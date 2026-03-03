@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteppeDNA — Pan-Gene Variant Classifier</title>
+    <meta name="description"
+        content="Universal HR pathway missense variant pathogenicity prediction using XGBoost+MLP ensemble with 103 features from 5 biological databases. Research use only.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=5.3">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6260FF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+</head>
+
+<body>
+
+    <!-- Skip to content link for keyboard users -->
+    <a href="#mutationForm" class="skip-link">Skip to main content</a>
+
+    <!-- Offline / backend-down banner -->
+    <div class="offline-banner" id="offlineBanner" style="display:none" role="alert">
+        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span id="offlineText">Server is starting up &mdash; predictions will be available shortly.</span>
+    </div>
+
+    <!-- Toast container — screen readers announce new toasts -->
+    <div class="toast-container" id="toastContainer" role="status" aria-live="polite"></div>
+
+    <!-- ============ HERO ============ -->
+    <header class="hero" role="banner">
+        <div class="hero-content">
+            <div class="logo-row">
+                <img src="logo.png" alt="SteppeDNA" style="height:52px;width:auto" onerror="this.style.display='none'">
+                <span class="logo-text" style="font-size: 1.8rem;">SteppeDNA</span>
+            </div>
+            <p class="tagline" data-i18n="tagline"
+                style="font-size: 0.85rem; max-width: 620px; margin: 0 auto 1.2rem; line-height: 1.6; opacity: 0.92;">
+                Pan-Gene Variant Classifier &bull; 103 Features from 5 Databases &bull; ESM-2 LLM Embeddings &bull;
+                SHAP Explained</p>
+
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <svg id="moonIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg id="sunIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            <div class="lang-toggle" role="group" aria-label="Language selection">
+                <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+                <button class="lang-btn" data-lang="kk" aria-label="Қазақша">KK</button>
+                <button class="lang-btn" data-lang="ru" aria-label="Русский">RU</button>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="num" id="hero-roc-auc">0.978</div>
+                    <div class="lbl">ROC-AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Area Under the Receiver Operating Characteristic curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess.</span></button></div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num" id="hero-mcc">0.881</div>
+                    <div class="lbl" data-i18n="stat_mcc">MCC <button class="help-tip" aria-label="What is MCC?">?<span class="help-text" data-i18n-tooltip="tip_mcc">Matthew's Correlation Coefficient. A balanced metric from -1 to +1 that accounts for true/false positives and negatives. Considered the most reliable single metric for binary classification.</span></button></div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num" id="hero-bal-acc">94.1%</div>
+                    <div class="lbl" data-i18n="stat_bal_acc">Balanced Acc <button class="help-tip" aria-label="What is Balanced Accuracy?">?<span class="help-text" data-i18n-tooltip="tip_bal_acc">Average of sensitivity (true pathogenic rate) and specificity (true benign rate). Unaffected by class imbalance unlike raw accuracy.</span></button></div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">XGB+MLP</div>
+                    <div class="lbl" data-i18n="stat_model">Ensemble <button class="help-tip" aria-label="What is the Ensemble?">?<span class="help-text" data-i18n-tooltip="tip_ensemble">XGBoost (60%) + Multi-Layer Perceptron neural network (40%) with isotonic calibration. Two models vote on each prediction for higher reliability.</span></button></div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">5</div>
+                    <div class="lbl" data-i18n="stat_genes">HR Genes <button class="help-tip" aria-label="What are HR Genes?">?<span class="help-text" data-i18n-tooltip="tip_hr_genes">Homologous Recombination DNA repair genes: BRCA1, BRCA2, PALB2, RAD51C, RAD51D. Mutations in these genes cause hereditary breast, ovarian, and other cancers.</span></button></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============ PER-GENE PERFORMANCE ============ -->
+    <section class="per-gene-section" aria-label="Per-Gene Performance">
+        <h3 class="per-gene-title" data-i18n="pergene_title">Per-Gene ROC-AUC Performance</h3>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">BRCA2</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:98.3%" aria-label="BRCA2 AUC 0.983"></div></div>
+                <span class="pg-val">0.983</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51D</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:80.4%" aria-label="RAD51D AUC 0.804"></div></div>
+                <span class="pg-val">0.804</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51C</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:74.3%" aria-label="RAD51C AUC 0.743"></div></div>
+                <span class="pg-val">0.743</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">BRCA1</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:70.6%" aria-label="BRCA1 AUC 0.706"></div></div>
+                <span class="pg-val">0.706</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">PALB2</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:64.1%" aria-label="PALB2 AUC 0.641"></div></div>
+                <span class="pg-val">0.641</span>
+            </div>
+        </div>
+        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.978) is weighted by gene representation. BRCA2 comprises 52% of the test set. See Validation Report &sect;9.</p>
+        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes. See Validation Report &sect;10.</p>
+    </section>
+
+    <!-- ============ MAIN 2-COL LAYOUT ============ -->
+    <main class="main-container" role="main">
+
+        <!-- LEFT: Upload -->
+        <div class="card">
+            <div class="card-title"><span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg></span> <span data-i18n="upload_title">Upload VCF</span></div>
+
+            <div class="form-group custom-dropdown-container" style="margin-bottom: 1.2rem;">
+                <label data-i18n="tgt_gene_ctx">Target Gene Context</label>
+                <div class="custom-dropdown" id="vcfGeneDropdown" tabindex="0">
+                    <div class="dropdown-selected" id="vcfGeneSelected">BRCA2</div>
+                    <div class="dropdown-options">
+                        <div class="dropdown-option" data-value="BRCA1">BRCA1</div>
+                        <div class="dropdown-option active" data-value="BRCA2">BRCA2</div>
+                        <div class="dropdown-option" data-value="PALB2">PALB2</div>
+                        <div class="dropdown-option" data-value="RAD51C">RAD51C</div>
+                        <div class="dropdown-option" data-value="RAD51D">RAD51D</div>
+                    </div>
+                </div>
+                <!-- Preserved mapped ID for JS lookups -->
+                <input type="hidden" id="vcfGeneSelect" value="BRCA2">
+            </div>
+
+            <div class="upload-zone" id="dropZone" role="button" aria-label="Upload VCF file" tabindex="0">
+                <div class="dna-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                        <path d="M2 15c6.667-6 13.333 0 20-6" stroke-linecap="round" />
+                        <path d="M9 22c1.798-1.998 2.573-3.995 2.572-5.993" stroke-linecap="round" />
+                        <path d="M15 2c-1.798 1.998-2.573 3.995-2.572 5.993" stroke-linecap="round" />
+                        <path d="M2 9c6.667 6 13.333 0 20 6" stroke-linecap="round" />
+                    </svg></div>
+                <h3 data-i18n="drop_vcf">Drop your VCF file here</h3>
+                <p data-i18n="or_click">or click to browse · .vcf format</p>
+                <input type="file" id="fileInput" hidden accept=".vcf">
+            </div>
+        </div>
+
+        <!-- RIGHT: Manual Input -->
+        <div class="card">
+            <div class="card-title"><span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        <path d="m15 5 4 4" />
+                    </svg></span> <span data-i18n="manual_entry">Manual Entry</span></div>
+            <form id="mutationForm" novalidate>
+                <div class="form-group custom-dropdown-container">
+                    <label data-i18n="tgt_gene">Target Gene</label>
+                    <div class="custom-dropdown" id="geneDropdown" tabindex="0">
+                        <div class="dropdown-selected" id="geneSelected">BRCA2</div>
+                        <div class="dropdown-options">
+                            <div class="dropdown-option" data-value="BRCA1">BRCA1</div>
+                            <div class="dropdown-option active" data-value="BRCA2">BRCA2</div>
+                            <div class="dropdown-option" data-value="PALB2">PALB2</div>
+                            <div class="dropdown-option" data-value="RAD51C">RAD51C</div>
+                            <div class="dropdown-option" data-value="RAD51D">RAD51D</div>
+                        </div>
+                    </div>
+                    <!-- Preserved mapped ID for JS lookups -->
+                    <input type="hidden" id="geneSelect" value="BRCA2">
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label for="cDNA_pos"><span data-i18n="cdna_pos">cDNA Position</span> <span id="cdnaHint"
+                                style="opacity:0.5">(1 - 10257)</span></label>
+                        <input type="number" id="cDNA_pos" placeholder="e.g. 8167" required min="1" max="10257">
+                    </div>
+
+                    <div class="form-group custom-dropdown-container" id="mutTypeDropdownGroup">
+                        <label data-i18n="mut_type">Mutation Type</label>
+                        <div class="custom-dropdown" id="mutTypeDropdown" tabindex="0">
+                            <div class="dropdown-selected" id="mutTypeSelected">Missense</div>
+                            <div class="dropdown-options">
+                                <div class="dropdown-option active" data-value="missense">Missense</div>
+                                <div class="dropdown-option" data-value="nonsense">Nonsense</div>
+                                <div class="dropdown-option" data-value="frameshift">Frameshift</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-2" id="missenseRow">
+                    <div class="form-group">
+                        <label for="AA_ref" data-i18n="ref_aa">Reference AA <button class="help-tip" aria-label="What is Reference AA?">?<span class="help-text" data-i18n-tooltip="tip_ref_aa">The original (wild-type) amino acid at this position. Use 3-letter codes: Ala, Arg, Asn, Asp, Cys, Glu, Gly, His, Ile, Leu, Lys, Met, Phe, Pro, Ser, Thr, Trp, Tyr, Val.</span></button></label>
+                        <input type="text" id="AA_ref" placeholder="e.g. Asp" required maxlength="3"
+                            pattern="[A-Za-z]{3}" autocomplete="off">
+                    </div>
+                    <div class="form-group" id="aaAltGroup">
+                        <label for="AA_alt" data-i18n="alt_aa">Alternate AA <button class="help-tip" aria-label="What is Alternate AA?">?<span class="help-text" data-i18n-tooltip="tip_alt_aa">The mutant amino acid that replaced the original. This is the variant you want to classify as pathogenic or benign.</span></button></label>
+                        <input type="text" id="AA_alt" placeholder="e.g. His" required maxlength="3"
+                            pattern="[A-Za-z]{3}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mutation"><span data-i18n="mutation">Mutation</span> <span data-i18n="mut_opt"
+                            style="opacity:0.5">(optional)</span></label>
+                    <input type="text" id="mutation" placeholder="e.g. G>C" autocomplete="off">
+                </div>
+                <button type="submit" class="btn" id="submitBtn">
+                    <div class="spinner" id="spinner"></div>
+                    <span id="btnText" data-i18n="analyze_btn">Analyze Mutation</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- LOADING SKELETON -->
+        <div class="skeleton-card" id="skeletonCard" style="display:none" aria-hidden="true">
+            <div class="skeleton-row skeleton-shimmer" style="width:40%;height:28px;margin-bottom:12px"></div>
+            <div class="skeleton-row skeleton-shimmer" style="width:25%;height:48px;margin-bottom:16px"></div>
+            <div class="skeleton-row skeleton-shimmer" style="width:90%;height:14px;margin-bottom:8px"></div>
+            <div class="skeleton-row skeleton-shimmer" style="width:75%;height:14px;margin-bottom:20px"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+                <div class="skeleton-row skeleton-shimmer" style="height:80px;border-radius:10px"></div>
+                <div class="skeleton-row skeleton-shimmer" style="height:80px;border-radius:10px"></div>
+                <div class="skeleton-row skeleton-shimmer" style="height:80px;border-radius:10px"></div>
+                <div class="skeleton-row skeleton-shimmer" style="height:80px;border-radius:10px"></div>
+            </div>
+        </div>
+
+        <!-- RESULT (full width) -->
+        <div class="result-card card-full" id="resultCard" aria-live="polite" aria-atomic="true">
+            <div class="result-top">
+                <div class="result-label-group">
+                    <span class="badge" id="badge">Pathogenic</span>
+                    <span class="result-model-note">XGBoost · Calibrated · SHAP explained</span>
+                </div>
+                <span class="confidence" id="confidence">98%</span>
+            </div>
+            <div id="uncertaintyInfo" style="display:none;text-align:center;margin-top:8px"></div>
+            <div id="geneReliability" style="display:none;margin:8px 0;padding:10px 14px;border-radius:8px;font-size:0.85rem;border:1px solid var(--warning);background:rgba(245,158,11,0.08);color:var(--text)"></div>
+            <div id="modelDisagreement" style="display:none;margin:8px 0;padding:10px 14px;border-radius:8px;font-size:0.85rem;border:1px solid var(--warning);background:rgba(245,158,11,0.08);color:var(--text)"></div>
+            <div id="vusGuidance" style="display:none;margin:8px 0;padding:10px 14px;border-radius:8px;font-size:0.85rem;border:1px solid var(--primary);background:rgba(99,102,241,0.06);color:var(--text)"></div>
+            <div id="predictionMeta" class="prediction-meta" style="display:none">
+                <span id="ensembleWeights" style="display:none"></span>
+                <span id="featureCoverage" style="display:none"></span>
+                <span id="dataSupport" style="display:none"></span>
+            </div>
+            <p class="result-subtitle" id="resultNote">
+                Prediction based on AlphaMissense, MAVE, PhyloP, ESM-2, SpliceAI, AlphaFold 3D structure, and 103 engineered features.
+            </p>
+
+            <!-- PROTEIN DOMAIN LOLLIPOP PLOT -->
+            <div class="lollipop-container" id="lollipopPlot" style="display:none"></div>
+
+            <div class="ds-grid" id="dsGrid">
+                <!-- filled by JS -->
+            </div>
+
+            <div class="features-grid" id="featuresGrid">
+                <!-- filled by JS -->
+            </div>
+
+            <!-- ACMG EVIDENCE -->
+            <div class="acmg-section" id="acmgSection" style="display:none">
+                <div class="acmg-title" data-i18n="acmg_ev">ACMG Evidence <button class="help-tip" aria-label="What is ACMG?">?<span class="help-text" data-i18n-tooltip="tip_acmg">American College of Medical Genetics classification criteria. PP/PM/PS = evidence for pathogenic. BP/BS/BA = evidence for benign. These are computational approximations.</span></button></div>
+                <div class="acmg-approx-note" style="font-size:0.75rem;color:var(--text-mid);margin-bottom:6px;font-style:italic" data-i18n="acmg_approx_label">Computational approximation &mdash; not validated ACMG classification</div>
+                <div class="acmg-grid" id="acmgGrid"></div>
+            </div>
+
+            <!-- SHAP -->
+            <div class="shap-section" id="shapSection" style="display:none">
+                <div class="shap-title" data-i18n="why_shap">Why This Prediction? — SHAP Feature Attribution <button class="help-tip" aria-label="What is SHAP?">?<span class="help-text" data-i18n-tooltip="tip_shap">SHAP (SHapley Additive exPlanations) shows how each biological feature pushed the prediction toward pathogenic (+) or benign (-). Longer bars = stronger influence on this specific variant.</span></button></div>
+                <div id="shapChart"></div>
+                <button class="shap-toggle-btn" id="shapToggleBtn" style="display:none" data-i18n="shap_show_all">Show All Features</button>
+                <div class="shap-legend">
+                    <span class="leg-ben" data-i18n="legend_ben">Benign</span>
+                    <span class="leg-path" data-i18n="legend_path">Pathogenic</span>
+                </div>
+            </div>
+
+            <!-- Contrastive Explanation (Item 43) -->
+            <div class="shap-section" id="contrastiveSection" style="display:none">
+                <div class="shap-title" data-i18n="contrastive_title">Contrastive Explanation <button class="help-tip" aria-label="What is this?">?<span class="help-text" data-i18n-tooltip="contrastive_tip">Shows the nearest training variant with the opposite classification. The key differences highlight which features most distinguish this variant from its nearest opposite-class neighbor.</span></button></div>
+                <div id="contrastiveContent"></div>
+            </div>
+
+            <!-- PDF / JSON EXPORT -->
+            <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:1rem">
+                <button class="csv-download-btn" id="pdfExportBtn" style="display:none">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                    <span data-i18n="download_pdf">Download PDF Report</span>
+                </button>
+                <button class="csv-download-btn" id="jsonExportBtn" style="display:none">
+                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><polyline points="14 2 14 8 20 8"/><path d="M12 18v-6"/><path d="m9 15 3 3 3-3"/></svg>
+                    <span data-i18n="download_json">Export JSON</span>
+                </button>
+                <button class="csv-download-btn" id="compareBtn" style="display:none">
+                    <svg viewBox="0 0 24 24"><path d="M16 3h5v5"/><path d="M8 3H3v5"/><path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/><path d="m15 9 6-6"/></svg>
+                    <span data-i18n="compare_btn">Compare</span>
+                </button>
+            </div>
+
+            <!-- LIVE DATABASE LOOKUP -->
+            <div class="live-lookup-section" id="liveLookupSection">
+                <div class="live-column">
+                    <button type="button" class="live-btn" id="btnClinvar">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        <span data-i18n="fetch_clinvar">Fetch Live ClinVar</span> <button class="help-tip" aria-label="What is ClinVar?">?<span class="help-text" data-i18n-tooltip="tip_clinvar">NCBI ClinVar database. Queries the latest clinical significance classification for this variant from submitting labs worldwide.</span></button>
+                        <div class="live-spinner" id="spinClinvar"></div>
+                    </button>
+                    <div class="live-result-box" id="resClinvar"></div>
+                </div>
+
+                <div class="live-column">
+                    <button type="button" class="live-btn" id="btnGnomad">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
+                            <path d="M2 12h20"></path>
+                        </svg>
+                        <span data-i18n="fetch_gnomad">Fetch Live gnomAD</span> <button class="help-tip" aria-label="What is gnomAD?">?<span class="help-text" data-i18n-tooltip="tip_gnomad">Genome Aggregation Database. Shows how often this variant appears in ~1.6 million sequenced individuals across diverse populations.</span></button>
+                        <div class="live-spinner" id="spinGnomad"></div>
+                    </button>
+                    <div class="live-result-box" id="resGnomad"></div>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ============ UMAP VARIANT LANDSCAPE ============ -->
+    <div class="umap-section" id="umapSection" style="display:none">
+        <div class="umap-title" data-i18n="umap_title">Variant Landscape (UMAP)</div>
+        <div class="umap-subtitle" data-i18n="umap_subtitle">Your variant projected onto 5,000 training variants</div>
+        <canvas id="umapCanvas" width="600" height="400"></canvas>
+        <div class="umap-legend">
+            <span class="umap-leg-item"><span class="umap-dot" style="background:#ef4444"></span> <span data-i18n="umap_leg_path">Pathogenic</span></span>
+            <span class="umap-leg-item"><span class="umap-dot" style="background:#10b981"></span> <span data-i18n="umap_leg_ben">Benign</span></span>
+            <span class="umap-leg-item"><span class="umap-dot umap-dot-query"></span> <span data-i18n="umap_leg_query">Your Variant</span></span>
+        </div>
+    </div>
+
+    <!-- ============ 3D PROTEIN VIEWER ============ -->
+    <div class="viewer3d-section" id="viewer3dSection" style="display:none">
+        <div class="viewer3d-title" data-i18n="viewer3d_title">3D Protein Structure</div>
+        <div class="viewer3d-subtitle" data-i18n="viewer3d_subtitle">Mutation position highlighted on the AlphaFold-predicted structure</div>
+        <div class="viewer3d-container" id="viewer3dContainer">
+            <div class="viewer3d-loading" id="viewer3dLoading">
+                <span class="spinner" style="display:inline-block;width:24px;height:24px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px"></span>
+                <span data-i18n="viewer3d_loading">Loading 3D structure...</span>
+            </div>
+            <div class="viewer3d-error" id="viewer3dError" style="display:none"></div>
+            <div id="viewer3dViewport" style="width:100%;height:100%"></div>
+        </div>
+        <div class="viewer3d-legend">
+            <span class="viewer3d-leg-item"><span class="viewer3d-dot" style="background:var(--primary)"></span> <span data-i18n="viewer3d_leg_structure">Protein Structure</span></span>
+            <span class="viewer3d-leg-item"><span class="viewer3d-dot" style="background:#ef4444"></span> <span data-i18n="viewer3d_leg_mutation">Mutation Site</span></span>
+        </div>
+    </div>
+
+    <!-- ============ VARIANT COMPARISON ============ -->
+    <div class="comparison-panel" id="comparisonPanel" style="display:none"></div>
+
+    <!-- ============ VCF RESULTS (full width) ============ -->
+    <div class="result-card card-full vcf-results" id="vcfResults" aria-live="polite">
+        <div class="card-title"><span class="ct-icon"><svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg></span> <span data-i18n="vcf_batch">VCF Batch Results</span></div>
+        <div class="vcf-summary" id="vcfSummary"></div>
+        <div id="compoundHetWarning" style="display:none"></div>
+        <div id="vcfLoading" class="vcf-loading" style="display:none" role="status" aria-label="Loading">
+            <span class="spinner" aria-hidden="true"></span> <span data-i18n="analyzing">Analyzing variants...</span>
+        </div>
+        <div style="overflow-x:auto">
+            <table class="vcf-table" id="vcfTable" aria-label="VCF batch prediction results">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th data-i18n="vcf_type_col">Type</th>
+                        <th data-i18n="tb_hgvs">HGVS</th>
+                        <th data-i18n="tb_cdna">cDNA</th>
+                        <th data-i18n="tb_aa">AA Change</th>
+                        <th data-i18n="tb_mut">Mutation</th>
+                        <th data-i18n="tb_pred">Prediction</th>
+                        <th data-i18n="tb_prob">Probability</th>
+                    </tr>
+                </thead>
+                <tbody id="vcfBody"></tbody>
+            </table>
+        </div>
+        <div id="skippedVariants"></div>
+        <button class="csv-download-btn" id="csvDownloadBtn" style="display:none;margin-top:1.2rem">
+            <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            <span data-i18n="download_csv">Download CSV</span>
+        </button>
+    </div>
+
+    <!-- ============ ANALYSIS HISTORY ============ -->
+    <div class="history-section" id="historyPanel" style="display:none">
+        <div class="history-header">
+            <h3 data-i18n="history_title">Recent Analyses</h3>
+            <button class="history-clear-btn" id="clearHistoryBtn" data-i18n="history_clear">Clear</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- ============ RESEARCH PRIORITIES (Active Learning) ============ -->
+    <div class="research-priorities-section" id="researchPriorities" style="display:none">
+        <div class="card-title">
+            <span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke="currentColor" stroke-width="2" fill="none"/></svg></span>
+            <span data-i18n="research_priorities_title">Research Priorities: Recommended for Functional Validation</span>
+        </div>
+        <p class="rp-desc" data-i18n="research_priorities_desc">
+            Variants ranked by their value for functional validation using query-by-committee model disagreement,
+            gene data scarcity, and positional novelty. Higher priority variants have greater potential to improve
+            the model when experimentally characterized.
+        </p>
+        <div class="rp-gene-filter" id="researchGeneFilter"></div>
+        <div style="overflow-x:auto">
+            <table class="vcf-table" id="researchTable" aria-label="Research priority variants">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th data-i18n="rp_variant">Variant</th>
+                        <th data-i18n="rp_priority">Priority</th>
+                        <th data-i18n="rp_qbc">QBC Score</th>
+                        <th data-i18n="rp_prediction">Current Pred.</th>
+                        <th data-i18n="rp_nearby">Nearby Train.</th>
+                        <th data-i18n="rp_reason">Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="researchBody"></tbody>
+            </table>
+        </div>
+        <p class="rp-note" data-i18n="research_priorities_note">
+            QBC = Query By Committee (|XGB - MLP|). Priority = QBC x gene scarcity x positional novelty.
+        </p>
+    </div>
+
+    <!-- ============ INFO CARDS ============ -->
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                    <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.57-3.25 3.92" />
+                    <path d="M8 6a4 4 0 0 1 .68-2.23" />
+                    <circle cx="12" cy="17" r="5" />
+                    <path d="m12 14 2 3h-4Z" />
+                </svg></div>
+            <h4 data-i18n="info1_t">Universal Base Models</h4>
+            <p data-i18n="info1_d">Pan-gene Deep Neural Network &amp; XGBoost ensemble trained on 19,000+ ClinVar &amp; gnomAD HR missense variants with isotonic probability calibration. Resolves 5 genes seamlessly.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                    <path d="M2 12h20" />
+                </svg></div>
+            <h4 data-i18n="info2_t">103 Features</h4>
+            <p data-i18n="info2_d">BLOSUM62 substitution scores, ESM-2 protein language model embeddings, PhyloP conservation, MAVE functional assays, AlphaMissense, SpliceAI, AlphaFold 3D structures, and gnomAD population frequencies.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                    <path d="M3 3v18h18" />
+                    <path d="m19 9-5 5-4-4-3 3" />
+                </svg></div>
+            <h4 data-i18n="info3_t">SHAP Explanations</h4>
+            <p data-i18n="info3_d">Every prediction shows which features pushed it toward pathogenic or benign, using
+                SHAP values
+                extracted from the XGBoost model.</p>
+        </div>
+    </div>
+
+    <!-- ============ MODEL CARD ============ -->
+    <details class="model-card-section">
+        <summary class="model-card-toggle" data-i18n="mc_title">Model Card &amp; Limitations</summary>
+        <div class="model-card-content">
+            <div class="mc-grid">
+                <div class="mc-block">
+                    <h4 data-i18n="mc_intended_use">Intended Use</h4>
+                    <p data-i18n="mc_intended_use_d">Research-grade variant classification for missense mutations in 5 Homologous Recombination DNA repair genes (BRCA1, BRCA2, PALB2, RAD51C, RAD51D). Intended as a decision-support tool, not a standalone diagnostic.</p>
+                </div>
+                <div class="mc-block">
+                    <h4 data-i18n="mc_training_data">Training Data</h4>
+                    <p data-i18n="mc_training_data_d">19,223 variants: 18,738 from ClinVar (reviewed/expert-panel classifications) + 485 gnomAD proxy-benign (AC &ge; 2 in ~1.6M alleles). 60/20/20 split with gene &times; label stratification. RANDOM_STATE=42.</p>
+                </div>
+                <div class="mc-block">
+                    <h4 data-i18n="mc_architecture">Architecture</h4>
+                    <p data-i18n="mc_architecture_d">XGBoost (60%) + Multi-Layer Perceptron (40%) blended ensemble with isotonic calibration trained on a held-out calibration set. 103 engineered features from 5 databases.</p>
+                </div>
+                <div class="mc-block">
+                    <h4 data-i18n="mc_performance">Performance</h4>
+                    <p data-i18n="mc_performance_d">ROC-AUC: 0.978 &middot; MCC: 0.881 &middot; Balanced Accuracy: 94.1%. 10-fold CV: 0.9797 &plusmn; 0.0031. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.</p>
+                </div>
+                <div class="mc-block">
+                    <h4 data-i18n="mc_limitations">Known Limitations</h4>
+                    <ul>
+                        <li data-i18n="mc_lim1">Non-BRCA2 genes have smaller training sets and lower per-gene AUC (PALB2: 0.641, RAD51C: 0.743)</li>
+                        <li data-i18n="mc_lim2">Copy number variants (CNVs) are not classified. Splice-site, in-frame indel, and synonymous variants use rule-based classification (not the ML model). Truncating variants (nonsense, frameshift) use Tier 1 protocol</li>
+                        <li data-i18n="mc_lim3">Model may underperform on novel variants with no population frequency data</li>
+                        <li data-i18n="mc_lim4">Probabilities are clipped to [0.5%, 99.5%] &mdash; the model never claims absolute certainty</li>
+                        <li data-i18n="mc_lim5">Compound heterozygosity warning is provided in VCF batch analysis, but does not perform phasing; variants require segregation study to determine cis/trans configuration</li>
+                        <li data-i18n="mc_lim6">Training data predominantly from populations of European descent (ClinVar submission bias); predictions for underrepresented ancestries may be less reliable</li>
+                        <li data-i18n="mc_lim7">ClinVar classifications evolve over time; training labels may not reflect the latest expert consensus</li>
+                    </ul>
+                    <p class="mc-sota-note" data-i18n="mc_sota_note" style="font-size:0.8rem;color:var(--text-mid);margin-top:8px;font-style:italic"></p>
+                </div>
+                <div class="mc-block">
+                    <h4 data-i18n="mc_ethics">Ethical Considerations</h4>
+                    <ul>
+                        <li data-i18n="mc_eth1">Not validated for clinical diagnostic use &mdash; all predictions require expert review</li>
+                        <li data-i18n="mc_eth2">Training data is primarily from populations of European descent; performance may vary across ancestries</li>
+                        <li data-i18n="mc_eth3">ACMG evidence codes are computational approximations, not expert classifications</li>
+                        <li data-i18n="mc_eth4">Should not be used as the sole basis for clinical decisions about patient care</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </details>
+
+    <!-- ============ CERTIFICATION ============ -->
+    <div class="certification-section">
+        <div class="cert-badge">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+        </div>
+        <h4 data-i18n="cert_title">Regulatory & Certification Roadmap</h4>
+        <div class="cert-grid">
+            <div class="cert-item planned">
+                <span class="cert-status" data-i18n="cert_planned">Future</span>
+                <span class="cert-label" data-i18n="cert_kz">Kazakhstan Ministry of Health Registration</span>
+            </div>
+            <div class="cert-item planned">
+                <span class="cert-status" data-i18n="cert_planned">Future</span>
+                <span class="cert-label" data-i18n="cert_ce">CE-IVD Marking (EU)</span>
+            </div>
+            <div class="cert-item active">
+                <span class="cert-status" data-i18n="cert_active">Active</span>
+                <span class="cert-label" data-i18n="cert_research">Research Use Only (RUO)</span>
+            </div>
+        </div>
+        <p class="cert-note" data-i18n="cert_note">This tool is currently for research use only and has not been submitted for regulatory approval. Clinical deployment will require certification from the relevant national health authority.</p>
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <footer>
+        <a href="#">SteppeDNA</a> &middot; <span data-i18n="footer1">Research use only &middot; Not a diagnostic
+            tool</span><br>
+        <div style="margin-top: 8px;">
+            <span style="font-size: 0.7rem; opacity: 0.6;" data-i18n="footer2">ACMG evidence codes are computational
+                approximations and do not replace expert clinical curation.</span>
+        </div>
+    </footer>
+
+    <script src="api.js?v=3"></script>
+    <script src="lang.js?v=3"></script>
+    <script src="app.js?v=3"></script>
+    <script>
+        // Register service worker for offline support
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(() => {});
+        }
+    </script>
+</body>
+
+</html>

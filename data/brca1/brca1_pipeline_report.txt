@@ -1,0 +1,39 @@
+SteppeDNA: BRCA1 Expansion Pipeline Report
+===========================================
+
+Dataset:
+  Gene: BRCA1 (chr17, minus strand)
+  Protein: 1863 amino acids (UniProt P38398)
+  CDS: 5592 bp
+
+ClinVar Variants Retrieved:
+  Pathogenic: 226
+  Benign: 6
+  Total: 232
+
+Feature Engineering Compatibility:
+  The following BRCA2 features are directly portable to BRCA1:
+  [x] BLOSUM62 substitution matrix (universal)
+  [x] AA volume / hydrophobicity / charge (universal)
+  [x] AlphaMissense scores (genome-wide, includes BRCA1)
+  [x] gnomAD allele frequencies (genome-wide, includes BRCA1)
+  [x] PhyloP conservation scores (genome-wide, includes BRCA1)
+
+  Gene-specific features requiring BRCA1-specific data:
+  [ ] Structural features (need BRCA1 PDB: 1JM7, 1T15, or AlphaFold)
+  [ ] Domain annotations (need BRCA1 RING, BRCT, coiled-coil domains)
+  [ ] MAVE scores (Findlay et al. dataset is BRCA2-specific)
+  [ ] cDNA-to-genomic mapping (need BRCA1 transcript NM_007294)
+
+Steps to Complete BRCA1 Model:
+  1. Run PhyloP pipeline for chr17 BRCA1 region
+  2. Extract AlphaMissense scores for BRCA1 (already in genome-wide file)
+  3. Extract gnomAD frequencies for BRCA1
+  4. Generate BRCA1 structural features from PDB 1JM7/1T15 + AlphaFold
+  5. Define BRCA1 functional domains (RING: 1-109, coiled-coil: 1393-1424, BRCT: 1646-1859)
+  6. Train XGBoost with same hyperparameters and SMOTE pipeline
+  7. Validate against SGE/MAVE data if available for BRCA1
+
+This demonstrates that SteppeDNA's architecture is gene-agnostic.
+The core ML pipeline (XGBoost + SMOTE + isotonic calibration) is identical.
+Only the biological feature sources need to be swapped.

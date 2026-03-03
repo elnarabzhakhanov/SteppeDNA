@@ -1,0 +1,14 @@
+# ── Production dependencies ──────────────────────────────────────
+fastapi==0.129.0
+uvicorn==0.41.0
+python-multipart
+pandas==2.3.2
+numpy==1.26.4
+xgboost==2.1.4
+scikit-learn==1.7.2
+biopython==1.85
+tensorflow>=2.15.0,<2.17.0
+httpx>=0.27.0
+scipy>=1.12.0
+psutil>=5.9.0
+fpdf2>=2.7.0

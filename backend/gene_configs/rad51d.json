@@ -1,0 +1,29 @@
+{
+    "gene_name": "RAD51D",
+    "uniprot_id": "O75771",
+    "chromosome": "17",
+    "genomic_start": 35092221,
+    "genomic_end": 35121522,
+    "strand": "-",
+    "transcript_id": "ENST00000345365.10",
+    "cds_length": 987,
+    "aa_length": 328,
+    "domains": {
+        "ssDNA_binding": [
+            1,
+            83
+        ],
+        "N_terminal_domain": [
+            2,
+            28
+        ],
+        "Walker_A": [
+            108,
+            115
+        ],
+        "Walker_B": [
+            206,
+            210
+        ]
+    }
+}

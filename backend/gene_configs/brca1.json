@@ -1,0 +1,41 @@
+{
+    "gene_name": "BRCA1",
+    "uniprot_id": "P38398",
+    "chromosome": "17",
+    "genomic_start": 43044292,
+    "genomic_end": 43170245,
+    "strand": "-",
+    "transcript_id": "ENST00000357654.9",
+    "cds_length": 5592,
+    "aa_length": 1863,
+    "domains": {
+        "RING": [
+            8,
+            96
+        ],
+        "BARD1_interaction": [
+            8,
+            96
+        ],
+        "DNA_binding": [
+            452,
+            1079
+        ],
+        "PALB2_interaction": [
+            1364,
+            1437
+        ],
+        "SCD": [
+            1280,
+            1524
+        ],
+        "BRCT1": [
+            1646,
+            1736
+        ],
+        "BRCT2": [
+            1760,
+            1855
+        ]
+    }
+}

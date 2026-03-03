@@ -1,0 +1,15 @@
+# Exclude large/unnecessary directories from Docker build context
+notebooks/
+scripts/
+data_pipelines/
+tests/
+.github/
+.git/
+*.md
+*.ipynb
+__pycache__/
+*.pyc
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/

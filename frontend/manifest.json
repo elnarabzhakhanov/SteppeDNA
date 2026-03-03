@@ -1,0 +1,19 @@
+{
+  "name": "SteppeDNA",
+  "short_name": "SteppeDNA",
+  "description": "Pan-Gene Variant Pathogenicity Classifier for HR DNA Repair Genes",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#6260FF",
+  "orientation": "any",
+  "categories": ["medical", "science", "utilities"],
+  "icons": [
+    {
+      "src": "logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

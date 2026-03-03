@@ -1,0 +1,33 @@
+{
+    "gene_name": "BRCA2",
+    "uniprot_id": "P51587",
+    "chromosome": "13",
+    "genomic_start": 32315086,
+    "genomic_end": 32400268,
+    "strand": "+",
+    "transcript_id": "ENST00000380152.8",
+    "cds_length": 10257,
+    "aa_length": 3418,
+    "domains": {
+        "PALB2_interaction": [
+            10,
+            40
+        ],
+        "BRC_repeats": [
+            1009,
+            2083
+        ],
+        "DNA_binding": [
+            2402,
+            3190
+        ],
+        "OB_folds": [
+            2670,
+            3102
+        ],
+        "NLS_nuclear_localization": [
+            3263,
+            3330
+        ]
+    }
+}

@@ -1,0 +1,69 @@
+{
+  "model_version": "v5.3-gpu",
+  "roc_auc": 0.9835,
+  "pr_auc": 0.9692,
+  "mcc": 0.9224,
+  "balanced_accuracy": 0.9616,
+  "sensitivity": 0.9679,
+  "specificity": 0.9554,
+  "threshold": 0.6667,
+  "n_test": 3845,
+  "n_train": 11533,
+  "n_features": 178,
+  "n_genes": 5,
+  "gpu_features": {
+    "esm2_lora_pca": 20,
+    "esm2_650m_pca": 20,
+    "esm2_650m_extra": 2,
+    "gnn_structural": 32,
+    "gnn_indicator": 1
+  },
+  "confusion_matrix": {
+    "tp": 1747,
+    "fp": 91,
+    "fn": 58,
+    "tn": 1949
+  },
+  "per_gene": {
+    "BRCA1": {
+      "n": 1087,
+      "roc_auc": 0.7632,
+      "mcc": 0.5874,
+      "balanced_accuracy": 0.6786,
+      "sensitivity": 1.0,
+      "specificity": 0.3571
+    },
+    "BRCA2": {
+      "n": 2017,
+      "roc_auc": 0.9938,
+      "mcc": 0.9447,
+      "balanced_accuracy": 0.9577,
+      "sensitivity": 0.9171,
+      "specificity": 0.9983
+    },
+    "PALB2": {
+      "n": 524,
+      "roc_auc": 0.5209,
+      "mcc": 0.4867,
+      "balanced_accuracy": 0.625,
+      "sensitivity": 1.0,
+      "specificity": 0.25
+    },
+    "RAD51C": {
+      "n": 135,
+      "roc_auc": 0.6999,
+      "mcc": 0.2357,
+      "balanced_accuracy": 0.6,
+      "sensitivity": 0.3333,
+      "specificity": 0.8667
+    },
+    "RAD51D": {
+      "n": 82,
+      "roc_auc": 0.776,
+      "mcc": 0.4099,
+      "balanced_accuracy": 0.7059,
+      "sensitivity": 0.6944,
+      "specificity": 0.7174
+    }
+  }
+}

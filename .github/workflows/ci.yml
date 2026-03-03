@@ -1,0 +1,54 @@
+name: SteppeDNA CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt', 'requirements-dev.txt') }}
+          restore-keys: ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Lint with flake8 (critical errors)
+        run: |
+          # Fail build on syntax errors, undefined names, and critical issues
+          flake8 backend/ --count --select=E9,F63,F7,F82 --show-source --statistics
+
+      - name: Lint with flake8 (style warnings)
+        run: |
+          # Style warnings — fail on high-complexity or serious issues, ignore line length soft warnings
+          flake8 backend/ --count --max-complexity=15 --max-line-length=150 --statistics --extend-ignore=E501,W503,W504,E402
+
+      - name: Run tests
+        run: |
+          pytest tests/ -v --tb=short --cov=backend --cov-report=term-missing
+
+      - name: Verify backend imports
+        run: |
+          python -c "from backend.feature_engineering import ALL_AMINO_ACIDS, ALL_MUTATIONS; print(f'Features OK: {len(ALL_AMINO_ACIDS)} AAs, {len(ALL_MUTATIONS)} mutations')"
+          python -c "from backend.acmg_rules import evaluate_acmg_rules; print('ACMG rules OK')"
+          python -c "from backend.constants import CODON_TABLE; print(f'Constants OK: {len(CODON_TABLE)} codons')"

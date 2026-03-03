@@ -1,0 +1,129 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment & secrets
+.env
+*.key
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+coverage.xml
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Docker
+*.log
+
+# Node
+node_modules/
+
+# ============================================
+# Large binary files (kept locally, not in git)
+# ============================================
+data/*.pkl
+data/*.h5
+data/*.db
+data/variant_summary.txt.gz
+data/bootstrap_models/
+data/dbnsfp_scores_cache.json
+data/eve_scores_cache.json
+data/master_training_dataset_gpu_augmented.csv
+
+# ============================================
+# Claude Code / AI artifacts (kept locally)
+# ============================================
+.claude/
+
+# ============================================
+# Internal notes & guides (kept locally)
+# ============================================
+maximizing_project.md
+explanation_of_SteppeDNA.html
+explanation_of_SteppeDNA.md
+SteppeDNA_Guide.md
+advanced_scale_strategies.md
+future_improvements.md
+improvements.md
+COMPETITION_NARRATIVE.md
+
+# ============================================
+# Legacy/redundant scripts (kept locally)
+# ============================================
+scripts/generate_bw_pdf.py
+scripts/generate_bw_pdf_ru.py
+scripts/generate_comprehensive_guide.py
+scripts/generate_comprehensive_guide_ru.py
+scripts/generate_explanation_html.py
+scripts/generate_explanation_pdf.py
+scripts/generate_final_unified_pdf.py
+scripts/generate_simple_pdf.py
+scripts/generate_simplified_bw_pdf.py
+scripts/generate_ultimate_pdf.py
+scripts/generate_v3_deep_dive.py
+scripts/generate_v3_purple_pdf.py
+scripts/md_to_pdf.py
+scripts/baseline_model.py
+scripts/train_ensemble_baseline.py
+scripts/train_ensemble_blind.py
+scripts/train_mave_blind_model.py
+scripts/train_multitask_blind.py
+scripts/train_xgboost.py
+scripts/tune_xgboost.py
+scripts/tune_xgboost_blind.py
+scripts/check_api.py
+scripts/check_known_variants.py
+scripts/check_leakage_brca2.py
+scripts/check_mave_api.py
+scripts/check_mutations.py
+scripts/check_vcf.py
+scripts/external_validation.py
+scripts/external_validation_ensemble.py
+scripts/external_validation_multitask.py
+scripts/run_benchmark.py
+scripts/evaluate.py
+
+# ============================================
+# Other local-only files
+# ============================================
+brca2_missense_dataset_2.csv
+visual_proofs/
+logs/
+frontend/index-split.html
+
+# Generated PDFs & temp scripts
+SteppeDNA_Comprehensive_Guide.pdf
+SteppeDNA_Comprehensive_Guide_RU.pdf
+fix_css.py
+gen_vcf.py
+test_api_locally.py
+test_fonts.py
+tmp_*.py
+data/gnn_model_weights.pt

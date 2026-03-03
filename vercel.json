@@ -1,0 +1,38 @@
+{
+  "version": 2,
+  "name": "steppedna",
+  "buildCommand": "",
+  "outputDirectory": "frontend",
+  "rewrites": [
+    { "source": "/predict/:path*", "destination": "https://steppedna-api.onrender.com/predict/:path*" },
+    { "source": "/lookup/:path*", "destination": "https://steppedna-api.onrender.com/lookup/:path*" },
+    { "source": "/health", "destination": "https://steppedna-api.onrender.com/health" },
+    { "source": "/model_metrics", "destination": "https://steppedna-api.onrender.com/model_metrics" },
+    { "source": "/umap", "destination": "https://steppedna-api.onrender.com/umap" },
+    { "source": "/cohort/:path*", "destination": "https://steppedna-api.onrender.com/cohort/:path*" },
+    { "source": "/history", "destination": "https://steppedna-api.onrender.com/history" },
+    { "source": "/stats", "destination": "https://steppedna-api.onrender.com/stats" },
+    { "source": "/metrics", "destination": "https://steppedna-api.onrender.com/metrics" },
+    { "source": "/docs", "destination": "https://steppedna-api.onrender.com/docs" },
+    { "source": "/redoc", "destination": "https://steppedna-api.onrender.com/redoc" },
+    { "source": "/openapi.json", "destination": "https://steppedna-api.onrender.com/openapi.json" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://3Dmol.org https://3dmol.csb.pitt.edu; style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data: blob:; connect-src 'self' https://eutils.ncbi.nlm.nih.gov https://gnomad.broadinstitute.org https://alphafold.ebi.ac.uk; frame-src 'none'; object-src 'none'; base-uri 'self';" },
+        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    },
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Cache-Control", "value": "no-store, no-cache, must-revalidate" }
+      ]
+    }
+  ]
+}

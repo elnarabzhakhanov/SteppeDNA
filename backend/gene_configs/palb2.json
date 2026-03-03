@@ -1,0 +1,29 @@
+{
+    "gene_name": "PALB2",
+    "uniprot_id": "Q86YC2",
+    "chromosome": "16",
+    "genomic_start": 23603160,
+    "genomic_end": 23641321,
+    "strand": "-",
+    "transcript_id": "ENST00000261584.9",
+    "cds_length": 3561,
+    "aa_length": 1186,
+    "domains": {
+        "BRCA1_interaction": [
+            9,
+            42
+        ],
+        "ChAM_DNA_binding": [
+            395,
+            442
+        ],
+        "BRCA2_interaction": [
+            1085,
+            1186
+        ],
+        "WD40_repeats": [
+            853,
+            1186
+        ]
+    }
+}

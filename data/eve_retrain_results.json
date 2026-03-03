@@ -1,0 +1,67 @@
+{
+  "overall": {
+    "prod_auc": 0.978088,
+    "eve_auc": 0.980105,
+    "delta": 0.002017
+  },
+  "per_gene": {
+    "BRCA1": {
+      "prod_auc": 0.705669,
+      "eve_auc": 0.755516,
+      "delta": 0.049848,
+      "improved": true,
+      "n_test": 1087
+    },
+    "BRCA2": {
+      "prod_auc": 0.983367,
+      "eve_auc": 0.982182,
+      "delta": -0.001185,
+      "improved": false,
+      "n_test": 2017
+    },
+    "PALB2": {
+      "prod_auc": 0.640967,
+      "eve_auc": 0.617116,
+      "delta": -0.02385,
+      "improved": false,
+      "n_test": 524
+    },
+    "RAD51C": {
+      "prod_auc": 0.743086,
+      "eve_auc": 0.766543,
+      "delta": 0.023457,
+      "improved": true,
+      "n_test": 135
+    },
+    "RAD51D": {
+      "prod_auc": 0.804046,
+      "eve_auc": 0.797705,
+      "delta": -0.006341,
+      "improved": false,
+      "n_test": 82
+    }
+  },
+  "feature_count": 104,
+  "eve_coverage": {
+    "BRCA1": {
+      "nonzero": 3561,
+      "total": 5432
+    },
+    "BRCA2": {
+      "nonzero": 3927,
+      "total": 10085
+    },
+    "PALB2": {
+      "nonzero": 2617,
+      "total": 2621
+    },
+    "RAD51C": {
+      "nonzero": 675,
+      "total": 675
+    },
+    "RAD51D": {
+      "nonzero": 410,
+      "total": 410
+    }
+  }
+}

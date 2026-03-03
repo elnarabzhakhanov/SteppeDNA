@@ -1,0 +1,33 @@
+{
+    "gene_name": "RAD51C",
+    "uniprot_id": "O43502",
+    "chromosome": "17",
+    "genomic_start": 58692573,
+    "genomic_end": 58735611,
+    "strand": "+",
+    "transcript_id": "ENST00000337432.9",
+    "cds_length": 1131,
+    "aa_length": 376,
+    "domains": {
+        "Holliday_junction_resolution": [
+            1,
+            126
+        ],
+        "RAD51B_RAD51D_XRCC3_interaction": [
+            79,
+            136
+        ],
+        "Walker_A": [
+            135,
+            142
+        ],
+        "Walker_B": [
+            238,
+            242
+        ],
+        "NLS_nuclear_localization": [
+            366,
+            370
+        ]
+    }
+}

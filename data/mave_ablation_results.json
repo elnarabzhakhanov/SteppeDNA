@@ -1,0 +1,53 @@
+{
+  "with_mave": {
+    "roc_auc": 0.9780879637173429,
+    "mcc": 0.8813958846031406,
+    "balanced_accuracy": 0.941415458150019
+  },
+  "without_mave": {
+    "roc_auc": 0.9763406387485742,
+    "mcc": 0.8795328172894005,
+    "balanced_accuracy": 0.9403929715930694
+  },
+  "delta": {
+    "roc_auc": -0.0017473249687686154,
+    "mcc": -0.0018630673137400855
+  },
+  "per_gene": {
+    "BRCA1": {
+      "auc_with_mave": 0.7056689067479562,
+      "auc_without_mave": 0.7056689067479562,
+      "delta": 0.0,
+      "n": 1087
+    },
+    "BRCA2": {
+      "auc_with_mave": 0.9833669843320949,
+      "auc_without_mave": 0.9653825445539224,
+      "delta": -0.017984439778172545,
+      "n": 2017
+    },
+    "PALB2": {
+      "auc_with_mave": 0.6409665300546448,
+      "auc_without_mave": 0.6409665300546448,
+      "delta": 0.0,
+      "n": 524
+    },
+    "RAD51C": {
+      "auc_with_mave": 0.7430864197530864,
+      "auc_without_mave": 0.7430864197530864,
+      "delta": 0.0,
+      "n": 135
+    },
+    "RAD51D": {
+      "auc_with_mave": 0.8040458937198067,
+      "auc_without_mave": 0.8040458937198067,
+      "delta": 0.0,
+      "n": 82
+    }
+  },
+  "assessment": "minimal_impact",
+  "mave_feature_count": 4,
+  "total_feature_count": 103,
+  "test_variants_with_mave": 134,
+  "total_test_variants": 3845
+}

@@ -1,0 +1,61 @@
+{
+  "cutoff_year": 2024,
+  "n_train": 9048,
+  "n_test": 10175,
+  "roc_auc": 0.964,
+  "pr_auc": 0.9473,
+  "mcc": 0.8171,
+  "balanced_accuracy": 0.9085,
+  "accuracy": 0.9086,
+  "sensitivity": 0.9044,
+  "specificity": 0.9126,
+  "threshold": 0.6667,
+  "confusion_matrix": {
+    "tp": 4503,
+    "fp": 454,
+    "fn": 476,
+    "tn": 4742
+  },
+  "per_gene": {
+    "BRCA1": {
+      "n": 2514,
+      "roc_auc": 0.5268,
+      "mcc": -0.0261,
+      "balanced_accuracy": 0.4808,
+      "sensitivity": 0.9171,
+      "specificity": 0.0444
+    },
+    "BRCA2": {
+      "n": 5228,
+      "roc_auc": 0.9827,
+      "mcc": 0.8976,
+      "balanced_accuracy": 0.9515,
+      "sensitivity": 0.9152,
+      "specificity": 0.9877
+    },
+    "PALB2": {
+      "n": 1699,
+      "roc_auc": 0.5132,
+      "mcc": 0.0129,
+      "balanced_accuracy": 0.5097,
+      "sensitivity": 0.9101,
+      "specificity": 0.1094
+    },
+    "RAD51C": {
+      "n": 498,
+      "roc_auc": 0.5605,
+      "mcc": 0.1199,
+      "balanced_accuracy": 0.5571,
+      "sensitivity": 0.7592,
+      "specificity": 0.355
+    },
+    "RAD51D": {
+      "n": 236,
+      "roc_auc": 0.6081,
+      "mcc": 0.1338,
+      "balanced_accuracy": 0.5613,
+      "sensitivity": 0.7815,
+      "specificity": 0.3412
+    }
+  }
+}

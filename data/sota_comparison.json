@@ -1,0 +1,82 @@
+{
+  "SteppeDNA (Ensemble)": {
+    "roc_auc": 0.9781,
+    "pr_auc": 0.9688,
+    "mcc": 0.881,
+    "bal_acc": 0.9414,
+    "n_scored": 3845,
+    "citation": "This work"
+  },
+  "REVEL (REAL)": {
+    "roc_auc": 0.7245,
+    "pr_auc": 0.5333,
+    "mcc": 0.027,
+    "bal_acc": 0.5104,
+    "n_scored": 2784,
+    "citation": "Ioannidis et al. 2016"
+  },
+  "BayesDel (REAL)": {
+    "roc_auc": 0.7206,
+    "pr_auc": 0.5547,
+    "mcc": 0.097,
+    "bal_acc": 0.5403,
+    "n_scored": 2802,
+    "citation": "Feng 2017"
+  },
+  "MAVE": {
+    "roc_auc": 0.6722,
+    "pr_auc": 0.3316,
+    "mcc": 0.195,
+    "bal_acc": 0.6269,
+    "n_scored": 134,
+    "citation": "Findlay et al. 2018"
+  },
+  "AlphaMissense": {
+    "roc_auc": 0.6595,
+    "pr_auc": 0.5999,
+    "mcc": 0.278,
+    "bal_acc": 0.6393,
+    "n_scored": 3845,
+    "citation": "Cheng et al., Nature 2023"
+  },
+  "BLOSUM62": {
+    "roc_auc": 0.5837,
+    "pr_auc": 0.6087,
+    "mcc": 0.108,
+    "bal_acc": 0.5543,
+    "n_scored": 3845,
+    "citation": "Henikoff & Henikoff 1992"
+  },
+  "ESM-2 (cosine)": {
+    "roc_auc": 0.5544,
+    "pr_auc": 0.5527,
+    "mcc": 0.078,
+    "bal_acc": 0.5393,
+    "n_scored": 3845,
+    "citation": "Lin et al. 2023"
+  },
+  "CADD (REAL)": {
+    "roc_auc": 0.5388,
+    "pr_auc": 0.3242,
+    "mcc": 0.026,
+    "bal_acc": 0.5039,
+    "n_scored": 2784,
+    "citation": "Rentzsch et al. 2019"
+  },
+  "PhyloP": {
+    "roc_auc": 0.5138,
+    "pr_auc": 0.4648,
+    "mcc": 0.023,
+    "bal_acc": 0.5117,
+    "n_scored": 3845,
+    "citation": "Pollard et al. 2010"
+  },
+  "SpliceAI": {
+    "roc_auc": 0.4704,
+    "pr_auc": 0.3229,
+    "mcc": 0.0,
+    "bal_acc": 0.5,
+    "n_scored": 3845,
+    "citation": "Jaganathan et al. 2019"
+  }
+}

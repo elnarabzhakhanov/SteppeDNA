@@ -1,0 +1,54 @@
+{
+  "population_stats": {
+    "af": {
+      "n_total": 9574,
+      "n_nonzero": 0,
+      "pct_nonzero": 0.0,
+      "median_af": 0.0,
+      "mean_af": 0.0
+    },
+    "popmax": {
+      "n_total": 9574,
+      "n_nonzero": 0,
+      "pct_nonzero": 0.0,
+      "median_af": 0.0,
+      "mean_af": 0.0
+    },
+    "afr": {
+      "n_total": 9574,
+      "n_nonzero": 0,
+      "pct_nonzero": 0.0,
+      "median_af": 0.0,
+      "mean_af": 0.0
+    },
+    "amr": {
+      "n_total": 9574,
+      "n_nonzero": 0,
+      "pct_nonzero": 0.0,
+      "median_af": 0.0,
+      "mean_af": 0.0
+    },
+    "eas": {
+      "n_total": 9574,
+      "n_nonzero": 0,
+      "pct_nonzero": 0.0,
+      "median_af": 0.0,
+      "mean_af": 0.0
+    },
+    "nfe": {
+      "n_total": 9574,
+      "n_nonzero": 0,
+      "pct_nonzero": 0.0,
+      "median_af": 0.0,
+      "mean_af": 0.0
+    }
+  },
+  "eas_vs_nfe": {
+    "both": 0,
+    "eas_only": 0,
+    "nfe_only": 0,
+    "neither": 9574
+  },
+  "key_finding": "Only 0/9574 variants (0.0%) have East Asian AF data. Model is biased toward European ancestry.",
+  "recommendation": "Future work should incorporate Central Asian population data from BioBank studies as they become available."
+}

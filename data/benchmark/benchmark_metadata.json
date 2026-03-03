@@ -1,0 +1,65 @@
+{
+  "created": "2026-02-28T22:45:36.755473",
+  "total_variants": 2234,
+  "sources": {
+    "ProteinGym_DMS": {
+      "n_variants": 1837,
+      "genes": [
+        "BRCA1"
+      ],
+      "citations": [
+        "Findlay et al., Nature 2018"
+      ],
+      "label_distribution": {
+        "pathogenic": 1363,
+        "benign": 474,
+        "unlabeled": 0
+      }
+    },
+    "ClinVar_ExpertPanel": {
+      "n_variants": 397,
+      "genes": [
+        "BRCA1",
+        "BRCA2",
+        "PALB2"
+      ],
+      "citations": [
+        "ClinGen VCEP / ENIGMA"
+      ],
+      "label_distribution": {
+        "pathogenic": 116,
+        "benign": 281,
+        "unlabeled": 0
+      }
+    }
+  },
+  "per_gene": {
+    "BRCA1": {
+      "total": 2051,
+      "sources": {
+        "ProteinGym_DMS": 1837,
+        "ClinVar_ExpertPanel": 214
+      },
+      "novel_variants": 64
+    },
+    "BRCA2": {
+      "total": 177,
+      "sources": {
+        "ClinVar_ExpertPanel": 177
+      },
+      "novel_variants": 2
+    },
+    "PALB2": {
+      "total": 6,
+      "sources": {
+        "ClinVar_ExpertPanel": 6
+      },
+      "novel_variants": 0
+    }
+  },
+  "overlap": {
+    "in_training": 1711,
+    "in_test": 460,
+    "novel": 66
+  }
+}

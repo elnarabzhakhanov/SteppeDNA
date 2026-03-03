@@ -1,0 +1,52 @@
+{
+  "BRCA1": {
+    "method": "gene_specific",
+    "n_cal": 1086,
+    "n_pos": 1030,
+    "n_neg": 56,
+    "n_test": 1087,
+    "brier_gene": 0.032778,
+    "brier_universal": 0.060477,
+    "improvement": 0.027699
+  },
+  "BRCA2": {
+    "method": "gene_specific",
+    "n_cal": 2018,
+    "n_pos": 205,
+    "n_neg": 1813,
+    "n_test": 2017,
+    "brier_gene": 0.008942,
+    "brier_universal": 0.015148,
+    "improvement": 0.006206
+  },
+  "PALB2": {
+    "method": "gene_specific",
+    "n_cal": 524,
+    "n_pos": 488,
+    "n_neg": 36,
+    "n_test": 524,
+    "brier_gene": 0.053306,
+    "brier_universal": 0.074,
+    "improvement": 0.020695
+  },
+  "RAD51C": {
+    "method": "gene_specific",
+    "n_cal": 135,
+    "n_pos": 45,
+    "n_neg": 90,
+    "n_test": 135,
+    "brier_gene": 0.192571,
+    "brier_universal": 0.206692,
+    "improvement": 0.014121
+  },
+  "RAD51D": {
+    "method": "gene_specific",
+    "n_cal": 82,
+    "n_pos": 36,
+    "n_neg": 46,
+    "n_test": 82,
+    "brier_gene": 0.172236,
+    "brier_universal": 0.199751,
+    "improvement": 0.027515
+  }
+}

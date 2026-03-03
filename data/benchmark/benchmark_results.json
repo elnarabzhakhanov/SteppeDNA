@@ -1,0 +1,34 @@
+{
+  "benchmark_size": 2234,
+  "matched_to_test": 460,
+  "unmatched": 1774,
+  "dms": {
+    "BRCA1": {
+      "n_variants": 386,
+      "spearman_r": -0.3187657618603207,
+      "spearman_p": 1.45109832256393e-10,
+      "roc_auc": 0.7189414765011758,
+      "mcc": 0.03197002675210429,
+      "citation": "Findlay et al., Nature 2018"
+    }
+  },
+  "expert": {
+    "overall": {
+      "n_variants": 74,
+      "roc_auc": 0.7928321678321678,
+      "mcc": 0.5080750901223137,
+      "balanced_accuracy": 0.7753496503496504
+    },
+    "BRCA1": {
+      "n_variants": 36,
+      "roc_auc": 0.7909698996655518,
+      "mcc": 0.22667906654450068
+    },
+    "BRCA2": {
+      "n_variants": 37,
+      "roc_auc": 0.9181034482758621,
+      "mcc": 0.8405172413793104
+    }
+  },
+  "novel_variants_available": 66
+}

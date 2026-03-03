@@ -1,0 +1,18 @@
+{
+  "version": "5.2.0",
+  "training_date": "2026-02-15",
+  "feature_count": 103,
+  "training_size": 19223,
+  "calibration_size": 3845,
+  "test_size": 3845,
+  "random_state": 42,
+  "ensemble_weights": {
+    "xgboost": 0.6,
+    "mlp": 0.4
+  },
+  "genes": ["BRCA1", "BRCA2", "PALB2", "RAD51C", "RAD51D"],
+  "data_sources": {
+    "clinvar": 18738,
+    "gnomad_proxy_benign": 485
+  }
+}

@@ -1,0 +1,184 @@
+{
+  "metadata": {
+    "description": "Cross-gene feature importance transfer analysis. Tests whether BRCA2 SHAP-derived feature importances improve predictions for data-scarce genes.",
+    "brca2_n_variants": 10085,
+    "n_features": 103,
+    "random_state": 42,
+    "transfer_approaches": [
+      "importance_weighted_features: scale features by sqrt(BRCA2 importance)",
+      "feature_selection_top_k: keep only features with above-median BRCA2 importance",
+      "regularization_guided: stronger L1 regularization + reduced colsample_bytree"
+    ]
+  },
+  "brca2_feature_importance": [
+    {
+      "feature": "in_critical_repeat_region",
+      "mean_abs_shap": 1.320397,
+      "normalized": 1.0
+    },
+    {
+      "feature": "am_score",
+      "mean_abs_shap": 0.917973,
+      "normalized": 0.6952
+    },
+    {
+      "feature": "relative_cdna_pos",
+      "mean_abs_shap": 0.791176,
+      "normalized": 0.5992
+    },
+    {
+      "feature": "dist_dna",
+      "mean_abs_shap": 0.694367,
+      "normalized": 0.5259
+    },
+    {
+      "feature": "bfactor",
+      "mean_abs_shap": 0.671516,
+      "normalized": 0.5086
+    },
+    {
+      "feature": "alt_hydro",
+      "mean_abs_shap": 0.483956,
+      "normalized": 0.3665
+    },
+    {
+      "feature": "blosum62_score",
+      "mean_abs_shap": 0.474026,
+      "normalized": 0.359
+    },
+    {
+      "feature": "relative_aa_pos",
+      "mean_abs_shap": 0.414552,
+      "normalized": 0.314
+    },
+    {
+      "feature": "in_DNA_binding",
+      "mean_abs_shap": 0.287694,
+      "normalized": 0.2179
+    },
+    {
+      "feature": "esm2_l2_shift",
+      "mean_abs_shap": 0.223567,
+      "normalized": 0.1693
+    },
+    {
+      "feature": "phylop_score",
+      "mean_abs_shap": 0.168105,
+      "normalized": 0.1273
+    },
+    {
+      "feature": "esm2_cosine_sim",
+      "mean_abs_shap": 0.146321,
+      "normalized": 0.1108
+    },
+    {
+      "feature": "spliceai_score",
+      "mean_abs_shap": 0.136099,
+      "normalized": 0.1031
+    },
+    {
+      "feature": "dist_palb2",
+      "mean_abs_shap": 0.123226,
+      "normalized": 0.0933
+    },
+    {
+      "feature": "esm2_pca_19",
+      "mean_abs_shap": 0.093651,
+      "normalized": 0.0709
+    },
+    {
+      "feature": "esm2_pca_18",
+      "mean_abs_shap": 0.088553,
+      "normalized": 0.0671
+    },
+    {
+      "feature": "esm2_pca_17",
+      "mean_abs_shap": 0.085686,
+      "normalized": 0.0649
+    },
+    {
+      "feature": "in_OB_folds",
+      "mean_abs_shap": 0.082092,
+      "normalized": 0.0622
+    },
+    {
+      "feature": "am_x_phylop",
+      "mean_abs_shap": 0.069374,
+      "normalized": 0.0525
+    },
+    {
+      "feature": "esm2_pca_16",
+      "mean_abs_shap": 0.065133,
+      "normalized": 0.0493
+    }
+  ],
+  "baseline_universal_aucs": {
+    "BRCA1": 0.6942,
+    "BRCA2": 0.9956,
+    "PALB2": 0.9079,
+    "RAD51C": 0.8951,
+    "RAD51D": 0.9547
+  },
+  "transfer_results": {
+    "BRCA1": {
+      "n_train": 3258,
+      "n_test": 1087,
+      "universal_model_auc": 0.6942,
+      "gene_specific_baseline_auc": 0.7541,
+      "importance_weighted_auc": 0.7541,
+      "feature_selection_auc": 0.755,
+      "feature_selection_n_features": 52,
+      "regularization_guided_auc": 0.7591,
+      "best_approach": "regularization_guided",
+      "best_auc": 0.7591,
+      "delta_vs_universal": 0.0649,
+      "delta_vs_gene_baseline": 0.005,
+      "recommendation": "production"
+    },
+    "PALB2": {
+      "n_train": 1572,
+      "n_test": 525,
+      "universal_model_auc": 0.9079,
+      "gene_specific_baseline_auc": 0.6722,
+      "importance_weighted_auc": 0.6722,
+      "feature_selection_auc": 0.6722,
+      "feature_selection_n_features": 52,
+      "regularization_guided_auc": 0.6601,
+      "best_approach": "baseline_gene_specific",
+      "best_auc": 0.6722,
+      "delta_vs_universal": -0.2357,
+      "delta_vs_gene_baseline": 0.0,
+      "recommendation": "analysis_only"
+    },
+    "RAD51C": {
+      "n_train": 405,
+      "n_test": 135,
+      "universal_model_auc": 0.8951,
+      "gene_specific_baseline_auc": 0.6691,
+      "importance_weighted_auc": 0.6691,
+      "feature_selection_auc": 0.6691,
+      "feature_selection_n_features": 52,
+      "regularization_guided_auc": 0.6521,
+      "best_approach": "baseline_gene_specific",
+      "best_auc": 0.6691,
+      "delta_vs_universal": -0.226,
+      "delta_vs_gene_baseline": 0.0,
+      "recommendation": "analysis_only"
+    },
+    "RAD51D": {
+      "n_train": 246,
+      "n_test": 82,
+      "universal_model_auc": 0.9547,
+      "gene_specific_baseline_auc": 0.8056,
+      "importance_weighted_auc": 0.8056,
+      "feature_selection_auc": 0.8056,
+      "feature_selection_n_features": 52,
+      "regularization_guided_auc": 0.8031,
+      "best_approach": "baseline_gene_specific",
+      "best_auc": 0.8056,
+      "delta_vs_universal": -0.1491,
+      "delta_vs_gene_baseline": 0.0,
+      "recommendation": "analysis_only"
+    }
+  }
+}
