@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(timeout 120 python:*)",
+      "Bash(python scripts/vus_reclassification.py:*)",
+      "Bash(done)",
+      "Bash(python -m pytest:*)"
+    ]
+  }
+}

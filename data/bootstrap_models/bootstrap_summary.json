@@ -1,0 +1,39 @@
+{
+  "n_bootstrap": 50,
+  "n_train": 11533,
+  "n_test": 3845,
+  "per_gene": {
+    "BRCA1": {
+      "n_test": 1087,
+      "median_ci_width": 0.0529,
+      "mean_ci_width": 0.1076,
+      "std_ci_width": 0.1325
+    },
+    "BRCA2": {
+      "n_test": 2017,
+      "median_ci_width": 0.0133,
+      "mean_ci_width": 0.0756,
+      "std_ci_width": 0.1413
+    },
+    "PALB2": {
+      "n_test": 524,
+      "median_ci_width": 0.1095,
+      "mean_ci_width": 0.1645,
+      "std_ci_width": 0.15
+    },
+    "RAD51C": {
+      "n_test": 135,
+      "median_ci_width": 0.4077,
+      "mean_ci_width": 0.3836,
+      "std_ci_width": 0.2028
+    },
+    "RAD51D": {
+      "n_test": 82,
+      "median_ci_width": 0.2587,
+      "mean_ci_width": 0.2646,
+      "std_ci_width": 0.2311
+    }
+  },
+  "overall_median_ci_width": 0.0377,
+  "overall_mean_ci_width": 0.1116
+}

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteppeDNA — BRCA2 Variant Classifier</title>
+    <meta name="description"
+        content="BRCA2 missense variant pathogenicity prediction using XGBoost with 99 features from 5 biological databases. Research use only.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Skip to main content for screen readers -->
+    <a href="#mutationForm" class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Skip to main content</a>
+
+    <!-- ============ HERO ============ -->
+    <header class="hero" role="banner">
+        <div class="hero-content">
+            <div class="logo-row">
+                <img src="logo.png" alt="SteppeDNA" style="height:52px;width:auto" onerror="this.style.display='none'">
+                <span class="logo-text" style="font-size: 1.8rem;">SteppeDNA</span>
+            </div>
+            <p class="tagline"
+                style="font-size: 0.85rem; max-width: 620px; margin: 0 auto 1.2rem; line-height: 1.6; opacity: 0.92;">
+                BRCA2 Variant Classifier &bull; 99 Features from 5 Databases &bull; 3D Structure &bull;
+                SHAP Explained</p>
+
+            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                <svg id="moonIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                </svg>
+                <svg id="sunIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                    fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="5"></circle>
+                    <line x1="12" y1="1" x2="12" y2="3"></line>
+                    <line x1="12" y1="21" x2="12" y2="23"></line>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                    <line x1="1" y1="12" x2="3" y2="12"></line>
+                    <line x1="21" y1="12" x2="23" y2="12"></line>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                </svg>
+            </button>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="num">95.1%</div>
+                    <div class="lbl">Sensitivity</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">99.0%</div>
+                    <div class="lbl">Accuracy</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">0.989</div>
+                    <div class="lbl">ROC-AUC</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">XGB</div>
+                    <div class="lbl">Model</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">99</div>
+                    <div class="lbl">Features</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- ============ MAIN 2-COL LAYOUT ============ -->
+    <main class="main-container" role="main" aria-label="Variant analysis">
+
+        <!-- LEFT: Upload -->
+        <div class="card">
+            <div class="card-title"><span class="ct-icon"><svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg></span> Upload VCF</div>
+            <div class="upload-zone" id="dropZone" role="button" tabindex="0" aria-label="Upload VCF file — drag and drop or click to browse">
+                <div class="dna-icon"><svg viewBox="0 0 24 24">
+                        <path d="M2 15c6.667-6 13.333 0 20-6" stroke-linecap="round" />
+                        <path d="M9 22c1.798-1.998 2.573-3.995 2.572-5.993" stroke-linecap="round" />
+                        <path d="M15 2c-1.798 1.998-2.573 3.995-2.572 5.993" stroke-linecap="round" />
+                        <path d="M2 9c6.667 6 13.333 0 20 6" stroke-linecap="round" />
+                    </svg></div>
+                <h3>Drop your VCF file here</h3>
+                <p>or click to browse · .vcf format</p>
+                <input type="file" id="fileInput" hidden accept=".vcf">
+            </div>
+        </div>
+
+        <!-- RIGHT: Manual Input -->
+        <div class="card">
+            <div class="card-title"><span class="ct-icon"><svg viewBox="0 0 24 24">
+                        <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
+                        <path d="m15 5 4 4" />
+                    </svg></span> Manual Entry</div>
+            <form id="mutationForm" novalidate aria-label="BRCA2 variant analysis form">
+                <div class="form-group">
+                    <label for="cDNA_pos">cDNA Position <span style="opacity:0.5">(1–10257)</span></label>
+                    <input type="number" id="cDNA_pos" placeholder="e.g. 8167" required min="1" max="10257">
+                </div>
+                <div class="row-2">
+                    <div class="form-group">
+                        <label for="AA_ref">Reference AA</label>
+                        <input type="text" id="AA_ref" placeholder="e.g. Asp" required maxlength="3"
+                            pattern="[A-Za-z]{3}" autocomplete="off">
+                    </div>
+                    <div class="form-group">
+                        <label for="AA_alt">Alternate AA</label>
+                        <input type="text" id="AA_alt" placeholder="e.g. His" required maxlength="3"
+                            pattern="[A-Za-z]{3}" autocomplete="off">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="mutation">Mutation <span style="opacity:0.5">(optional, e.g. G>C)</span></label>
+                    <input type="text" id="mutation" placeholder="e.g. G>C" maxlength="3" pattern="[ACGT]>[ACGT]"
+                        autocomplete="off">
+                </div>
+                <button type="submit" class="btn" id="submitBtn">
+                    <div class="spinner" id="spinner"></div>
+                    <span id="btnText">Analyze Mutation</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- RESULT (full width) -->
+        <div class="result-card card-full" id="resultCard" role="region" aria-live="polite" aria-label="Prediction results">
+            <div class="result-top">
+                <div class="result-label-group">
+                    <span class="badge" id="badge">Pathogenic</span>
+                    <span class="result-model-note">XGBoost · Calibrated · SHAP explained</span>
+                </div>
+                <span class="confidence" id="confidence">98%</span>
+            </div>
+            <div id="uncertaintyInfo" style="display:none;text-align:center;margin-top:8px"></div>
+            <p class="result-subtitle" id="resultNote">
+                Prediction based on AlphaMissense, MAVE, PhyloP, 3D structure, and 99 engineered features.
+            </p>
+
+            <div class="ds-grid" id="dsGrid">
+                <!-- filled by JS -->
+            </div>
+
+            <div class="features-grid" id="featuresGrid">
+                <!-- filled by JS -->
+            </div>
+
+            <!-- ACMG EVIDENCE -->
+            <div class="acmg-section" id="acmgSection" style="display:none">
+                <div class="acmg-title">ACMG Evidence</div>
+                <div class="acmg-grid" id="acmgGrid"></div>
+            </div>
+
+            <!-- SHAP -->
+            <div class="shap-section" id="shapSection" style="display:none">
+                <div class="shap-title">Why This Prediction? — SHAP Feature Attribution</div>
+                <div id="shapChart"></div>
+                <div class="shap-legend">
+                    <span class="leg-path">Pathogenic</span>
+                    <span class="leg-ben">Benign</span>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- ============ VCF RESULTS (full width) ============ -->
+    <div class="result-card card-full vcf-results" id="vcfResults">
+        <div class="card-title"><span class="ct-icon"><svg viewBox="0 0 24 24">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg></span> VCF Batch Results</div>
+        <div class="vcf-summary" id="vcfSummary"></div>
+        <div id="vcfLoading" class="vcf-loading" style="display:none">
+            <span class="spinner"></span> Analyzing variants...
+        </div>
+        <div style="overflow-x:auto">
+            <table class="vcf-table" id="vcfTable">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>HGVS</th>
+                        <th>cDNA</th>
+                        <th>AA Change</th>
+                        <th>Mutation</th>
+                        <th>Prediction</th>
+                        <th>Probability</th>
+                    </tr>
+                </thead>
+                <tbody id="vcfBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ INFO CARDS ============ -->
+    <div class="info-grid">
+        <div class="info-card">
+            <div class="info-icon"><svg viewBox="0 0 24 24">
+                    <path d="M12 2a4 4 0 0 1 4 4c0 1.95-1.4 3.57-3.25 3.92" />
+                    <path d="M8 6a4 4 0 0 1 .68-2.23" />
+                    <circle cx="12" cy="17" r="5" />
+                    <path d="m12 14 2 3h-4Z" />
+                </svg></div>
+            <h4>XGBoost Model</h4>
+            <p>Gradient-boosted tree classifier trained on 9,900 ClinVar BRCA2 missense variants with probability
+                calibration. Validated on independent MAVE functional assay data (ROC-AUC 0.894).</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon"><svg viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20" />
+                    <path d="M2 12h20" />
+                </svg></div>
+            <h4>99 Features</h4>
+            <p>BLOSUM62 substitution scores, PhyloP conservation, MAVE functional data, AlphaMissense predictions,
+                3D distances from PDB 1MIU, and gnomAD population frequencies.</p>
+        </div>
+        <div class="info-card">
+            <div class="info-icon"><svg viewBox="0 0 24 24">
+                    <path d="M3 3v18h18" />
+                    <path d="m19 9-5 5-4-4-3 3" />
+                </svg></div>
+            <h4>SHAP Explanations</h4>
+            <p>Every prediction shows which features pushed it toward pathogenic or benign, using SHAP values
+                extracted from the XGBoost model.</p>
+        </div>
+    </div>
+
+    <!-- ============ FOOTER ============ -->
+    <footer>
+        <a href="#">SteppeDNA</a> &middot; Research use only &middot; Not a diagnostic
+        tool<br>
+        <div style="margin-top: 8px;">
+            <span style="font-size: 0.7rem; opacity: 0.6;">ACMG evidence codes are computational approximations and do
+                not
+                replace expert clinical curation.</span>
+        </div>
+    </footer>
+
+
+    <!-- API config (loaded first) -->
+    <script src="api.js"></script>
+    <!-- Application logic -->
+    <script src="app.js"></script>
+</body>
+
+</html>
