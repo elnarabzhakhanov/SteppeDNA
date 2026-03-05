@@ -1813,10 +1813,17 @@ async def predict(mutation_data: MutationInput, request: Request):
 @app.get("/")
 async def root():
     uni = _get_universal_models()
+    per_gene_aucs = [0.983, 0.804, 0.743, 0.706, 0.641]
     return {
         "status": "SteppeDNA API running",
+        "version": "5.2.0",
         "models": "Universal (Pan-Gene)",
         "model_type": "Ensemble (XGBoost + MLP, gene-adaptive weights)",
+        "macro_avg_auc": round(float(np.mean(per_gene_aucs)), 3),
+        "per_gene_auc": {
+            "BRCA2": 0.983, "RAD51D": 0.804, "RAD51C": 0.743,
+            "BRCA1": 0.706, "PALB2": 0.641
+        },
         "shap": uni.get("booster") is not None,
         "vcf": True
     }
