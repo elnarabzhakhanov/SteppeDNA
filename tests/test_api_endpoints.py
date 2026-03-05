@@ -564,3 +564,77 @@ def test_contrastive_explanation_opposite_class(client):
         else:
             assert ce["contrast_class"] == "Pathogenic", \
                 "Contrastive variant should be Pathogenic when prediction is Benign"
+
+
+# ─── Split Conformal Prediction (Item 5.1) ─────────────────────────────────
+
+def test_conformal_prediction_field_present(client):
+    """Predict response should include conformal_prediction field."""
+    resp = client.post("/predict", json={
+        "gene_name": "BRCA2",
+        "cDNA_pos": 8165,
+        "AA_ref": "Thr",
+        "AA_alt": "Arg",
+        "Mutation": "A>G",
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "conformal_prediction" in data, "Missing conformal_prediction in response"
+
+
+def test_conformal_prediction_structure(client):
+    """If conformal_prediction is not None, validate its structure."""
+    import os
+    ct_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "data", "conformal_thresholds.json"
+    )
+    resp = client.post("/predict", json={
+        "gene_name": "BRCA2",
+        "cDNA_pos": 8165,
+        "AA_ref": "Thr",
+        "AA_alt": "Arg",
+        "Mutation": "A>G",
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    cp = data.get("conformal_prediction")
+    if os.path.exists(ct_path) and cp is not None:
+        assert "conformal_set" in cp, "Missing conformal_set"
+        assert "conformal_coverage" in cp, "Missing conformal_coverage"
+        assert "set_size" in cp, "Missing set_size"
+        assert isinstance(cp["conformal_set"], list), "conformal_set should be a list"
+        assert len(cp["conformal_set"]) >= 1, "conformal_set should have at least 1 class"
+        assert all(c in ("Pathogenic", "Benign") for c in cp["conformal_set"]), \
+            "conformal_set should only contain Pathogenic or Benign"
+        assert cp["conformal_coverage"] == 0.90, \
+            f"Expected 90% coverage, got {cp['conformal_coverage']}"
+        assert cp["set_size"] == len(cp["conformal_set"]), \
+            "set_size should match length of conformal_set"
+
+
+def test_conformal_prediction_all_genes(client):
+    """Conformal prediction should work for all supported genes."""
+    import os
+    ct_path = os.path.join(
+        os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+        "data", "conformal_thresholds.json"
+    )
+    if not os.path.exists(ct_path):
+        pytest.skip("conformal_thresholds.json not found")
+    genes = {
+        "BRCA1": {"cDNA_pos": 300, "AA_ref": "Ala", "AA_alt": "Val"},
+        "BRCA2": {"cDNA_pos": 8165, "AA_ref": "Thr", "AA_alt": "Arg"},
+        "PALB2": {"cDNA_pos": 1000, "AA_ref": "Gly", "AA_alt": "Asp"},
+        "RAD51C": {"cDNA_pos": 500, "AA_ref": "Leu", "AA_alt": "Pro"},
+        "RAD51D": {"cDNA_pos": 400, "AA_ref": "Ile", "AA_alt": "Thr"},
+    }
+    for gene, params in genes.items():
+        resp = client.post("/predict", json={
+            "gene_name": gene, **params, "Mutation": "A>G",
+        })
+        assert resp.status_code == 200, f"Failed for gene {gene}: {resp.text}"
+        cp = resp.json().get("conformal_prediction")
+        if cp is not None:
+            assert len(cp["conformal_set"]) >= 1, \
+                f"Empty conformal set for {gene}"

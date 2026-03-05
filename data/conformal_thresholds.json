@@ -1,0 +1,58 @@
+{
+  "_global": {
+    "quantile": 0.0625,
+    "alpha": 0.1,
+    "n_calibration": 3845,
+    "coverage_target": 0.9
+  },
+  "BRCA1": {
+    "quantile": 0.066667,
+    "alpha": 0.1,
+    "n_calibration": 1086,
+    "coverage_target": 0.9,
+    "test_coverage": 0.966,
+    "test_n": 1087,
+    "avg_set_size": 1.0,
+    "singleton_rate": 1.0
+  },
+  "BRCA2": {
+    "quantile": 0.027273,
+    "alpha": 0.1,
+    "n_calibration": 2018,
+    "coverage_target": 0.9,
+    "test_coverage": 0.9891,
+    "test_n": 2017,
+    "avg_set_size": 1.0,
+    "singleton_rate": 1.0
+  },
+  "PALB2": {
+    "quantile": 0.058824,
+    "alpha": 0.1,
+    "n_calibration": 524,
+    "coverage_target": 0.9,
+    "test_coverage": 0.9427,
+    "test_n": 524,
+    "avg_set_size": 1.0,
+    "singleton_rate": 1.0
+  },
+  "RAD51C": {
+    "quantile": 0.636364,
+    "alpha": 0.1,
+    "n_calibration": 135,
+    "coverage_target": 0.9,
+    "test_coverage": 0.9778,
+    "test_n": 135,
+    "avg_set_size": 1.674,
+    "singleton_rate": 0.3259
+  },
+  "RAD51D": {
+    "quantile": 0.727273,
+    "alpha": 0.1,
+    "n_calibration": 82,
+    "coverage_target": 0.9,
+    "test_coverage": 0.9024,
+    "test_n": 82,
+    "avg_set_size": 1.439,
+    "singleton_rate": 0.561
+  }
+}

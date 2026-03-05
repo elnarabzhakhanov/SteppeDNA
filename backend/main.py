@@ -149,6 +149,7 @@ async def lifespan(app):
     _load_gene_ensemble_weights()
     _load_bootstrap_models()
     _load_active_learning_priorities()
+    _load_conformal_thresholds()
     logger.info("Server ready.")
     try:
         init_db()
@@ -791,6 +792,67 @@ def _load_active_learning_priorities():
         logger.info(f"[ACTIVE-LEARNING] Loaded {n_total} priority variants across {len(_ACTIVE_LEARNING.get('priorities', {}))} genes")
     except Exception as e:
         logger.warning(f"[ACTIVE-LEARNING] Failed to load priorities: {e}")
+
+
+# ─── Split Conformal Prediction (Item 5.1) ────────────────────────────────────
+_CONFORMAL_THRESHOLDS: dict = {}  # gene -> {"quantile": float, "alpha": float, ...}
+
+def _load_conformal_thresholds():
+    """Load per-gene conformal prediction quantile thresholds."""
+    global _CONFORMAL_THRESHOLDS
+    ct_path = os.path.join(DATA_DIR, "conformal_thresholds.json")
+    if not os.path.exists(ct_path):
+        logger.info("[CONFORMAL] conformal_thresholds.json not found — run scripts/train_conformal.py to generate")
+        return
+    try:
+        with open(ct_path, "r") as f:
+            _CONFORMAL_THRESHOLDS = json.load(f)
+        n_genes = len([k for k in _CONFORMAL_THRESHOLDS if k != "_global"])
+        logger.info(f"[CONFORMAL] Loaded conformal thresholds for {n_genes} genes (alpha={_CONFORMAL_THRESHOLDS.get('_global', {}).get('alpha', 0.10)})")
+    except Exception as e:
+        logger.warning(f"[CONFORMAL] Failed to load conformal thresholds: {e}")
+
+
+def compute_conformal_set(probability: float, gene_name: str) -> dict:
+    """Compute the conformal prediction set for a given probability and gene.
+
+    Returns dict with:
+        conformal_set: list of class labels included at the coverage level
+        conformal_coverage: the target coverage (e.g. 0.90)
+        conformal_alpha: the alpha level (e.g. 0.10)
+        set_size: number of classes in the set (1 or 2)
+    Returns None if conformal thresholds are not loaded.
+    """
+    if not _CONFORMAL_THRESHOLDS:
+        return None
+
+    gene_upper = gene_name.upper()
+    gene_info = _CONFORMAL_THRESHOLDS.get(gene_upper, _CONFORMAL_THRESHOLDS.get("_global"))
+    if not gene_info:
+        return None
+
+    q = gene_info["quantile"]
+    alpha = gene_info.get("alpha", 0.10)
+
+    p_pathogenic = probability
+    p_benign = 1.0 - probability
+
+    pred_set = []
+    if p_pathogenic >= 1.0 - q:
+        pred_set.append("Pathogenic")
+    if p_benign >= 1.0 - q:
+        pred_set.append("Benign")
+
+    # Safety: if empty set (shouldn't happen), include highest-probability class
+    if not pred_set:
+        pred_set.append("Pathogenic" if probability >= 0.5 else "Benign")
+
+    return {
+        "conformal_set": pred_set,
+        "conformal_coverage": round(1 - alpha, 2),
+        "conformal_alpha": alpha,
+        "set_size": len(pred_set),
+    }
 
 
 # ─── ESM-2 Runtime Inference Defaults ─────────────────────────────────────────
@@ -1662,6 +1724,9 @@ async def predict(mutation_data: MutationInput, request: Request):
         mutation_data.gene_name, scaled_vector[0], probability, feature_names_list,
     )
 
+    # Split Conformal Prediction (Item 5.1)
+    _conformal = compute_conformal_set(probability, mutation_data.gene_name)
+
     latency_ms = (time.perf_counter() - t_start) * 1000
     logger.info(f"[PREDICT] {mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt} (cDNA:{mutation_data.cDNA_pos}) -> {label} p={probability:.4f} ({latency_ms:.0f}ms)")
 
@@ -1713,6 +1778,7 @@ async def predict(mutation_data: MutationInput, request: Request):
         "feature_coverage": _feature_coverage,
         "data_support": _data_support,
         "contrastive_explanation": _contrastive,
+        "conformal_prediction": _conformal,
         "calibrator_type": calibrator_type,
         "warnings": _warnings if _warnings else None,
     }
