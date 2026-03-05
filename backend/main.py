@@ -375,7 +375,6 @@ DATA_SCARCITY_WINDOW = 50   # +/- AA positions for neighborhood count
 
 def _build_training_index():
     """Build per-gene training data index from master dataset for data scarcity computation."""
-    global _TRAINING_INDEX
     csv_path = os.path.join(DATA_DIR, "master_training_dataset.csv")
     if not os.path.exists(csv_path):
         logger.warning("[DATA-SCARCITY] master_training_dataset.csv not found — data scarcity disabled")
@@ -495,7 +494,6 @@ _CONTRASTIVE_INDEX: dict = {}  # gene -> {"tree_path": KDTree, "tree_benign": KD
 
 def _build_contrastive_index():
     """Build per-gene KD-trees on scaled training features for contrastive explanations."""
-    global _CONTRASTIVE_INDEX
     csv_path = os.path.join(DATA_DIR, "master_training_dataset.csv")
     if not os.path.exists(csv_path):
         logger.warning("[CONTRASTIVE] master_training_dataset.csv not found -- contrastive explanations disabled")
@@ -688,7 +686,6 @@ _GENE_CALIBRATORS: dict = {}  # gene -> IsotonicRegression or None
 
 def _load_gene_calibrators():
     """Load per-gene calibrators from data/calibrator_<gene>.pkl files."""
-    global _GENE_CALIBRATORS
     for gene in SUPPORTED_GENES:
         cal_path = os.path.join(DATA_DIR, f"calibrator_{gene.lower()}.pkl")
         if os.path.exists(cal_path):
@@ -708,7 +705,6 @@ _GENE_ENSEMBLE_WEIGHTS: dict = {}  # gene -> {"xgb_weight": float, "mlp_weight":
 
 def _load_gene_ensemble_weights():
     """Load per-gene optimized ensemble weights from data/gene_ensemble_weights.json."""
-    global _GENE_ENSEMBLE_WEIGHTS
     weights_path = os.path.join(DATA_DIR, "gene_ensemble_weights.json")
     if not os.path.exists(weights_path):
         logger.info("[WEIGHTS] gene_ensemble_weights.json not found — using default 0.6/0.4 for all genes")
@@ -732,7 +728,6 @@ N_BOOTSTRAP = 50
 
 def _load_bootstrap_models():
     """Load pre-trained bootstrap XGBoost models for confidence interval estimation."""
-    global _BOOTSTRAP_MODELS
     bootstrap_dir = os.path.join(DATA_DIR, "bootstrap_models")
     if not os.path.isdir(bootstrap_dir):
         logger.info("[BOOTSTRAP] data/bootstrap_models/ not found — bootstrap CIs disabled. Run scripts/generate_bootstrap_models.py to enable.")
