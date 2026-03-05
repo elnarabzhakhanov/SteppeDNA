@@ -13,14 +13,17 @@ SteppeDNA classifies missense variants in 5 Homologous Recombination DNA repair 
 
 | Metric | Value |
 |--------|-------|
-| ROC-AUC | **0.978** |
+| ROC-AUC (overall) | **0.978** (per-gene: 0.641–0.983)* |
+| Macro-Averaged AUC | **0.775** (equal-weight per-gene mean) |
 | MCC | **0.881** |
 | Balanced Accuracy | **94.1%** |
 | 10-Fold CV | 0.9797 +/- 0.0031 |
 | Training Variants | 19,223 |
 | Features | 103 |
 
-Outperforms REVEL (0.725), BayesDel (0.721), and CADD (0.539) on the same held-out test set.
+*Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants. See per-gene breakdown below.
+
+Outperforms REVEL (0.725), BayesDel (0.721), and CADD (0.539) on SteppeDNA's own held-out test set. Competitor tools were not trained on this distribution, giving SteppeDNA a methodological advantage. On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719–0.793.
 
 ## Supported Genes
 
@@ -149,7 +152,7 @@ SHAP Explanation + ACMG Evidence + Confidence Interval
 
 ## Validation
 
-- **SOTA Comparison**: Outperforms REVEL, BayesDel, and CADD using real independent scores fetched via myvariant.info API
+- **SOTA Comparison**: Outperforms REVEL, BayesDel, and CADD on SteppeDNA's held-out test set (competitor tools were not trained on this distribution)
 - **Gold-Standard Benchmark**: Evaluated on 2,234 variants from ProteinGym DMS + ClinVar Expert Panel
 - **MAVE Leakage Assessment**: Ablation shows minimal dependence on MAVE features (dAUC = -0.0017)
 - **Cross-Validation**: 10-fold CV AUC = 0.9797 +/- 0.0031

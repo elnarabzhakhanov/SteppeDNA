@@ -53,13 +53,16 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 | Metric | Value |
 |--------|-------|
-| ROC-AUC | 0.978 |
+| ROC-AUC (overall, weighted) | 0.978* |
+| Macro-Averaged AUC (equal-weight per-gene) | 0.775 |
 | PR-AUC | 0.965 |
 | MCC | 0.881 |
 | Balanced Accuracy | 94.1% |
 | Sensitivity | 95.7% |
 | Specificity | 92.6% |
 | 10-Fold CV AUC | 0.9797 +/- 0.0031 |
+
+*Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants (n=2,017 of 3,845). The macro-averaged per-gene AUC of 0.775 provides a more representative picture of cross-gene performance.
 
 ### Per-Gene Performance
 
@@ -88,7 +91,22 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 | BayesDel | 0.721 |
 | CADD | 0.539 |
 
-Note: SteppeDNA is evaluated on its own test set, giving it a methodological advantage. Independent benchmark AUC: 0.719-0.793.
+**Methodological caveat:** SteppeDNA is evaluated on its own held-out test set. Competitor tools (REVEL, BayesDel, CADD) were not trained on this distribution, giving SteppeDNA a methodological advantage. On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719–0.793.
+
+### Temporal Validation (Prospective Simulation)
+
+| Metric | Value |
+|--------|-------|
+| Training (pre-2024) | 9,048 variants |
+| Test (2024+) | 10,175 variants |
+| Overall AUC | 0.964 |
+| BRCA2 AUC | 0.983 (robust) |
+| BRCA1 AUC | 0.527 (near-random) |
+| PALB2 AUC | 0.513 (near-random) |
+| RAD51C AUC | 0.561 |
+| RAD51D AUC | 0.608 |
+
+**Critical finding:** Only BRCA2 demonstrates robust temporal generalization. Non-BRCA2 temporal AUCs (0.51–0.61) indicate the model does not reliably generalize to newly classified variants for data-scarce genes. This reflects insufficient pre-2024 training data for these genes, not a modeling failure per se, but the practical consequence is the same: non-BRCA2 predictions for newly discovered variants should be interpreted with caution.
 
 ---
 
@@ -97,7 +115,7 @@ Note: SteppeDNA is evaluated on its own test set, giving it a methodological adv
 1. **Non-BRCA2 generalization:** Model predictions for non-BRCA2 genes (AUC 0.64-0.80) are below clinical-grade thresholds
 2. **ClinVar bias:** Training labels reflect ClinVar consensus, which has known ascertainment biases
 3. **ESM-2 model size:** Using 8M-parameter ESM-2; larger models (650M+) may improve non-BRCA2
-4. **Population bias:** Training data predominantly from European-descent populations (ClinVar submission bias); performance on Central Asian, African, East Asian populations is unknown
+4. **Population bias:** Training data predominantly from European-descent populations (ClinVar submission bias). ClinVar submitters skew heavily toward the United States and Europe. Performance on Central Asian, African, and East Asian populations is unknown and likely lower. Kazakh founder mutations in BRCA1/2 are not represented in training data. Population-stratified allele frequencies (gnomAD AFR, AMR, EAS, NFE) are unavailable due to an Ensembl API limitation, so the model has no population-specific frequency signals
 5. **Temporal bias:** ClinVar classifications evolve; training labels are a February 2026 snapshot
 6. **Compound heterozygosity:** Each variant evaluated independently; compound het effects not modeled
 7. **ACMG approximations:** Generated ACMG codes are computational approximations, not reviewed by clinical geneticists
@@ -115,7 +133,7 @@ Note: SteppeDNA is evaluated on its own test set, giving it a methodological adv
 
 ## Ethical Considerations
 
-- **Health equity:** The model is trained predominantly on European-ancestry data. Predictions for underrepresented populations may be less accurate. Users must consider ancestry when interpreting results.
+- **Health equity:** The model is trained predominantly on European-ancestry data (ClinVar submission bias). Predictions for underrepresented populations — including Central Asian, African, and East Asian ancestries — may be less accurate. Kazakh founder mutations are not represented. Users must consider patient ancestry when interpreting results. The degree of population bias cannot be quantified because ClinVar lacks ancestry metadata.
 - **Misuse potential:** Computational predictions could be misinterpreted as clinical diagnoses. All outputs include RUO (Research Use Only) disclaimers.
 - **Transparency:** SHAP feature attributions and per-gene reliability tiers are provided to help users understand prediction basis and confidence.
 - **Informed consent:** The model should not be used to inform patients without proper genetic counseling framework.

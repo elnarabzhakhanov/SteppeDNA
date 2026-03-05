@@ -325,7 +325,7 @@ python scripts/generate_figures.py        # All visual proofs
 
 ---
 
-## 10. Temporal Validation (Prospective Simulation)
+## 10. Critical: Temporal Generalization
 
 **Methodology:** Date-stratified split using ClinVar variant_summary.txt.gz classification dates. Variants classified before 2024 form the training set; 2024+ classifications form the test set. Model retrained from scratch on the temporal-train split.
 
