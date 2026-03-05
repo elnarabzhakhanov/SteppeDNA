@@ -177,7 +177,11 @@ const i18n = {
         "contrastive_contrast": "Contrast",
         "contrastive_imp_high": "High",
         "contrastive_imp_moderate": "Moderate",
-        "contrastive_imp_low": "Low"
+        "contrastive_imp_low": "Low",
+        "conformal_coverage_label": "90% Coverage Guarantee",
+        "conformal_tip": "Split conformal prediction produces a set of classes guaranteed to contain the true label with 90% probability (distribution-free). A singleton set (one class) means high certainty; a larger set honestly communicates uncertainty.",
+        "conformal_singleton": "Confident prediction — single class in conformal set",
+        "conformal_multi": "Uncertain — multiple classes in conformal set"
     },
     "kk": {
         "tagline": "Pan-Gene варианттар классификаторы &bull; 5 дерекқордан оқылған 103 белгі &bull; ESM-2 LLM эмбеддингтері &bull; SHAP түсіндірмелері",
@@ -357,7 +361,11 @@ const i18n = {
         "contrastive_contrast": "Контраст",
         "contrastive_imp_high": "Жоғары",
         "contrastive_imp_moderate": "Орташа",
-        "contrastive_imp_low": "Төмен"
+        "contrastive_imp_low": "Төмен",
+        "conformal_coverage_label": "90% қамту кепілдігі",
+        "conformal_tip": "Бөлінген конформалды болжам шынайы белгіні 90% ықтималдықпен қамтуға кепілдік беретін класстар жиынтығын жасайды (таралудан тәуелсіз). Жалғыз класс — жоғары сенімділік; бірнеше класс — белгісіздікті адал көрсетеді.",
+        "conformal_singleton": "Сенімді болжам — конформалды жиынтықта бір класс",
+        "conformal_multi": "Белгісіз — конформалды жиынтықта бірнеше класс"
     },
     "ru": {
         "tagline": "Классификатор вариантов Pan-Gene &bull; 103 признака из 5 баз &bull; Эмбеддинги ESM-2 LLM &bull; Объяснения SHAP",
@@ -537,7 +545,11 @@ const i18n = {
         "contrastive_contrast": "Контраст",
         "contrastive_imp_high": "Высокий",
         "contrastive_imp_moderate": "Средний",
-        "contrastive_imp_low": "Низкий"
+        "contrastive_imp_low": "Низкий",
+        "conformal_coverage_label": "Гарантия покрытия 90%",
+        "conformal_tip": "Раздельное конформное предсказание создаёт набор классов, гарантированно содержащий истинную метку с вероятностью 90% (без предположений о распределении). Один класс = высокая уверенность; несколько классов = честное отражение неопределённости.",
+        "conformal_singleton": "Уверенный прогноз — один класс в конформном множестве",
+        "conformal_multi": "Неопределённость — несколько классов в конформном множестве"
     }
 };
 

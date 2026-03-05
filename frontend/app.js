@@ -954,6 +954,31 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
             ciDiv.style.display = 'none';
         }
 
+        // Conformal Prediction Set (Item 5.1)
+        const conformalDiv = document.getElementById('conformalPrediction');
+        if (conformalDiv && data.conformal_prediction) {
+            const cp = data.conformal_prediction;
+            const setLabels = cp.conformal_set.map(c => escapeHtml(tr(c.toLowerCase()) || c)).join(', ');
+            const coveragePct = Math.round(cp.conformal_coverage * 100);
+            const isSingleton = cp.set_size === 1;
+            const badgeColor = isSingleton ? '#10b981' : '#f59e0b';
+            const badgeIcon = isSingleton
+                ? '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2.5" style="vertical-align:-2px;margin-right:3px"><path d="M20 6L9 17l-5-5"/></svg>'
+                : '<svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="#fff" stroke-width="2" style="vertical-align:-2px;margin-right:3px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
+            conformalDiv.innerHTML =
+                '<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:0.8rem;font-weight:600;color:#fff;background:' + badgeColor + '">' +
+                badgeIcon +
+                escapeHtml(tr('conformal_coverage_label') || (coveragePct + '% Coverage Guarantee')) +
+                ': {' + setLabels + '}' +
+                '</span>' +
+                '<span class="help-tip" style="margin-left:4px" aria-label="What is this?">?<span class="help-text">' +
+                escapeHtml(tr('conformal_tip') || 'Conformal prediction produces a set of classes guaranteed to contain the true class with ' + coveragePct + '% probability. Smaller sets = more informative predictions.') +
+                '</span></span>';
+            conformalDiv.style.display = 'block';
+        } else if (conformalDiv) {
+            conformalDiv.style.display = 'none';
+        }
+
         // Gene reliability warning for low/moderate-performing genes
         const relDiv = document.getElementById('geneReliability');
         const rel = data.gene_reliability;
