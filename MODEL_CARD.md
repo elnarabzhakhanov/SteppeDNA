@@ -6,11 +6,11 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 ## Model Details
 
-- **Model name:** SteppeDNA v5.2
+- **Model name:** SteppeDNA v5.3
 - **Model type:** Ensemble classifier (XGBoost 60% + MLP Neural Network 40%) with isotonic calibration
-- **Version:** 5.2.0 (March 2026)
+- **Version:** 5.3.0 (March 2026)
 - **Developed by:** Elnar Abzhakhanov
-- **License:** Research Use Only (RUO)
+- **License:** Research Use Only (RUO). Code license: MIT. Model artifacts and predictions: Research Use Only (RUO).
 - **Input:** Missense variant features (cDNA position, amino acid change, nucleotide mutation, gene name)
 - **Output:** Calibrated pathogenicity probability (0.0-1.0), classification (Pathogenic/Benign), ACMG evidence codes, SHAP feature attributions
 - **Features:** 103 engineered features (gene-identifying features removed)
@@ -19,7 +19,7 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 ## Intended Use
 
-- **Primary use:** Research-grade computational prediction of missense variant pathogenicity in 5 Homologous Recombination DNA repair genes (BRCA1, BRCA2, PALB2, RAD51C, RAD51D)
+- **Primary use:** Research exploration tool for missense variant classification in 5 HR genes (BRCA1, BRCA2, PALB2, RAD51C, RAD51D). Not validated for clinical diagnosis. ML model handles missense variants only; nonsense, frameshift, and splice variants use rule-based classification. Germline variants only.
 - **Intended users:** Genetics researchers, bioinformaticians, genetic counseling trainees
 - **Out-of-scope uses:**
   - Clinical diagnostic decision-making without expert review
@@ -27,6 +27,7 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
   - Variants outside the 5 supported HR genes
   - Non-missense variants (nonsense/frameshift handled by Tier 1 rules, not ML)
   - Population screening without clinical geneticist oversight
+  - Somatic variant interpretation
 
 ---
 
@@ -128,6 +129,9 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 14. **Feature concentration:** Most predictive power from ~15 of 103 features
 15. **Kazakh translations:** Medical terminology not expert-verified
 16. **EVE coverage gap:** EVE scores available for BRCA1/PALB2/RAD51C/D but not BRCA2
+17. **AlphaMissense indirect label leakage:** AM was partially trained on ClinVar, creating a potential circular dependency. Ablation not yet performed.
+18. **PVS1 evidence code overwrite bug corrected in v5.3.**
+19. **ACMG rule engine implements approximately 10 of 28+ standard criteria.**
 
 ---
 
@@ -166,7 +170,7 @@ Top features by SHAP importance (aggregated):
 
 If using SteppeDNA in research, please cite:
 
-> Abzhakhanov, E. (2026). SteppeDNA: Pan-Gene Variant Pathogenicity Classifier for Homologous Recombination DNA Repair Genes. Research Use Only.
+> Abzhakhanov, E. (2026). SteppeDNA: Multi-Gene HR Variant Pathogenicity Classifier for Homologous Recombination DNA Repair Genes. Research Use Only.
 
 ---
 

@@ -251,6 +251,112 @@ else:
     print("\n[3b] No dbNSFP scores found. Run: python data_pipelines/fetch_dbnsfp_scores.py")
 
 # ─────────────────────────────────────────────────────────────────────────────
+# 3c. Per-gene AUC for real SOTA tools (REVEL, CADD, BayesDel)
+# ─────────────────────────────────────────────────────────────────────────────
+TARGET_GENES = ['BRCA1', 'BRCA2', 'PALB2', 'RAD51C', 'RAD51D']
+MIN_SAMPLES_PER_CLASS = 5   # require at least this many pos AND neg per gene-subset
+
+per_gene_sota = {}          # per_gene_sota[gene][predictor] = {roc_auc, n_scored, n_pos, n_neg, note}
+
+dbnsfp_path = "data/dbnsfp_sota_scores.csv"
+if os.path.exists(dbnsfp_path):
+    print("\n[3c] Per-gene AUC for real SOTA tools...")
+
+    # Re-read (may already be in memory, but reading again is cheap and keeps this
+    # block self-contained in case section 3b was skipped).
+    dbnsfp_pg = pd.read_csv(dbnsfp_path)
+
+    # Normalise the gene column to avoid whitespace issues
+    dbnsfp_pg["Gene"] = dbnsfp_pg["Gene"].astype(str).str.strip()
+
+    REAL_SOTA_PG = [
+        ("revel_score",    "REVEL",    True),
+        ("cadd_phred",     "CADD",     True),
+        ("bayesdel_score", "BayesDel", True),
+    ]
+
+    # Determine available predictor columns once
+    available_sota = [(col, name, hipath)
+                      for col, name, hipath in REAL_SOTA_PG
+                      if col in dbnsfp_pg.columns]
+
+    print(f"\n  {'Gene':<10} {'Predictor':<12} {'ROC-AUC':>8}  {'n_scored':>8}  {'n_pos':>6}  {'n_neg':>6}  Note")
+    print(f"  {'-'*70}")
+
+    for gene in TARGET_GENES:
+        gene_mask = dbnsfp_pg["Gene"] == gene
+        gene_df = dbnsfp_pg[gene_mask]
+        per_gene_sota[gene] = {}
+
+        for col, display_name, higher_is_path in available_sota:
+            entry = {}
+
+            scores_raw = gene_df[col].values.astype(float)
+            labels_raw = gene_df["Label"].values.astype(int)
+
+            # Drop rows where the score is NaN
+            valid = ~np.isnan(scores_raw)
+            s_valid = scores_raw[valid]
+            y_valid = labels_raw[valid]
+
+            n_pos = int((y_valid == 1).sum())
+            n_neg = int((y_valid == 0).sum())
+            n_valid = int(valid.sum())
+
+            entry["n_scored"] = n_valid
+            entry["n_pos"] = n_pos
+            entry["n_neg"] = n_neg
+
+            # Edge-case: not enough samples or single class
+            if n_valid == 0:
+                note = "no scores"
+                entry["roc_auc"] = None
+                entry["note"] = note
+                print(f"  {gene:<10} {display_name:<12} {'N/A':>8}  {n_valid:>8}  {n_pos:>6}  {n_neg:>6}  {note}")
+                per_gene_sota[gene][display_name] = entry
+                continue
+
+            if len(set(y_valid)) < 2:
+                note = "single class"
+                entry["roc_auc"] = None
+                entry["note"] = note
+                print(f"  {gene:<10} {display_name:<12} {'N/A':>8}  {n_valid:>8}  {n_pos:>6}  {n_neg:>6}  {note}")
+                per_gene_sota[gene][display_name] = entry
+                continue
+
+            if n_pos < MIN_SAMPLES_PER_CLASS or n_neg < MIN_SAMPLES_PER_CLASS:
+                note = f"too few samples (pos={n_pos}, neg={n_neg})"
+                entry["roc_auc"] = None
+                entry["note"] = note
+                print(f"  {gene:<10} {display_name:<12} {'N/A':>8}  {n_valid:>8}  {n_pos:>6}  {n_neg:>6}  {note}")
+                per_gene_sota[gene][display_name] = entry
+                continue
+
+            # Higher score = more pathogenic for all three tools; no inversion needed
+            try:
+                roc_val = roc_auc_score(y_valid, s_valid)
+                note = "ok"
+            except Exception as exc:
+                roc_val = None
+                note = f"error: {exc}"
+                entry["roc_auc"] = None
+                entry["note"] = note
+                print(f"  {gene:<10} {display_name:<12} {'ERR':>8}  {n_valid:>8}  {n_pos:>6}  {n_neg:>6}  {note}")
+                per_gene_sota[gene][display_name] = entry
+                continue
+
+            entry["roc_auc"] = round(float(roc_val), 4)
+            entry["note"] = note
+            print(f"  {gene:<10} {display_name:<12} {roc_val:>8.4f}  {n_valid:>8}  {n_pos:>6}  {n_neg:>6}  {note}")
+            per_gene_sota[gene][display_name] = entry
+
+    print()
+else:
+    print("\n[3c] Skipping per-gene SOTA AUC — dbNSFP file not found.")
+    for gene in TARGET_GENES:
+        per_gene_sota[gene] = {}
+
+# ─────────────────────────────────────────────────────────────────────────────
 # 4. Overall + BRCA2-only comparison
 # ─────────────────────────────────────────────────────────────────────────────
 print("\n[4] BRCA2-specific comparison...")
@@ -434,6 +540,34 @@ with open("data/sota_comparison.json", "w") as f:
     json.dump(comparison_json, f, indent=2)
 print("\n  Metrics saved to data/sota_comparison.json")
 
+# ─── Per-gene block ────────────────────────────────────────────────────────
+# Reload, add the per_gene key, and re-save so the JSON stays consistent
+# even if section 3c was skipped (per_gene_sota will be empty dicts).
+try:
+    with open("data/sota_comparison.json", "r") as f:
+        existing_json = json.load(f)
+except (FileNotFoundError, json.JSONDecodeError):
+    existing_json = comparison_json.copy()
+
+# Build serialisable per-gene dict (all values are already plain Python types)
+per_gene_serialisable = {}
+for gene, predictors in per_gene_sota.items():
+    per_gene_serialisable[gene] = {}
+    for pred_name, entry in predictors.items():
+        per_gene_serialisable[gene][pred_name] = {
+            "roc_auc":  entry.get("roc_auc"),      # float or None
+            "n_scored": entry.get("n_scored", 0),
+            "n_pos":    entry.get("n_pos", 0),
+            "n_neg":    entry.get("n_neg", 0),
+            "note":     entry.get("note", ""),
+        }
+
+existing_json["per_gene"] = per_gene_serialisable
+
+with open("data/sota_comparison.json", "w") as f:
+    json.dump(existing_json, f, indent=2)
+print("  Per-gene metrics appended to data/sota_comparison.json")
+
 # ─────────────────────────────────────────────────────────────────────────────
 # 7. Final report
 # ─────────────────────────────────────────────────────────────────────────────
@@ -473,6 +607,35 @@ n_real_total = len(real_sota_names)
 print(f"\n  SteppeDNA outperforms {n_beat}/{n_comp} total predictors by ROC-AUC")
 if n_real_total > 0:
     print(f"  Including {n_real}/{n_real_total} independent SOTA tools (REVEL, CADD, BayesDel)")
+
+if per_gene_sota:
+    print(f"\n  --- Per-gene SOTA comparison (REVEL / CADD / BayesDel) ---")
+    # Collect all predictor names that appeared
+    all_pred_names = []
+    for gene_data in per_gene_sota.values():
+        for pname in gene_data:
+            if pname not in all_pred_names:
+                all_pred_names.append(pname)
+
+    # Header
+    col_w = 11
+    header = f"  {'Gene':<10}"
+    for pname in all_pred_names:
+        header += f"  {pname:>{col_w}}"
+    print(header)
+    print(f"  {'-' * (10 + (col_w + 2) * len(all_pred_names))}")
+
+    for gene in TARGET_GENES:
+        row = f"  {gene:<10}"
+        for pname in all_pred_names:
+            entry = per_gene_sota.get(gene, {}).get(pname, {})
+            auc_val = entry.get("roc_auc")
+            if auc_val is None:
+                cell = entry.get("note", "N/A")[:col_w]
+            else:
+                cell = f"{auc_val:.4f}"
+            row += f"  {cell:>{col_w}}"
+        print(row)
 
 print(f"\n{'=' * 65}")
 print(f"  DONE")

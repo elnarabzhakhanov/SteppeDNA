@@ -112,7 +112,7 @@ def test_parse_vcf_line_basic():
     from backend.main import parse_vcf_line
     result = parse_vcf_line("13\t32316462\t.\tA\tG")
     assert result is not None
-    chrom, pos, ref, alt, gt = result
+    chrom, pos, ref, alt, gt, vcf_filter, warnings, multi_sample = result
     assert chrom == "13"
     assert pos == 32316462
     assert ref == "A"
@@ -126,7 +126,7 @@ def test_parse_vcf_line_with_genotype():
     line = "13\t32316462\t.\tA\tG\t30\tPASS\t.\tGT:DP:GQ\t0/1:30:99"
     result = parse_vcf_line(line)
     assert result is not None
-    chrom, pos, ref, alt, gt = result
+    chrom, pos, ref, alt, gt, vcf_filter, warnings, multi_sample = result
     assert gt == "0/1"
 
 
@@ -135,7 +135,7 @@ def test_parse_vcf_line_homozygous():
     from backend.main import parse_vcf_line
     line = "13\t32316462\t.\tA\tG\t30\tPASS\t.\tGT:DP\t1/1:30"
     result = parse_vcf_line(line)
-    _, _, _, _, gt = result
+    chrom, pos, ref, alt, gt, vcf_filter, warnings, multi_sample = result
     assert gt == "1/1"
 
 

@@ -2,6 +2,48 @@
 
 All notable changes to SteppeDNA are documented in this file.
 
+## [5.3.0] - 2026-03-06
+
+### Fixed
+- PVS1 evidence code overwrite bug: canonical splice no longer overwrites nonsense/frameshift PVS1 when both flags are set
+- BRCA2 hardcoded fallback in `_safe_critical_domain()` replaced with gene-config-aware lookup
+- Gene config redundant disk read in `build_feature_vector()` now uses cached config
+- VCF path now uses gene-adaptive ensemble weights and per-gene calibrators
+
+### Added
+- Per-gene SOTA comparison table (Section 5c in VALIDATION_REPORT.md): SteppeDNA beats REVEL/BayesDel/CADD on 4/5 genes
+- Macro-averaged AUC footnote: hero AUC 0.978 now accompanied by macro-averaged 0.775
+- ACMG rule engine expansion: PM2 (absent from population databases), PS1 (same amino acid change as known pathogenic), PVS1 last-exon attenuation
+- 5-tier classification system (Pathogenic, Likely Pathogenic, VUS, Likely Benign, Benign)
+- RUO inline disclaimers throughout frontend and backend
+- UMAP honest label (shows data source, not clinical truth)
+- Test overhaul: 196 tests across 3 test modules (combinatorial, clinical correctness, property-based)
+- AlphaMissense indirect label leakage acknowledged in VALIDATION_REPORT.md (limitation #17)
+- Gene-adaptive ensemble weights loaded from `data/gene_ensemble_weights.json`
+- VCF parsing hardening with improved error handling and edge case coverage
+- Dead code removal: is_transition/is_transversion computation and unused NICE_NAMES entries
+
+### Changed
+- Branding changed from "Pan-Gene" to "Multi-Gene HR"
+
+## [5.2.0] - 2026-03-04
+
+### Added
+- Honest per-gene metrics displayed in frontend (per-gene AUC table instead of overall-only)
+- SOTA comparison caveat: explicit disclaimer that competitor tools were not trained on this distribution
+
+### Fixed
+- Frontend hero stats now include macro-averaged AUC alongside weighted AUC
+
+## [5.1.0] - 2026-03-03
+
+### Changed
+- Backend refactored into modules: `middleware.py`, `models.py`, `explanations.py`, `features.py`, `vcf.py`, `external_api.py`, `cohort.py`
+- Version consistency fixes across backend, frontend, and metadata files
+
+### Fixed
+- Version string inconsistencies between `main.py`, `model_metadata.json`, and frontend
+
 ## [5.0.0] - 2026-03-01
 
 ### Added
@@ -73,7 +115,7 @@ All notable changes to SteppeDNA are documented in this file.
 ## [3.0.0] - 2026-01-15
 
 ### Added
-- Universal pan-gene model (single model for all 5 genes)
+- Universal pan-gene model (single model for all 5 genes) (now Multi-Gene HR)
 - XGBoost + MLP ensemble with isotonic calibration
 - 103 engineered features from 5 biological databases
 - AlphaFold 3D structure features
