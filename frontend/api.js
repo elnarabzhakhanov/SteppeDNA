@@ -1,21 +1,16 @@
 /* SteppeDNA — API Configuration
  * ================================
  * Single source of truth for all backend URLs.
- * Override: set window.STEPPEDNA_API_BASE before this script loads,
- * or pass ?api=https://your-backend.onrender.com in the URL.
+ * Security: No external overrides allowed. API base is determined
+ * solely by the current hostname (localhost = dev, otherwise same-origin).
  */
 "use strict";
 
 const API_BASE = (() => {
-    // 1. Explicit override via global variable
-    if (window.STEPPEDNA_API_BASE) return window.STEPPEDNA_API_BASE;
-    // 2. URL parameter override (e.g. ?api=https://steppedna-api.onrender.com)
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('api')) return params.get('api');
-    // 3. Local development
+    // Local development
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:')
         return 'http://127.0.0.1:8000';
-    // 4. Same-origin production
+    // Same-origin production (Vercel rewrites proxy to Render backend)
     return window.location.origin;
 })();
 
@@ -55,9 +50,9 @@ async function checkBackendHealth() {
         _backendOnline = false;
         banner.className = 'offline-banner';
         if (_isLocalDev) {
-            text.innerHTML = 'Server offline &mdash; start the backend to enable predictions.';
+            text.textContent = 'Server offline \u2014 start the backend to enable predictions.';
         } else {
-            text.innerHTML = 'Server is starting up &mdash; predictions will be available shortly.';
+            text.textContent = 'Server is starting up \u2014 predictions will be available shortly.';
         }
         banner.style.display = 'flex';
     }
