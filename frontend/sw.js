@@ -1,5 +1,5 @@
 /* SteppeDNA Service Worker — Offline-first caching */
-const CACHE_NAME = 'steppedna-v5.2';
+const CACHE_NAME = 'steppedna-v5.3.1';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
@@ -7,8 +7,13 @@ const STATIC_ASSETS = [
     '/api.js',
     '/lang.js',
     '/app.js',
+    '/sw-register.js',
     '/manifest.json',
 ];
+
+// Content types safe to cache dynamically
+const CACHEABLE_TYPES = ['text/html', 'text/css', 'application/javascript',
+                         'image/', 'font/', 'application/json'];
 
 // Install: cache static shell
 self.addEventListener('install', (e) => {
@@ -40,7 +45,11 @@ self.addEventListener('fetch', (e) => {
         url.pathname.startsWith('/lookup') ||
         url.pathname.startsWith('/health') ||
         url.pathname.startsWith('/model_metrics') ||
-        url.pathname.startsWith('/umap')) {
+        url.pathname.startsWith('/umap') ||
+        url.pathname.startsWith('/cohort') ||
+        url.pathname.startsWith('/metrics') ||
+        url.pathname.startsWith('/history') ||
+        url.pathname.startsWith('/stats')) {
         e.respondWith(fetch(e.request));
         return;
     }
@@ -50,10 +59,13 @@ self.addEventListener('fetch', (e) => {
         caches.match(e.request).then(cached => {
             if (cached) return cached;
             return fetch(e.request).then(resp => {
-                // Cache successful GET responses
+                // Only cache responses with safe content types
                 if (resp.ok && e.request.method === 'GET') {
-                    const clone = resp.clone();
-                    caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+                    const ct = resp.headers.get('Content-Type') || '';
+                    if (CACHEABLE_TYPES.some(t => ct.includes(t))) {
+                        const clone = resp.clone();
+                        caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
+                    }
                 }
                 return resp;
             });

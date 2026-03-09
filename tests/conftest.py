@@ -25,6 +25,14 @@ def client():
         yield c
 
 
+@pytest.fixture(autouse=True)
+def _reset_rate_limiter():
+    """Clear the rate limiter between tests so the suite doesn't hit 429s."""
+    from backend.middleware import _rate_counts, _rate_lock
+    with _rate_lock:
+        _rate_counts.clear()
+
+
 # ─── Known test variants ──────────────────────────────────────────────────────
 # These are real BRCA2 variants with clinically established classification.
 
@@ -52,4 +60,63 @@ DETERMINISTIC_VARIANT = {
     "AA_alt":   "Arg",
     "Mutation": "A>G",
     "AA_pos":   2722,
+}
+
+
+# ─── Multi-gene known variants ──────────────────────────────────────────────
+
+# BRCA2 variants (reuse existing KNOWN_PATHOGENIC and KNOWN_BENIGN)
+
+KNOWN_BRCA1_PATHOGENIC = {
+    "gene_name": "BRCA1",
+    "cDNA_pos": 181,
+    "AA_ref": "Cys",
+    "AA_alt": "Ter",
+    "Mutation": "C>A",
+    "AA_pos": 61,
+}
+
+KNOWN_BRCA1_BENIGN = {
+    "gene_name": "BRCA1",
+    "cDNA_pos": 2612,
+    "AA_ref": "Pro",
+    "AA_alt": "Leu",
+    "Mutation": "C>T",
+    "AA_pos": 871,
+}
+
+KNOWN_PALB2_PATHOGENIC = {
+    "gene_name": "PALB2",
+    "cDNA_pos": 3113,
+    "AA_ref": "Gln",
+    "AA_alt": "Ter",
+    "Mutation": "C>T",
+    "AA_pos": 1038,
+}
+
+KNOWN_PALB2_BENIGN = {
+    "gene_name": "PALB2",
+    "cDNA_pos": 1676,
+    "AA_ref": "Gln",
+    "AA_alt": "Arg",
+    "Mutation": "A>G",
+    "AA_pos": 559,
+}
+
+KNOWN_RAD51C_MISSENSE = {
+    "gene_name": "RAD51C",
+    "cDNA_pos": 376,
+    "AA_ref": "Leu",
+    "AA_alt": "Phe",
+    "Mutation": "C>T",
+    "AA_pos": 126,
+}
+
+KNOWN_RAD51D_MISSENSE = {
+    "gene_name": "RAD51D",
+    "cDNA_pos": 271,
+    "AA_ref": "Gly",
+    "AA_alt": "Arg",
+    "Mutation": "G>A",
+    "AA_pos": 91,
 }

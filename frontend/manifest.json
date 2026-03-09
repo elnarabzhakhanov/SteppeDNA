@@ -1,7 +1,7 @@
 {
   "name": "SteppeDNA",
   "short_name": "SteppeDNA",
-  "description": "Pan-Gene Variant Pathogenicity Classifier for HR DNA Repair Genes",
+  "description": "Multi-Gene HR Variant Pathogenicity Classifier for HR DNA Repair Genes",
   "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#1a1a2e",

@@ -122,9 +122,9 @@ def test_pp3_fires_at_high_probability():
 
 
 def test_pp3_not_fired_at_moderate_probability():
-    """Probability of 0.75 (below 0.90 threshold) should NOT trigger PP3."""
+    """Probability of 0.69 (below 0.70 threshold) should NOT trigger PP3."""
     feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.0}
-    result = evaluate_acmg_rules(feats, 0.75)
+    result = evaluate_acmg_rules(feats, 0.69)
     assert "PP3" not in result
 
 
