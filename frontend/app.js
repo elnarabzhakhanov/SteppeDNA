@@ -79,7 +79,7 @@ function renderHistory() {
     }
     panel.style.display = 'block';
     list.innerHTML = history.map((h, i) => {
-        const tierClass = h.probability > 0.7 ? 'pathogenic' : (h.probability < 0.3 ? 'benign' : 'uncertain');
+        const tierClass = h.probability > 0.9 ? 'pathogenic' : (h.probability > 0.7 ? 'likely_pathogenic' : (h.probability < 0.1 ? 'benign' : (h.probability < 0.3 ? 'likely_benign' : 'uncertain')));
         const pct = (h.probability * 100).toFixed(1);
         // Custom date formatting — browser kk-KZ locale falls back to Russian
         const kkMonths = ['Qan', 'Aqp', 'Nau', 'Sau', 'Mam', 'Mau', 'Shil', 'Tam', 'Qyr', 'Qaz', 'Qar', 'Zhel'];
@@ -190,6 +190,7 @@ function showToast(message, type = 'error', duration = 4000) {
             : '<svg class="toast-icon" viewBox="0 0 24 24" fill="none" stroke="#6260FF" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>';
     const msgSpan = document.createElement('span');
     msgSpan.textContent = message;
+    // Safety: icon is a hardcoded SVG string — no user data. Message uses textContent (XSS-safe).
     toast.innerHTML = icon;
     toast.appendChild(msgSpan);
     container.appendChild(toast);
@@ -217,7 +218,9 @@ const RESULT_TR = {
     "Moderate Confidence": { ru: "Средняя уверенность", kk: "Орташа сенімділік", en: "Moderate Confidence" },
     "Low Confidence": { ru: "Низкая уверенность", kk: "Төмен сенімділік", en: "Low Confidence" },
     "Pathogenic": { ru: "Патогенный", kk: "Патогендік", en: "Pathogenic" },
+    "Likely Pathogenic": { ru: "Вероятно патогенный", kk: "Патогенді болуы мүмкін", en: "Likely Pathogenic" },
     "Benign": { ru: "Доброкачественный", kk: "Қатерсіз", en: "Benign" },
+    "Likely Benign": { ru: "Вероятно доброкачественный", kk: "Қатерсіз болуы мүмкін", en: "Likely Benign" },
     "Neutral": { ru: "Нейтральный", kk: "Бейтарап", en: "Neutral" },
     "Abnormal": { ru: "Аномальный", kk: "Аномальді", en: "Abnormal" },
     "Normal": { ru: "Нормальный", kk: "Қалыпты", en: "Normal" },
@@ -274,20 +277,25 @@ function renderConfidenceHtml(ci) {
         ? `<div style="font-size:0.8rem;color:var(--text-body);margin-top:4px">${escapeHtml(ciPctLabel)}: ${(ci.ci_lower * 100).toFixed(1)}% – ${(ci.ci_upper * 100).toFixed(1)}%${methodTag}</div>`
         : '';
 
-    // Visual error bar showing CI range on a 0-100% scale
+    // Visual CI range bar on a 0-100% probability scale
     let errorBarHtml = '';
     if (ci.ci_lower != null && ci.ci_upper != null && ci.probability != null) {
-        const pPct = (ci.probability * 100).toFixed(1);
         const lPct = (ci.ci_lower * 100);
         const uPct = (ci.ci_upper * 100);
         const widthPct = ci.ci_width != null ? (ci.ci_width * 100).toFixed(1) : (uPct - lPct).toFixed(1);
-        // Bar colors based on width
         const barColor = parseFloat(widthPct) < 10 ? 'var(--success)' : (parseFloat(widthPct) < 25 ? 'var(--warning)' : 'var(--danger)');
+        const pointLeft = Math.max(ci.probability * 100 - 0.5, 0);
         errorBarHtml = `
-            <div style="position:relative;height:18px;background:var(--bg-input);border-radius:9px;margin-top:6px;overflow:hidden" title="CI width: ${escapeHtml(widthPct)}%">
-                <div style="position:absolute;left:${lPct}%;width:${Math.max(uPct - lPct, 1)}%;height:100%;background:${barColor};opacity:0.25;border-radius:9px"></div>
-                <div style="position:absolute;left:${Math.max(ci.probability * 100 - 0.5, 0)}%;width:3px;height:100%;background:${barColor};border-radius:2px"></div>
-                <div style="position:absolute;right:4px;top:1px;font-size:0.65rem;color:var(--text-mid)">CI width: ${escapeHtml(widthPct)}%</div>
+            <div style="margin-top:8px">
+                <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--text-mid);margin-bottom:2px">
+                    <span>0%</span>
+                    <span style="font-weight:600;color:${barColor}">CI width: ${escapeHtml(widthPct)}%</span>
+                    <span>100%</span>
+                </div>
+                <div style="position:relative;height:10px;background:var(--bg-input);border-radius:5px;overflow:hidden" title="${escapeHtml(String(lPct.toFixed(1)))}% – ${escapeHtml(String(uPct.toFixed(1)))}%">
+                    <div style="position:absolute;left:${lPct}%;width:${Math.max(uPct - lPct, 1)}%;height:100%;background:${barColor};opacity:0.3;border-radius:5px"></div>
+                    <div style="position:absolute;left:${pointLeft}%;width:4px;height:100%;background:${barColor};border-radius:2px"></div>
+                </div>
             </div>`;
     }
 
@@ -530,8 +538,8 @@ document.querySelectorAll('.custom-dropdown').forEach(dropdown => {
                     mutationInput.value = '';
                 } else if (val === 'frameshift') {
                     aaAltGroup.style.display = 'none';
-                    aaAltInput.value = 'Del';
-                    mutationInput.value = 'fs';
+                    aaAltInput.value = 'Fs';
+                    mutationInput.value = 'FS';
                 }
             }
         });
@@ -623,7 +631,7 @@ async function uploadVCF(file) {
                 chwDiv.innerHTML = `
                     <div class="compound-het-warning" role="alert">
                         <strong>&#9888; Compound Heterozygosity Warning</strong>
-                        <p>${escapeHtml(chw.message)}</p>
+                        <p>${escapeHtml(chw.message)} Note: combined effect of compound heterozygous variants is not modeled. Consult a genetic counselor.</p>
                         <ul style="margin:0.5rem 0 0 1.2rem;font-size:0.9rem">${varList}</ul>
                         ${gtNote}
                     </div>`;
@@ -660,7 +668,7 @@ async function uploadVCF(file) {
             // Sort: pathogenic first, then by probability desc
             mainPreds.sort((a, b) => b.probability - a.probability);
             const renderRow = (p, i) => {
-                const tier = p.probability > 0.7 ? 'high' : (p.probability < 0.3 ? 'low' : 'mid');
+                const tier = p.probability > 0.9 ? 'high' : (p.probability > 0.7 ? 'high' : (p.probability < 0.1 ? 'low' : (p.probability < 0.3 ? 'low' : 'mid')));
                 const pred = p.prediction || '';
                 const rowClass = pred.includes('Pathogenic') ? 'row-pathogenic' : (pred.includes('VUS') ? 'row-uncertain' : (pred.includes('Benign') ? 'row-benign' : ''));
                 const pct = Math.round(p.probability * 100);
@@ -674,6 +682,7 @@ async function uploadVCF(file) {
                     <td>${escapeHtml(p.mutation)}</td>
                     <td><span class="badge ${predBadge}" style="font-size:0.8rem;padding:2px 10px">${escapeHtml(pred)}</span></td>
                     <td>${pct}% <div class="prob-bar"><div class="prob-fill ${tier}" style="width:${pct}%"></div></div></td>
+                    <td class="col-action"><button class="btn-remove-row" title="Remove" onclick="this.closest('tr').remove()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></td>
                 </tr>`;
             };
             vcfBody.innerHTML = mainPreds.map((p, i) => renderRow(p, i)).join('');
@@ -687,7 +696,7 @@ async function uploadVCF(file) {
                 synPreds.sort((a, b) => b.probability - a.probability);
                 const synRows = synPreds.map((p, i) => {
                     const pct = Math.round(p.probability * 100);
-                    const tier = p.probability > 0.7 ? 'high' : (p.probability < 0.3 ? 'low' : 'mid');
+                    const tier = p.probability > 0.9 ? 'high' : (p.probability > 0.7 ? 'high' : (p.probability < 0.1 ? 'low' : (p.probability < 0.3 ? 'low' : 'mid')));
                     const pred = p.prediction || '';
                     const predBadge = pred.includes('VUS') ? 'badge-warning' : 'badge-benign';
                     return `<tr>
@@ -800,6 +809,11 @@ fileInput.addEventListener('change', () => {
     }
 });
 
+// dismiss result card
+document.getElementById('btnDismissResult')?.addEventListener('click', () => {
+    document.getElementById('resultCard').style.display = 'none';
+});
+
 // main form submit handler
 document.getElementById('mutationForm').addEventListener('submit', async e => {
     e.preventDefault();
@@ -892,8 +906,10 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
 
         const prob = data.probability;
         let tier;
-        if (prob > 0.7) tier = 'pathogenic';
-        else if (prob < 0.3) tier = 'benign';
+        if (prob > 0.9) tier = 'pathogenic';
+        else if (prob > 0.7) tier = 'likely_pathogenic';
+        else if (prob < 0.1) tier = 'benign';
+        else if (prob < 0.3) tier = 'likely_benign';
         else tier = 'uncertain';
 
         resultCard.className = `result-card card-full ${tier}`;
@@ -901,6 +917,14 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
         const badge = document.getElementById('badge');
         badge.textContent = tr(data.prediction);
         badge.className = `badge badge-${tier}`;
+
+        // Classification method chip (ML Ensemble vs Rule-Based)
+        const methodChip = data.classification_method
+            ? `<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:12px;font-size:0.7rem;font-weight:600;background:${data.classification_method === 'rule_based' ? '#FEF3C7' : '#EEF2FF'};color:${data.classification_method === 'rule_based' ? '#92400E' : '#4338CA'}">${data.classification_method === 'rule_based' ? 'Rule-Based' : 'ML Ensemble'}</span>`
+            : '';
+        if (methodChip) {
+            badge.insertAdjacentHTML('afterend', methodChip);
+        }
 
         const conf = document.getElementById('confidence');
         const ciData = data.confidence || {};
@@ -1076,6 +1100,10 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
                     </div>
                 `;
             }).join('');
+            // Show ACMG combining result if available
+            if (data.acmg_classification) {
+                acmgGrid.insertAdjacentHTML('afterend', `<div class="acmg-combining-result" style="margin-top:6px;font-weight:600;font-size:0.85rem;color:var(--text);">ACMG Combining: ${escapeHtml(data.acmg_classification)}</div>`);
+            }
             acmgSection.style.display = 'block';
         } else {
             acmgSection.style.display = 'none';
@@ -1378,8 +1406,9 @@ function generatePDFReport(data, input) {
         `<tr><td style="padding:3px 12px 3px 0">${s.feature}</td><td style="padding:3px 0;color:${s.value > 0 ? '#dc2626' : '#059669'};font-weight:600">${s.value > 0 ? '+' : ''}${s.value.toFixed(4)}</td><td style="padding:3px 0">${s.direction}</td></tr>`
     ).join('');
 
+    const ciLabel = ci.method === 'bootstrap' ? '90% CI' : (ci.method === 'rule_based' ? 'N/A (rule-based)' : '95% CI');
     const ciText = (ci.ci_lower != null && ci.ci_upper != null)
-        ? `<p style="margin-top:8px"><strong>95% Confidence Interval:</strong> ${(ci.ci_lower * 100).toFixed(1)}% - ${(ci.ci_upper * 100).toFixed(1)}%</p>`
+        ? `<p style="margin-top:8px"><strong>${ciLabel}:</strong> ${(ci.ci_lower * 100).toFixed(1)}% - ${(ci.ci_upper * 100).toFixed(1)}%</p>`
         : '';
 
     const now = new Date().toISOString().split('T')[0];
@@ -1398,8 +1427,8 @@ function generatePDFReport(data, input) {
     .header h1 { font-size: 22px; color: #6260FF; margin-bottom: 4px; }
     .header p { color: #666; font-size: 11px; }
     .disclaimer { background: #FEF3C7; border: 1px solid #F59E0B; border-radius: 6px; padding: 10px 14px; font-size: 11px; color: #92400E; margin-bottom: 20px; }
-    .result-box { background: ${prob > 0.7 ? '#FEE2E2' : (prob < 0.3 ? '#D1FAE5' : '#FEF3C7')}; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid ${prob > 0.7 ? '#FECACA' : (prob < 0.3 ? '#A7F3D0' : '#FDE68A')}; }
-    .result-box .pred { font-size: 24px; font-weight: 800; color: ${prob > 0.7 ? '#dc2626' : (prob < 0.3 ? '#059669' : '#d97706')}; }
+    .result-box { background: ${prob > 0.9 ? '#FEE2E2' : (prob > 0.7 ? '#FEE2E2' : (prob < 0.1 ? '#D1FAE5' : (prob < 0.3 ? '#D1FAE5' : '#FEF3C7')))}; border-radius: 10px; padding: 20px; text-align: center; margin-bottom: 24px; border: 1px solid ${prob > 0.9 ? '#FECACA' : (prob > 0.7 ? '#FECACA' : (prob < 0.1 ? '#A7F3D0' : (prob < 0.3 ? '#A7F3D0' : '#FDE68A')))}; }
+    .result-box .pred { font-size: 24px; font-weight: 800; color: ${prob > 0.9 ? '#dc2626' : (prob > 0.7 ? '#dc2626' : (prob < 0.1 ? '#059669' : (prob < 0.3 ? '#059669' : '#d97706')))}; }
     .result-box .prob { font-size: 16px; color: #374151; margin-top: 4px; }
     h2 { font-size: 15px; color: #6260FF; border-bottom: 1px solid #e5e7eb; padding-bottom: 6px; margin: 20px 0 12px; }
     table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -1411,7 +1440,7 @@ function generatePDFReport(data, input) {
 
 <div class="header">
     <h1>SteppeDNA Variant Report</h1>
-    <p>Pan-Gene HR Pathway Variant Classifier &bull; Generated: ${now} &bull; Research Use Only</p>
+    <p>Multi-Gene HR Pathway Variant Classifier &bull; Generated: ${now} &bull; Research Use Only</p>
 </div>
 
 <div class="disclaimer" style="background:#FEE2E2;border-color:#EF4444;color:#991B1B;font-weight:600;text-align:center">
@@ -1470,6 +1499,7 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
     <tr><td>Features</td><td>103 engineered features from 5 databases</td></tr>
     <tr><td>Training Data</td><td>19,223 variants (ClinVar + gnomAD)</td></tr>
     <tr><td>Validation ROC-AUC</td><td>0.978</td></tr>
+    ${data.gene_reliability?.auc ? `<tr><td>Gene-Specific AUC (${data.gene_reliability?.gene || input.gene_name})</td><td>${data.gene_reliability.auc}</td></tr>` : ''}
     <tr><td>Validation MCC</td><td>0.881</td></tr>
     <tr><td>Genes Covered</td><td>BRCA1, BRCA2, PALB2, RAD51C, RAD51D</td></tr>
 </table>
@@ -1487,7 +1517,7 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
 </div>
 
 <div class="footer">
-    SteppeDNA v5.2 &mdash; Pan-Gene Variant Classifier &bull; Research Use Only &mdash; Not a diagnostic tool<br>
+    SteppeDNA v5.3 &mdash; Multi-Gene HR Variant Classifier &bull; Research Use Only &mdash; Not a diagnostic tool<br>
     ACMG evidence codes are computational approximations and do not replace expert clinical curation.<br>
     Training data predominantly European ancestry. Performance on other populations unknown.
 </div>
@@ -1550,6 +1580,10 @@ async function loadAndRenderUMAP(queryProb) {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 2;
         ctx.stroke();
+        // Honest label for heuristic placement
+        ctx.font = '10px sans-serif';
+        ctx.fillStyle = '#888';
+        ctx.fillText('Estimated (not projected)', qx + 12, qy + 4);
         // Glow effect
         ctx.beginPath();
         ctx.arc(qx, qy, 12, 0, Math.PI * 2);
@@ -1588,7 +1622,7 @@ function renderComparison() {
 
     const renderSlot = (s, idx) => {
         if (!s) return `<div class="cmp-slot cmp-empty">Slot ${idx + 1}: Analyze a variant, then click "Compare"</div>`;
-        const tierClass = s.probability > 0.7 ? 'pathogenic' : (s.probability < 0.3 ? 'benign' : 'uncertain');
+        const tierClass = s.probability > 0.9 ? 'pathogenic' : (s.probability > 0.7 ? 'likely_pathogenic' : (s.probability < 0.1 ? 'benign' : (s.probability < 0.3 ? 'likely_benign' : 'uncertain')));
         const pct = (s.probability * 100).toFixed(1);
         const shapHtml = s.shap.map(sh =>
             `<div class="cmp-shap-row"><span>${escapeHtml(sh.feature)}</span><span style="color:${sh.direction === 'pathogenic' ? 'var(--danger)' : 'var(--success)'}">${sh.value > 0 ? '+' : ''}${sh.value.toFixed(3)}</span></div>`
@@ -1680,7 +1714,7 @@ function renderLollipopPlot(gene, aaPos, prediction) {
 
     // Collision detection: assign stagger levels so no labels overlap
     const maxLevels = Math.max(6, gd.domains.length); // scale with domain count
-    const staggerSpacing = 13;
+    const staggerSpacing = 15;
     const baseLabelY = trackY + trackH + 14;
     for (let i = 0; i < labelInfos.length; i++) {
         const li = labelInfos[i];
@@ -1693,7 +1727,7 @@ function renderLollipopPlot(gene, aaPos, prediction) {
                 if (lj.level !== lvl) continue;
                 const ljLeft = lj.midX - lj.labelW / 2;
                 const ljRight = lj.midX + lj.labelW / 2;
-                if (liLeft < ljRight + 6 && liRight > ljLeft - 6) {
+                if (liLeft < ljRight + 10 && liRight > ljLeft - 10) {
                     collides = true;
                     break;
                 }
@@ -1737,9 +1771,9 @@ function renderLollipopPlot(gene, aaPos, prediction) {
         svg += `<text x="${labelX}" y="${labelY}" text-anchor="${anchor}" font-size="${li.fontSize}" fill="var(--text-body)" font-family="system-ui">${li.name}</text>`;
     }
 
-    // Lollipop pin
-    svg += `<line x1="${pinX}" y1="${trackY - 4}" x2="${pinX}" y2="18" stroke="${pinColor}" stroke-width="2"/>`;
-    svg += `<circle cx="${pinX}" cy="14" r="7" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>`;
+    // Lollipop pin — label above circle with visible gap
+    svg += `<line x1="${pinX}" y1="${trackY - 4}" x2="${pinX}" y2="24" stroke="${pinColor}" stroke-width="2"/>`;
+    svg += `<circle cx="${pinX}" cy="20" r="7" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>`;
     svg += `<text x="${pinX}" y="6" text-anchor="middle" font-size="${Math.round(9 * fontScale)}" fill="var(--text-dark)" font-weight="600" font-family="system-ui">${gene} p.${aaPos}</text>`;
     // Scale markers — placed just above the track bar
     svg += `<text x="${pad}" y="${scaleMarkerY}" text-anchor="start" font-size="${Math.round(8 * fontScale)}" fill="var(--text-body)" opacity="0.5" font-family="system-ui">1</text>`;
@@ -1793,6 +1827,8 @@ function loadNGL() {
     nglLoadPromise = new Promise((resolve, reject) => {
         const script = document.createElement('script');
         script.src = 'https://unpkg.com/ngl@2.3.1/dist/ngl.js';
+        script.integrity = 'sha384-2IGKSrhj5s8F8y255Khep26WxVFJnBmATKZAtfHE8/bCjEpyqsPNB9bEtbo+y5+P';
+        script.crossOrigin = 'anonymous';
         script.onload = () => { nglLoaded = true; resolve(); };
         script.onerror = () => reject(new Error('Failed to load NGL.js'));
         document.head.appendChild(script);
@@ -1874,9 +1910,11 @@ async function render3DViewer(geneName, aaPos, prediction) {
             if (!component) throw new Error('BRCA2 fragment unavailable');
             structureNote = `AlphaFold fragment F${brca2Frag.frag} (residues ${brca2Frag.start}–${brca2Frag.end})`;
         } else {
-            // Non-BRCA2: Load from AlphaFold (v6 → v4 → v3)
+            // Non-BRCA2: Load from AlphaFold (v4 → v3 → v2)
+            // Note: "v6" is the AlphaFold *database* version, not the model version.
+            // Model versions go v1–v4 (v4 is latest as of 2025).
             const baseUrl = `https://alphafold.ebi.ac.uk/files/AF-${uniprotId}-F1`;
-            const versionFallback = ['v6', 'v4', 'v3'];
+            const versionFallback = ['v4', 'v3', 'v2'];
             for (const ver of versionFallback) {
                 const pdbUrl = `${baseUrl}-model_${ver}.pdb`;
                 try {

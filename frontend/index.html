@@ -4,14 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SteppeDNA — Pan-Gene Variant Classifier</title>
+    <title>SteppeDNA — Multi-Gene HR Variant Classifier</title>
     <meta name="description"
         content="Universal HR pathway missense variant pathogenicity prediction using XGBoost+MLP ensemble with 103 features from 5 biological databases. Research use only.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;700&family=Inter:wght@400;500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=5.2">
+    <link rel="stylesheet" href="styles.css?v=5.3">
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#6260FF">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -37,41 +37,46 @@
         <div class="hero-content">
             <div class="logo-row">
                 <img src="logo.png" alt="SteppeDNA" style="height:52px;width:auto" onerror="this.style.display='none'">
-                <span class="logo-text" style="font-size: 1.8rem;">SteppeDNA</span>
+                <span class="logo-text">SteppeDNA</span>
             </div>
             <p class="tagline" data-i18n="tagline"
                 style="font-size: 0.85rem; max-width: 620px; margin: 0 auto 1.2rem; line-height: 1.6; opacity: 0.92;">
-                Pan-Gene Variant Classifier &bull; 103 Features from 5 Databases &bull; ESM-2 LLM Embeddings &bull;
+                Multi-Gene HR Variant Classifier &bull; 103 Features from 5 Databases &bull; ESM-2 LLM Embeddings &bull;
                 SHAP Explained</p>
 
-            <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
-                <svg id="moonIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
-                    fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
-                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                </svg>
-                <svg id="sunIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
-                    fill="none" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="5"></circle>
-                    <line x1="12" y1="1" x2="12" y2="3"></line>
-                    <line x1="12" y1="21" x2="12" y2="23"></line>
-                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                    <line x1="1" y1="12" x2="3" y2="12"></line>
-                    <line x1="21" y1="12" x2="23" y2="12"></line>
-                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                </svg>
-            </button>
-            <div class="lang-toggle" role="group" aria-label="Language selection">
-                <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
-                <button class="lang-btn" data-lang="kk" aria-label="Қазақша">KK</button>
-                <button class="lang-btn" data-lang="ru" aria-label="Русский">RU</button>
+            <div class="hero-controls">
+                <div class="lang-toggle" role="group" aria-label="Language selection">
+                    <button class="lang-btn" data-lang="en" aria-label="English">EN</button>
+                    <button class="lang-btn" data-lang="kk" aria-label="Қазақша">KK</button>
+                    <button class="lang-btn" data-lang="ru" aria-label="Русский">RU</button>
+                </div>
+                <button id="themeToggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+                    <svg id="moonIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sunIcon" viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2"
+                        fill="none" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
             </div>
             <div class="hero-stats">
                 <div class="hero-stat">
                     <div class="num" id="hero-roc-auc">0.978</div>
-                    <div class="lbl">ROC-AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Area Under the Receiver Operating Characteristic curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess.</span></button></div>
-                    <div class="lbl" style="font-size:0.65rem;opacity:0.7;margin-top:2px" data-i18n="hero_pergene_subtext">Per-gene: 0.641&ndash;0.983</div>
+                    <div class="lbl">Sample-Wtd AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Sample-weighted Area Under the ROC curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess. Weighted by gene representation (BRCA2 = 52% of test set).</span></button></div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num" id="hero-macro-auc">0.775</div>
+                    <div class="lbl">Macro-Avg AUC <button class="help-tip" aria-label="What is Macro-Averaged AUC?">?<span class="help-text" data-i18n-tooltip="tip_macro_auc">Macro-averaged AUC across all 5 genes (unweighted). Better reflects multi-gene performance than the sample-weighted AUC.</span></button></div>
                 </div>
                 <div class="hero-stat">
                     <div class="num" id="hero-mcc">0.881</div>
@@ -123,8 +128,63 @@
                 <span class="pg-val">0.641</span>
             </div>
         </div>
-        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.978) is weighted by gene representation. BRCA2 comprises 52% of the test set. See Validation Report &sect;9.</p>
-        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes. See Validation Report &sect;10.</p>
+        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.978) is weighted by gene representation. BRCA2 comprises 52% of the test set. Evaluated on a held-out 20% stratified test split.</p>
+        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes.</p>
+    </section>
+
+    <!-- ============ SOTA COMPARISON ============ -->
+    <section class="sota-section" aria-label="Per-Gene SOTA Comparison">
+        <h3 class="per-gene-title" data-i18n="sota_comparison_title">Per-Gene SOTA Comparison</h3>
+        <div style="overflow-x:auto">
+            <table class="sota-table" aria-label="Per-gene SOTA comparison table">
+                <thead>
+                    <tr>
+                        <th data-i18n="sota_col_gene">Gene</th>
+                        <th data-i18n="sota_col_steppdna">SteppeDNA</th>
+                        <th data-i18n="sota_col_best_sota">Best SOTA</th>
+                        <th data-i18n="sota_col_winner">Winner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="sota-win">
+                        <td class="sota-gene">BRCA2</td>
+                        <td class="sota-score sota-score-ours"><strong>0.983</strong></td>
+                        <td class="sota-score sota-score-ext">0.949 <span class="sota-tool">(BayesDel)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">RAD51D</td>
+                        <td class="sota-score sota-score-ours"><strong>0.804</strong></td>
+                        <td class="sota-score sota-score-ext">0.461 <span class="sota-tool">(REVEL)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">RAD51C</td>
+                        <td class="sota-score sota-score-ours"><strong>0.743</strong></td>
+                        <td class="sota-score sota-score-ext">0.703 <span class="sota-tool">(CADD)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">BRCA1</td>
+                        <td class="sota-score sota-score-ours"><strong>0.706</strong></td>
+                        <td class="sota-score sota-score-ext">0.646 <span class="sota-tool">(BayesDel)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-loss">
+                        <td class="sota-gene">PALB2</td>
+                        <td class="sota-score sota-score-ours">0.641</td>
+                        <td class="sota-score sota-score-ext"><strong>0.732</strong> <span class="sota-tool">(REVEL)</span></td>
+                        <td class="sota-badge sota-badge-loss">REVEL</td>
+                    </tr>
+                </tbody>
+                <tr class="sota-caveat-row">
+                    <td colspan="4" style="background:var(--warning-bg, #fff3cd);padding:8px 12px;font-size:0.8rem;color:var(--text);border-top:2px solid var(--warning);">
+                        All scores evaluated on SteppeDNA's own test set, giving SteppeDNA a methodological advantage. Independent benchmark AUC: 0.719–0.793. REVEL, BayesDel, and CADD are general-purpose tools not trained on this distribution.
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <p class="pg-footnote" style="margin-top:0.6rem" data-i18n="sota_footnote">Evaluated on SteppeDNA&#8217;s held-out test set. Independent benchmark AUC: 0.719&#8211;0.793.</p>
     </section>
 
     <!-- ============ MAIN 2-COL LAYOUT ============ -->
@@ -227,7 +287,7 @@
                 </div>
                 <button type="submit" class="btn" id="submitBtn">
                     <div class="spinner" id="spinner"></div>
-                    <span id="btnText" data-i18n="analyze_btn">Analyze Mutation</span>
+                    <span id="btnText" data-i18n="analyze_btn">Analyze Variant</span>
                 </button>
             </form>
         </div>
@@ -248,12 +308,19 @@
 
         <!-- RESULT (full width) -->
         <div class="result-card card-full" id="resultCard" aria-live="polite" aria-atomic="true">
+            <div class="ruo-inline" style="background:var(--bg-alt);border:1px solid var(--warning);padding:4px 10px;border-radius:4px;font-size:0.75rem;color:var(--text-mid);text-align:center;margin-bottom:8px;">Research Use Only — not for clinical diagnosis | Germline variants only</div>
             <div class="result-top">
                 <div class="result-label-group">
                     <span class="badge" id="badge">Pathogenic</span>
                     <span class="result-model-note">XGBoost · Calibrated · SHAP explained</span>
                 </div>
-                <span class="confidence" id="confidence">98%</span>
+                <div class="result-top-right">
+                    <span class="prob-label" style="font-size:0.7rem;color:var(--text-mid);display:block;margin-bottom:2px;">Pathogenicity Probability</span>
+                    <span class="confidence" id="confidence">98%</span>
+                    <button class="btn-dismiss-result" id="btnDismissResult" aria-label="Dismiss result" title="Dismiss">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
+                </div>
             </div>
             <div id="uncertaintyInfo" style="display:none;text-align:center;margin-top:8px"></div>
             <div id="conformalPrediction" style="display:none;text-align:center;margin-top:6px"></div>
@@ -283,7 +350,7 @@
             <!-- ACMG EVIDENCE -->
             <div class="acmg-section" id="acmgSection" style="display:none">
                 <div class="acmg-title" data-i18n="acmg_ev">ACMG Evidence <button class="help-tip" aria-label="What is ACMG?">?<span class="help-text" data-i18n-tooltip="tip_acmg">American College of Medical Genetics classification criteria. PP/PM/PS = evidence for pathogenic. BP/BS/BA = evidence for benign. These are computational approximations.</span></button></div>
-                <div class="acmg-approx-note" style="font-size:0.75rem;color:var(--text-mid);margin-bottom:6px;font-style:italic" data-i18n="acmg_approx_label">Computational approximation &mdash; not validated ACMG classification</div>
+                <div class="acmg-approx-note" style="font-size:0.85rem;color:var(--text);margin-bottom:6px;font-style:italic;background:var(--warning-bg, #fff3cd);padding:4px 8px;border-radius:4px;" data-i18n="acmg_approx_label">Computational approximation &mdash; not validated ACMG classification</div>
                 <div class="acmg-grid" id="acmgGrid"></div>
             </div>
 
@@ -410,6 +477,7 @@
                         <th data-i18n="tb_mut">Mutation</th>
                         <th data-i18n="tb_pred">Prediction</th>
                         <th data-i18n="tb_prob">Probability</th>
+                        <th class="col-action"></th>
                     </tr>
                 </thead>
                 <tbody id="vcfBody"></tbody>
@@ -474,7 +542,7 @@
                     <path d="m12 14 2 3h-4Z" />
                 </svg></div>
             <h4 data-i18n="info1_t">Universal Base Models</h4>
-            <p data-i18n="info1_d">Pan-gene Deep Neural Network &amp; XGBoost ensemble trained on 19,000+ ClinVar &amp; gnomAD HR missense variants with isotonic probability calibration. Resolves 5 genes seamlessly.</p>
+            <p data-i18n="info1_d">Multi-gene HR Deep Neural Network &amp; XGBoost ensemble trained on 19,000+ ClinVar &amp; gnomAD HR missense variants with isotonic probability calibration. Resolves 5 genes seamlessly.</p>
         </div>
         <div class="info-card">
             <div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
@@ -567,6 +635,7 @@
                 <span class="cert-label" data-i18n="cert_research">Research Use Only (RUO)</span>
             </div>
         </div>
+        <p class="cert-note" style="font-weight:600;margin-bottom:6px;">No regulatory approval has been obtained or is currently in progress. The roadmap below reflects aspirational milestones only.</p>
         <p class="cert-note" data-i18n="cert_note">This tool is currently for research use only and has not been submitted for regulatory approval. Clinical deployment will require certification from the relevant national health authority.</p>
     </div>
 
@@ -580,15 +649,10 @@
         </div>
     </footer>
 
-    <script src="api.js?v=3"></script>
-    <script src="lang.js?v=3"></script>
-    <script src="app.js?v=3"></script>
-    <script>
-        // Register service worker for offline support
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js').catch(() => {});
-        }
-    </script>
+    <script src="api.js?v=5.3"></script>
+    <script src="lang.js?v=5.3"></script>
+    <script src="app.js?v=5.3"></script>
+    <script src="sw-register.js?v=5.3"></script>
 </body>
 
 </html>

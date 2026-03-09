@@ -1,9 +1,9 @@
 # SteppeDNA
 
-**Pan-Gene Variant Pathogenicity Classifier for HR DNA Repair Genes**
+**Multi-Gene HR (BRCA1/2, PALB2, RAD51C/D) Variant Pathogenicity Classifier for HR DNA Repair Genes**
 
 [![CI](https://github.com/elnarabzhakhanov/SteppeDNA/actions/workflows/ci.yml/badge.svg)](https://github.com/elnarabzhakhanov/SteppeDNA/actions)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: MIT (code) / RUO (model)](https://img.shields.io/badge/License-MIT%20(code)%20%2F%20RUO%20(model)-blue.svg)](LICENSE)
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://python.org)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.129-009688.svg)](https://fastapi.tiangolo.com)
 
@@ -23,7 +23,7 @@ SteppeDNA classifies missense variants in 5 Homologous Recombination DNA repair 
 
 *Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants. See per-gene breakdown below.
 
-Outperforms REVEL (0.725), BayesDel (0.721), and CADD (0.539) on SteppeDNA's own held-out test set. Competitor tools were not trained on this distribution, giving SteppeDNA a methodological advantage. On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719–0.793.
+Outperforms REVEL (0.725), BayesDel (0.721), and CADD (0.539) on SteppeDNA's own held-out test set. Competitor tools were not trained on this distribution, giving SteppeDNA a methodological advantage. Evaluated on SteppeDNA's own test set -- see [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for independent benchmark results. On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719-0.793.
 
 ## Supported Genes
 
@@ -36,6 +36,8 @@ Outperforms REVEL (0.725), BayesDel (0.721), and CADD (0.539) on SteppeDNA's own
 | PALB2 | 0.641 | 60 gnomAD-augmented |
 
 ## Features
+
+ML model handles missense variants only. Nonsense, frameshift, and splice variants use rule-based classification. Germline variants only.
 
 - **Ensemble ML**: XGBoost (60%) + MLP (40%) with isotonic probability calibration
 - **103 Engineered Features**: BLOSUM62, ESM-2 embeddings, AlphaMissense, MAVE, PhyloP, SpliceAI, AlphaFold 3D structure
@@ -191,4 +193,4 @@ SteppeDNA is a **research tool** and is **NOT** a clinical diagnostic. All predi
 
 ## License
 
-[MIT](LICENSE)
+Code: [MIT](LICENSE). Model artifacts and predictions: Research Use Only -- see [LICENSE-MODEL](LICENSE-MODEL).

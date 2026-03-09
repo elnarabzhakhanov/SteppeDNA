@@ -1,0 +1,14 @@
+Research Use Only License
+
+The trained model weights, calibrators, and prediction outputs of SteppeDNA
+are provided for research purposes only. They are NOT approved for clinical
+diagnostic use and have not been validated by any regulatory body.
+
+Use of model predictions for clinical decision-making is prohibited without
+independent clinical validation and regulatory approval.
+
+Model artifacts include all .pkl, .h5, .json files in the data/ directory
+that contain trained model parameters, calibrators, or prediction thresholds.
+
+The source code of SteppeDNA is separately licensed under the MIT License.
+See LICENSE for details.

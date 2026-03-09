@@ -1,7 +1,7 @@
 # SteppeDNA: Experimental Validation Report
 
-**Universal Multi-Gene Model v4.1 (gnomAD-augmented)**
-**Date:** February 2026
+**Universal Multi-Gene Model v5.3 (gnomAD-augmented)**
+**Date:** March 2026
 **Dataset:** ClinVar + gnomAD proxy-benign missense variants (19,223 across 5 HR genes)
 
 ---
@@ -143,6 +143,27 @@ These are individual features used within SteppeDNA, tested as standalone classi
 | SpliceAI | 0.470 | 0.323 | 0.000 | 3,845 | Jaganathan et al. 2019 |
 
 **Note:** MAVE has only 3.5% coverage (134/3,845 variants scored).
+
+### 5c. Per-Gene SOTA Comparison
+
+The overall AUC comparison in Section 5a is dominated by BRCA2 (52.4% of the test set). The table below breaks down performance by gene, which provides a more granular and honest comparison.
+
+| Gene | SteppeDNA | REVEL | BayesDel | CADD | Best Non-SteppeDNA |
+|------|-----------|-------|----------|------|-------------------|
+| BRCA2 | **0.983** | 0.891 | 0.949 | 0.908 | BayesDel |
+| RAD51D | **0.804** | 0.461 | 0.448 | 0.457 | REVEL |
+| RAD51C | **0.743** | 0.651 | 0.634 | 0.703 | CADD |
+| BRCA1 | **0.706** | 0.595 | 0.646 | 0.527 | BayesDel |
+| PALB2 | 0.641 | **0.732** | 0.432 | 0.564 | REVEL |
+
+**Key findings:**
+
+- SteppeDNA outperforms all three SOTA predictors on 4 of 5 genes at the per-gene level.
+- REVEL outperforms SteppeDNA on PALB2 (0.732 vs 0.641), most likely because REVEL was trained on a broader, multi-gene dataset that includes more PALB2 diversity.
+- Poor non-BRCA2 performance is a field-wide problem, not unique to SteppeDNA. It is driven by extreme class imbalance (BRCA1: 94.8% pathogenic, PALB2: 93.1%) and data scarcity (RAD51C: 675 total variants, RAD51D: 410 total variants).
+- Coverage differs across predictors: REVEL, BayesDel, and CADD scored only 72–73% of test variants via myvariant.info/dbNSFP, whereas SteppeDNA scores 100%. Per-gene counts for SOTA predictors are proportionally lower.
+
+**Note:** SOTA scores are retrieved from dbnsfp_sota_scores.csv. Per-gene comparisons for REVEL/BayesDel/CADD are computed on the scored subset only, which introduces a mild selection bias (unscored variants tend to be less well-characterised).
 
 ### SOTA Comparison Context
 
@@ -322,6 +343,9 @@ python scripts/generate_figures.py        # All visual proofs
 14. **Kazakh translations not expert-verified:** Medical/scientific terminology in Kazakh translations has not been reviewed by a native-speaking domain expert.
 15. **EVE score coverage gap:** EVE scores (Frazer et al., Nature 2021) are available for BRCA1, PALB2, RAD51C, RAD51D but NOT BRCA2 via dbNSFP/myvariant.info. Total 18,253 EVE variant scores fetched.
 16. **No population-specific allele frequencies:** gnomAD population-stratified AF data (AFR, AMR, EAS, NFE) is all zeros in the training data. The model has no population-specific frequency signals.
+17. **AlphaMissense indirect label leakage:** `am_score`, `am_pathogenic`, and `am_x_phylop` are derived from a model that was partially trained on ClinVar pathogenicity labels, creating a circular dependency with SteppeDNA's ClinVar-based training labels (see Section 14 above). Ablation without AlphaMissense features is planned future work to quantify the exact impact.
+18. **Test suite historical bias:** Prior to v5.3, feature engineering tests exclusively covered BRCA2 inputs, providing no automated verification that the pipeline behaves correctly for the 4 underperforming genes. Unit test coverage for BRCA1, PALB2, RAD51C, and RAD51D is a gap in the current QA process.
+19. **PVS1 evidence code overwrite:** Prior to v5.3, a logic error in the ACMG rule evaluator allowed canonical splice-site PVS1 evidence to silently overwrite nonsense or frameshift PVS1 when both flags were set simultaneously for the same variant. This has been corrected in v5.3.
 
 ---
 
@@ -485,6 +509,18 @@ MAVE scores are experimentally determined functional readouts. If a variant's MA
 3. **Low coverage:** Only 3.5% (134/3,845) of test variants have MAVE scores
 4. **Mitigation:** The `use_mave=False` flag in `feature_engineering.py` provides a leakage-free evaluation mode
 5. **Production decision:** MAVE features are kept in production because the leakage risk is minimal and the information is genuinely useful for BRCA2 variant interpretation
+
+### AlphaMissense Indirect Label Leakage Risk
+
+AlphaMissense (Cheng et al., Science 2023) was partially trained on ClinVar pathogenicity labels as part of its supervised fine-tuning step. SteppeDNA uses three AlphaMissense-derived features: `am_score`, `am_pathogenic`, and `am_x_phylop`. This creates an indirect leakage pathway: ClinVar labels were used to train AlphaMissense, whose scores are then used as features in SteppeDNA, which is itself trained on ClinVar labels.
+
+**Standalone AlphaMissense AUC on this test set:** 0.660 (see Section 5b). This is notably low relative to published benchmarks on independent datasets (typically AUC ~0.90+), which likely reflects the class imbalance in this test set rather than a flaw in AlphaMissense itself.
+
+**Feature importance:** `am_score` ranks within the top 15 features by mean absolute SHAP value.
+
+**Risk assessment:** Low-to-moderate. The circular dependency exists in principle, but AlphaMissense's low standalone AUC on this test set (0.660) indicates it is not a dominant driver of SteppeDNA's performance. The model's performance is not simply recapitulating AlphaMissense's predictions. Ablation (retraining without AM features) is recommended as future work to quantify the exact impact of the circular dependency on reported metrics.
+
+**Mitigation:** No action taken in production at this time. Full ablation (zero-out or drop `am_score`, `am_pathogenic`, `am_x_phylop` from all training and calibration data) would quantify the leakage impact and is a planned future experiment.
 
 ---
 

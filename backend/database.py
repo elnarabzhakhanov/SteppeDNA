@@ -12,10 +12,10 @@ import logging
 
 logger = logging.getLogger("steppedna.db")
 
-DB_PATH = os.path.join(
+DB_PATH = os.getenv("STEPPEDNA_DB_PATH", os.path.join(
     os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
     "data", "steppedna.db"
-)
+))
 
 def _get_conn():
     """Get a thread-local SQLite connection."""
