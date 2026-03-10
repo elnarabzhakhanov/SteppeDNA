@@ -481,7 +481,8 @@ async def predict(mutation_data: MutationInput, request: Request):
     except Exception:
         pass  # OOD check is non-critical
 
-    # Clip to [0.5%, 99.5%] -- no model should claim absolute certainty
+    # Clip to [0.5%, 99.5%] — epistemic humility: no model should claim absolute
+    # certainty, especially given ClinVar reclassification rates (~2-3%/year)
     probability = float(np.clip(probability, 0.005, 0.995))
 
     # Confidence estimation: prefer bootstrap CI (empirical) over Beta approximation
@@ -775,7 +776,7 @@ async def health():
         "universal_models": uni.get("ensemble_model") is not None,
         "universal_scaler": uni.get("scaler") is not None,
         "universal_calibrator": uni.get("calibrator") is not None,
-        "feature_names": len(uni.get("feature_names", [])),
+        "feature_names": len(uni.get("feature_names") or []),
         "phylop_scores": len(phylop_scores) > 0,
         "mave_scores": len(mave_by_variant) > 0,
         "alphamissense_scores": len(am_by_variant) > 0,

@@ -176,8 +176,13 @@ If using SteppeDNA in research, please cite:
 
 ## References
 
-- Mitchell et al. (2019). "Model Cards for Model Reporting." FAT* Conference.
-- Ioannidis et al. (2016). REVEL. Am J Hum Genet.
-- Cheng et al. (2023). AlphaMissense. Nature.
-- Lin et al. (2023). ESM-2. Science.
-- Richards et al. (2015). ACMG/AMP Standards and Guidelines.
+- Mitchell et al. (2019). "Model Cards for Model Reporting." *FAT\* Conference*.
+- Richards et al. (2015). "Standards and guidelines for the interpretation of sequence variants." *Genet Med* 17:405-424.
+- Ioannidis et al. (2016). "REVEL: An ensemble method for predicting the pathogenicity of rare missense variants." *Am J Hum Genet* 99:877-885.
+- Cheng et al. (2023). "Accurate proteome-wide missense variant effect prediction with AlphaMissense." *Science* 381:eadg7492.
+- Lin et al. (2023). "Evolutionary-scale prediction of atomic-level protein structure with a language model." *Science* 379:1123-1130.
+- Findlay et al. (2018). "Accurate classification of BRCA1 variants with saturation genome editing." *Nature* 562:217-222.
+- Frazer et al. (2021). "Disease variant prediction with deep generative models of evolutionary data." *Nature* 599:91-95.
+- Pollard et al. (2010). "Detection of nonneutral substitution rates on mammalian phylogenies." *Genome Res* 20:110-121.
+- Tavtigian et al. (2018). "Modeling the ACMG/AMP variant classification guidelines." *Hum Mutat* 39:1485-1492.
+- Rentzsch et al. (2019). "CADD: predicting the deleteriousness of variants throughout the human genome." *Nucleic Acids Res* 47:D886-D894.

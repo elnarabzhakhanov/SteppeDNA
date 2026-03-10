@@ -19,6 +19,15 @@ Evidence Codes Evaluated:
 
 Note: PS2/PM6 (de novo), PP1/BS4 (co-segregation), PS3/BS3 (functional studies),
 PS4 (prevalence), PP2/BP1 (gene mechanism) require data not available to this tool.
+
+This is a simplified computational implementation (~11 of 28+ ACMG/AMP criteria).
+Evidence combination uses a counting heuristic, not the full Bayesian framework
+described in Tavtigian et al. (2018, Hum Mutat).
+
+References:
+- Richards et al. (2015). ACMG/AMP Standards and Guidelines. Genet Med 17:405-424.
+- Tavtigian et al. (2018). Modeling the ACMG/AMP framework. Hum Mutat 39:1485-1492.
+- ClinGen SVI Working Group gene-specific BS1/BA1 thresholds.
 """
 
 # Gene-specific BS1 AF thresholds based on ClinGen SVI recommendations

@@ -66,6 +66,16 @@ cd SteppeDNA
 pip install -r requirements.txt
 ```
 
+### Data Files
+
+The ML model artifacts (`.pkl`, `.h5`) are not stored in git due to their size. They are included in the deployment environment and are required for predictions. If running locally, ensure the `data/` directory contains:
+- `universal_xgboost_final.json`, `universal_mlp_final.h5` (trained models)
+- `universal_scaler_ensemble.pkl`, `universal_calibrator_ensemble.pkl` (preprocessing)
+- `universal_feature_names.pkl` (103 feature names)
+- `phylop_scores.pkl`, `esm2_embeddings.pkl`, `structural_features.pkl` (feature data)
+
+To regenerate, run the training pipeline: `python scripts/train_universal_model.py`
+
 ### Run the Backend
 
 ```bash

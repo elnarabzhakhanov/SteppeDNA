@@ -6,6 +6,12 @@
 
 ---
 
+## Executive Summary
+
+SteppeDNA achieves an overall ROC-AUC of **0.978** (weighted) / **0.775** (macro-averaged per gene) on a held-out test set of 3,845 variants across 5 HR DNA repair genes. Performance is highly gene-dependent: **BRCA2** (AUC 0.983, reliability: High) is the only gene with robust temporal generalization (temporal AUC 0.983). Non-BRCA2 genes range from AUC 0.641 (PALB2) to 0.804 (RAD51D) on the held-out test, and degrade to near-random (0.51–0.61) on temporal validation. On independent gold-standard benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719–0.793. The SOTA comparison advantage (vs REVEL 0.725, BayesDel 0.721, CADD 0.539) reflects in-distribution evaluation; on independent benchmarks, performance is competitive but not dramatically superior. Key limitations include population bias toward European ancestry, potential AlphaMissense circular dependency (ablation pending), and insufficient pre-2024 training data for non-BRCA2 genes.
+
+---
+
 ## 1. Model Architecture
 
 - **Ensemble:** XGBoost (60%) + MLP Neural Network (40%)
