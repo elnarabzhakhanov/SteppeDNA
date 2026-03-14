@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SteppeDNA — Research Poster</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@400;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  @page {
+    size: 165cm 125cm;
+    margin: 0;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  :root {
+    --primary: #6260FF;
+    --primary-dark: #4e4cdf;
+    --primary-glow: rgba(98, 96, 255, 0.15);
+    --text-dark: #1a1a2e;
+    --text-body: #555570;
+    --bg: #f4f4f8;
+    --card-bg: #ffffff;
+    --border: #d9d9fc;
+    --secondary: #d9d9fc;
+    --success: #10B981;
+    --danger: #EF4444;
+    --warning: #F59E0B;
+    --info: #3B82F6;
+    --radius: 20px;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text-dark);
+    width: 165cm;
+    height: 125cm;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ─── HEADER BANNER ─── */
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #2a2855 40%, #3d3a8a 70%, #6260FF 100%);
+    padding: 2.8cm 4cm 2.4cm 4cm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: radial-gradient(circle at 15% 50%, rgba(98, 96, 255, 0.12) 0%, transparent 50%),
+                radial-gradient(circle at 85% 30%, rgba(98, 96, 255, 0.08) 0%, transparent 40%);
+  }
+
+  /* DNA helix decorative strands */
+  .header::after {
+    content: '';
+    position: absolute;
+    top: -2cm;
+    right: 6cm;
+    width: 40cm;
+    height: 20cm;
+    background:
+      radial-gradient(ellipse 3cm 0.4cm at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 100%),
+      radial-gradient(ellipse 2cm 0.3cm at 30% 40%, rgba(255,255,255,0.03) 0%, transparent 100%),
+      radial-gradient(ellipse 2.5cm 0.35cm at 70% 60%, rgba(255,255,255,0.03) 0%, transparent 100%);
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 2cm;
+    position: relative;
+    z-index: 1;
+  }
+
+  .logo-container {
+    width: 5cm;
+    height: 5cm;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .logo-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: brightness(1.1) drop-shadow(0 0 20px rgba(98, 96, 255, 0.4));
+  }
+
+  .header-title h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.2cm;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+  }
+
+  .header-subtitle {
+    font-size: 1cm;
+    color: rgba(255, 255, 255, 0.75);
+    font-weight: 500;
+    margin-top: 0.4cm;
+    letter-spacing: 0.05em;
+  }
+
+  .header-right {
+    position: relative;
+    z-index: 1;
+    text-align: right;
+    flex-shrink: 0;
+  }
+
+  .author-name {
+    font-family: 'Inter', sans-serif;
+    font-size: 1cm;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .author-affiliation {
+    font-size: 0.7cm;
+    color: rgba(255, 255, 255, 0.6);
+    font-weight: 400;
+    margin-top: 0.2cm;
+  }
+
+  .competition-badge {
+    display: inline-block;
+    margin-top: 0.6cm;
+    padding: 0.3cm 0.8cm;
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 99px;
+    font-size: 0.6cm;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.85);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* ─── MAIN CONTENT GRID ─── */
+  .content {
+    flex: 1;
+    padding: 1.8cm 2.5cm 1.8cm 2.5cm;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 1.4cm;
+    min-height: 0;
+  }
+
+  /* ─── CARDS ─── */
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 1.2cm;
+    box-shadow: 0 8px 30px -8px rgba(98, 96, 255, 0.06);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 0.85cm;
+    font-weight: 600;
+    color: var(--primary);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.7cm;
+    padding-bottom: 0.4cm;
+    border-bottom: 2px solid var(--secondary);
+    display: flex;
+    align-items: center;
+    gap: 0.4cm;
+  }
+
+  .card-title .icon {
+    width: 1.2cm;
+    height: 1.2cm;
+    background: var(--secondary);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6cm;
+    flex-shrink: 0;
+  }
+
+  .card-body {
+    font-size: 0.52cm;
+    line-height: 1.65;
+    color: var(--text-body);
+    flex: 1;
+  }
+
+  .card-body p {
+    margin-bottom: 0.35cm;
+  }
+
+  .card-body strong {
+    color: var(--text-dark);
+    font-weight: 700;
+  }
+
+  .card-body ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card-body ul li {
+    padding-left: 0.6cm;
+    position: relative;
+    margin-bottom: 0.2cm;
+  }
+
+  .card-body ul li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.22cm;
+    width: 0.2cm;
+    height: 0.2cm;
+    background: var(--primary);
+    border-radius: 50%;
+  }
+
+  /* ─── LEFT COLUMN ─── */
+  .col-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4cm;
+  }
+
+  /* ─── CENTER COLUMN ─── */
+  .col-center {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4cm;
+  }
+
+  /* ─── RIGHT COLUMN ─── */
+  .col-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.4cm;
+  }
+
+  /* ─── PIPELINE DIAGRAM ─── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3cm;
+    padding: 0.6cm 0;
+  }
+
+  .pipeline-step {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: #fff;
+    border-radius: 14px;
+    padding: 0.5cm 0.6cm;
+    text-align: center;
+    font-size: 0.42cm;
+    font-weight: 700;
+    min-width: 3.5cm;
+    box-shadow: 0 6px 18px rgba(98, 96, 255, 0.25);
+  }
+
+  .pipeline-step small {
+    display: block;
+    font-size: 0.32cm;
+    font-weight: 400;
+    opacity: 0.8;
+    margin-top: 0.1cm;
+  }
+
+  .pipeline-arrow {
+    font-size: 0.8cm;
+    color: var(--primary);
+    font-weight: 300;
+  }
+
+  /* ─── FEATURE CATEGORIES VISUAL ─── */
+  .feature-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4cm;
+    margin-top: 0.3cm;
+  }
+
+  .feature-chip {
+    background: #f8f8fc;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0.3cm 0.4cm;
+    font-size: 0.38cm;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    gap: 0.25cm;
+  }
+
+  .feature-chip .feat-count {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 800;
+    font-size: 0.32cm;
+    padding: 0.1cm 0.22cm;
+    border-radius: 6px;
+    min-width: 0.7cm;
+    text-align: center;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* ─── BAR CHARTS ─── */
+  .bar-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35cm;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3cm;
+  }
+
+  .bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.38cm;
+    font-weight: 600;
+    color: var(--text-dark);
+    min-width: 2.5cm;
+    text-align: right;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 0.7cm;
+    background: #f0f0f5;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.3cm;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.35cm;
+    font-weight: 800;
+    color: #fff;
+    transition: width 0.5s ease;
+  }
+
+  .bar-fill.primary { background: linear-gradient(90deg, var(--primary) 0%, #8382ff 100%); }
+  .bar-fill.success { background: linear-gradient(90deg, #059669 0%, var(--success) 100%); }
+  .bar-fill.danger { background: linear-gradient(90deg, #DC2626 0%, var(--danger) 100%); }
+  .bar-fill.warning { background: linear-gradient(90deg, #D97706 0%, var(--warning) 100%); }
+  .bar-fill.info { background: linear-gradient(90deg, #2563EB 0%, var(--info) 100%); }
+  .bar-fill.gray { background: linear-gradient(90deg, #6b7280 0%, #9ca3af 100%); }
+
+  /* ─── METRIC HIGHLIGHT BOXES ─── */
+  .metrics-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5cm;
+    margin: 0.4cm 0;
+  }
+
+  .metric-box {
+    background: #f8f8fc;
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 0.5cm;
+    text-align: center;
+  }
+
+  .metric-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85cm;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1.1;
+  }
+
+  .metric-value.success { color: var(--success); }
+  .metric-value.danger { color: var(--danger); }
+
+  .metric-label {
+    font-size: 0.32cm;
+    color: var(--text-body);
+    font-weight: 600;
+    margin-top: 0.12cm;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ─── GENE TABLE ─── */
+  .gene-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.4cm;
+    margin-top: 0.3cm;
+  }
+
+  .gene-table th {
+    background: var(--primary);
+    color: #fff;
+    font-weight: 700;
+    padding: 0.3cm 0.35cm;
+    text-align: left;
+    font-size: 0.36cm;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .gene-table th:first-child { border-radius: 10px 0 0 0; }
+  .gene-table th:last-child { border-radius: 0 10px 0 0; }
+
+  .gene-table td {
+    padding: 0.28cm 0.35cm;
+    border-bottom: 1px solid var(--border);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  .gene-table td:first-child {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    color: var(--text-dark);
+    font-style: italic;
+  }
+
+  .gene-table tr:last-child td:first-child { border-radius: 0 0 0 10px; }
+  .gene-table tr:last-child td:last-child { border-radius: 0 0 10px 0; }
+
+  .gene-table tr:nth-child(even) td {
+    background: #fafaff;
+  }
+
+  /* Tier badges */
+  .tier {
+    display: inline-block;
+    padding: 0.08cm 0.3cm;
+    border-radius: 6px;
+    font-size: 0.32cm;
+    font-weight: 700;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .tier.high { background: #D1FAE5; color: #065F46; }
+  .tier.moderate { background: #FEF3C7; color: #92400E; }
+  .tier.low { background: #FEE2E2; color: #991B1B; }
+
+  /* ─── DATASET VISUAL ─── */
+  .dataset-bar {
+    display: flex;
+    height: 1.2cm;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0.4cm 0;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.06);
+  }
+
+  .dataset-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.34cm;
+    font-weight: 700;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dataset-segment span {
+    position: relative;
+    z-index: 1;
+  }
+
+  .dataset-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4cm;
+    margin-top: 0.3cm;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.2cm;
+    font-size: 0.36cm;
+    color: var(--text-body);
+  }
+
+  .legend-dot {
+    width: 0.35cm;
+    height: 0.35cm;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  /* ─── SOTA COMPARISON ─── */
+  .sota-row {
+    display: flex;
+    align-items: center;
+    gap: 0.3cm;
+    margin-bottom: 0.35cm;
+  }
+
+  .sota-name {
+    font-weight: 700;
+    font-size: 0.4cm;
+    min-width: 3cm;
+    color: var(--text-dark);
+  }
+
+  .sota-bar-track {
+    flex: 1;
+    height: 0.8cm;
+    background: #f0f0f5;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .sota-bar-fill {
+    height: 100%;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 0.3cm;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.36cm;
+    font-weight: 800;
+    color: #fff;
+  }
+
+  /* ─── IMPACT ARROW BOXES ─── */
+  .impact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.4cm;
+    margin-top: 0.3cm;
+  }
+
+  .impact-box {
+    background: #f8f8fc;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.4cm;
+    text-align: center;
+  }
+
+  .impact-gene {
+    font-weight: 700;
+    font-size: 0.4cm;
+    color: var(--text-dark);
+    font-style: italic;
+  }
+
+  .impact-values {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.2cm;
+    margin-top: 0.15cm;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.38cm;
+    font-weight: 700;
+  }
+
+  .impact-before { color: var(--danger); }
+  .impact-arrow { color: var(--primary); font-size: 0.5cm; }
+  .impact-after { color: var(--success); }
+  .impact-delta {
+    font-size: 0.3cm;
+    color: var(--success);
+    font-weight: 800;
+  }
+
+  /* ─── CONCLUSIONS & QR ─── */
+  .conclusion-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .conclusion-list li {
+    position: relative;
+    padding-left: 0.8cm;
+    margin-bottom: 0.35cm;
+    font-size: 0.45cm;
+    line-height: 1.55;
+    color: var(--text-dark);
+  }
+
+  .conclusion-list li::before {
+    content: attr(data-num);
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 800;
+    font-size: 0.42cm;
+    color: var(--primary);
+  }
+
+  /* ─── ENSEMBLE DIAGRAM ─── */
+  .ensemble-visual {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4cm;
+    padding: 0.5cm 0;
+  }
+
+  .ensemble-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5cm;
+  }
+
+  .model-box {
+    border-radius: 14px;
+    padding: 0.4cm 0.6cm;
+    text-align: center;
+    font-weight: 700;
+    font-size: 0.42cm;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .model-box.xgb {
+    background: linear-gradient(135deg, #6260FF 0%, #4e4cdf 100%);
+    color: #fff;
+  }
+
+  .model-box.mlp {
+    background: linear-gradient(135deg, #8382ff 0%, #6260FF 100%);
+    color: #fff;
+  }
+
+  .model-box.calib {
+    background: #fff;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+  }
+
+  .model-box.output {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    color: #fff;
+    font-size: 0.45cm;
+  }
+
+  .weight-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.34cm;
+    font-weight: 600;
+    color: var(--text-body);
+  }
+
+  .merge-symbol {
+    font-size: 0.6cm;
+    color: var(--primary);
+    font-weight: 300;
+  }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    background: var(--text-dark);
+    padding: 0.6cm 4cm;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .footer-text {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.4cm;
+  }
+
+  .footer-links {
+    display: flex;
+    gap: 1.5cm;
+  }
+
+  .footer-link {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.4cm;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  /* ─── SPANNING ─── */
+  .span-full {
+    grid-column: 1 / -1;
+  }
+
+  /* Highlight text */
+  .highlight {
+    color: var(--primary);
+    font-weight: 700;
+  }
+
+  /* Inline badge */
+  .badge {
+    display: inline-block;
+    padding: 0.05cm 0.25cm;
+    border-radius: 6px;
+    font-size: 0.34cm;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .badge.pathogenic { background: #FEE2E2; color: #991B1B; }
+  .badge.benign { background: #D1FAE5; color: #065F46; }
+
+  /* Section divider */
+  .section-note {
+    font-size: 0.34cm;
+    color: var(--text-body);
+    font-style: italic;
+    margin-top: 0.3cm;
+    padding-top: 0.2cm;
+    border-top: 1px dashed var(--border);
+  }
+
+  /* ─── PRINT STYLES ─── */
+  @media print {
+    body {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-container">
+      <img src="frontend/logo.png" alt="SteppeDNA Logo">
+    </div>
+    <div class="header-title">
+      <h1>SteppeDNA</h1>
+      <div class="header-subtitle">Multi-Gene Pathogenicity Classifier for Homologous Recombination DNA Repair Genes</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="author-name">Elnar Abzhakhanov</div>
+    <div class="author-affiliation">Kazakhstan</div>
+    <div class="competition-badge">Infomatrix Asia 2026</div>
+  </div>
+</div>
+
+<!-- ═══════════ CONTENT GRID ═══════════ -->
+<div class="content">
+
+  <!-- ─── LEFT COLUMN ─── -->
+  <div class="col-left">
+
+    <!-- PROBLEM -->
+    <div class="card">
+      <div class="card-title"><div class="icon">🧬</div> Problem</div>
+      <div class="card-body">
+        <p><strong>Variants of Uncertain Significance (VUS)</strong> in DNA repair genes prevent accurate cancer risk assessment for patients and clinicians.</p>
+        <p>Existing predictors (REVEL, CADD) have <strong>limited coverage</strong> and poor performance on <strong>non-BRCA2 HR genes</strong> — PALB2, RAD51C, RAD51D.</p>
+        <p style="margin-top:0.3cm; font-size:0.48cm; color: var(--primary); font-weight:700; font-style:italic;">Can an ensemble ML model accurately classify missense variants across 5 HR genes?</p>
+      </div>
+    </div>
+
+    <!-- DATASET -->
+    <div class="card">
+      <div class="card-title"><div class="icon">📊</div> Dataset</div>
+      <div class="card-body">
+        <p><strong>19,223 variants</strong> across 5 genes from ClinVar + gnomAD v4</p>
+        <div class="dataset-bar">
+          <div class="dataset-segment" style="width:52%; background: linear-gradient(135deg, #6260FF, #4e4cdf);">
+            <span>BRCA2 52%</span>
+          </div>
+          <div class="dataset-segment" style="width:28%; background: linear-gradient(135deg, #8382ff, #6260FF);">
+            <span>BRCA1 28%</span>
+          </div>
+          <div class="dataset-segment" style="width:14%; background: linear-gradient(135deg, #3B82F6, #2563EB);">
+            <span>PALB2</span>
+          </div>
+          <div class="dataset-segment" style="width:3.5%; background: linear-gradient(135deg, #10B981, #059669);">
+          </div>
+          <div class="dataset-segment" style="width:2.5%; background: linear-gradient(135deg, #F59E0B, #D97706);">
+          </div>
+        </div>
+        <div class="dataset-legend">
+          <div class="legend-item"><div class="legend-dot" style="background:#6260FF;"></div> BRCA2</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#8382ff;"></div> BRCA1</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#3B82F6;"></div> PALB2</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#10B981;"></div> RAD51C</div>
+          <div class="legend-item"><div class="legend-dot" style="background:#F59E0B;"></div> RAD51D</div>
+        </div>
+        <p class="section-note">gnomAD proxy-benign variants (485) added to fix class imbalance in rare genes</p>
+      </div>
+    </div>
+
+    <!-- 103 FEATURES -->
+    <div class="card">
+      <div class="card-title"><div class="icon">⚙️</div> 103 Engineered Features</div>
+      <div class="card-body">
+        <div class="feature-grid">
+          <div class="feature-chip"><span class="feat-count">22</span> ESM-2 Embeddings</div>
+          <div class="feature-chip"><span class="feat-count">42</span> Amino Acid Encoding</div>
+          <div class="feature-chip"><span class="feat-count">13</span> Biochemical</div>
+          <div class="feature-chip"><span class="feat-count">10</span> Structural (AlphaFold)</div>
+          <div class="feature-chip"><span class="feat-count">4</span> Conservation</div>
+          <div class="feature-chip"><span class="feat-count">4</span> Interaction Terms</div>
+          <div class="feature-chip"><span class="feat-count">3</span> AlphaMissense</div>
+          <div class="feature-chip"><span class="feat-count">2</span> Positional</div>
+          <div class="feature-chip"><span class="feat-count">2</span> SpliceAI</div>
+          <div class="feature-chip"><span class="feat-count">1</span> MAVE Score</div>
+        </div>
+        <p class="section-note">Gene-identifying features intentionally excluded to force transferable learning</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── CENTER COLUMN ─── -->
+  <div class="col-center">
+
+    <!-- METHODOLOGY PIPELINE -->
+    <div class="card">
+      <div class="card-title"><div class="icon">🔬</div> Methodology</div>
+      <div class="card-body">
+        <div class="pipeline">
+          <div class="pipeline-step">ClinVar +<br>gnomAD<small>19,223 variants</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">Feature<br>Engineering<small>103 features</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">Ensemble<br>Model<small>XGB + MLP</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step">Isotonic<br>Calibration<small>Probability</small></div>
+          <div class="pipeline-arrow">→</div>
+          <div class="pipeline-step" style="background: linear-gradient(135deg, var(--success), #059669);">Pathogenicity<br>Score<small>0.0 – 1.0</small></div>
+        </div>
+
+        <!-- Ensemble architecture -->
+        <div class="ensemble-visual">
+          <div class="ensemble-row">
+            <div class="model-box xgb">XGBoost<br><span style="font-size:0.34cm; opacity:0.85;">Gradient Boosting</span></div>
+            <div class="weight-label">60%</div>
+            <div class="merge-symbol">+</div>
+            <div class="weight-label">40%</div>
+            <div class="model-box mlp">MLP Neural Net<br><span style="font-size:0.34cm; opacity:0.85;">Deep Learning</span></div>
+          </div>
+          <div style="font-size:0.5cm; color: var(--primary);">↓</div>
+          <div class="ensemble-row">
+            <div class="model-box calib">Isotonic Calibration</div>
+            <div style="font-size:0.5cm; color: var(--primary);">→</div>
+            <div class="model-box output">Calibrated Score</div>
+          </div>
+        </div>
+        <p class="section-note">10-fold stratified cross-validation (gene × label stratified) · SMOTE oversampling · Early stopping</p>
+      </div>
+    </div>
+
+    <!-- RESULTS: Overall Performance -->
+    <div class="card">
+      <div class="card-title"><div class="icon">📈</div> Results</div>
+      <div class="card-body">
+        <div class="metrics-row">
+          <div class="metric-box">
+            <div class="metric-value">0.978</div>
+            <div class="metric-label">ROC-AUC</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value">0.881</div>
+            <div class="metric-label">MCC</div>
+          </div>
+          <div class="metric-box">
+            <div class="metric-value success">95.7%</div>
+            <div class="metric-label">Sensitivity</div>
+          </div>
+        </div>
+
+        <!-- Per-gene table -->
+        <table class="gene-table">
+          <thead>
+            <tr>
+              <th>Gene</th>
+              <th>Test n</th>
+              <th>ROC-AUC</th>
+              <th>MCC</th>
+              <th>Bal. Acc.</th>
+              <th>Tier</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>BRCA2</td>
+              <td>2,017</td>
+              <td>0.983</td>
+              <td>0.891</td>
+              <td>96.9%</td>
+              <td><span class="tier high">High</span></td>
+            </tr>
+            <tr>
+              <td>RAD51D</td>
+              <td>82</td>
+              <td>0.804</td>
+              <td>0.437</td>
+              <td>72.0%</td>
+              <td><span class="tier moderate">Moderate</span></td>
+            </tr>
+            <tr>
+              <td>RAD51C</td>
+              <td>135</td>
+              <td>0.743</td>
+              <td>0.403</td>
+              <td>70.6%</td>
+              <td><span class="tier moderate">Moderate</span></td>
+            </tr>
+            <tr>
+              <td>BRCA1</td>
+              <td>1,087</td>
+              <td>0.706</td>
+              <td>0.312</td>
+              <td>66.0%</td>
+              <td><span class="tier low">Low</span></td>
+            </tr>
+            <tr>
+              <td>PALB2</td>
+              <td>524</td>
+              <td>0.641</td>
+              <td>0.346</td>
+              <td>65.1%</td>
+              <td><span class="tier low">Low</span></td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="section-note">10-Fold CV AUC: 0.9797 ± 0.0031 · Macro-average AUC: 0.775 · Test set n = 3,845</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ─── RIGHT COLUMN ─── -->
+  <div class="col-right">
+
+    <!-- SOTA COMPARISON -->
+    <div class="card">
+      <div class="card-title"><div class="icon">🏆</div> vs. State-of-the-Art</div>
+      <div class="card-body">
+        <div class="bar-chart">
+          <div class="bar-row">
+            <div class="bar-label">SteppeDNA</div>
+            <div class="bar-track">
+              <div class="bar-fill primary" style="width: 97.8%;">0.978</div>
+            </div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">REVEL</div>
+            <div class="bar-track">
+              <div class="bar-fill gray" style="width: 72.5%;">0.725</div>
+            </div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">BayesDel</div>
+            <div class="bar-track">
+              <div class="bar-fill gray" style="width: 72.1%;">0.721</div>
+            </div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label">CADD</div>
+            <div class="bar-track">
+              <div class="bar-fill gray" style="width: 53.9%;">0.539</div>
+            </div>
+          </div>
+        </div>
+        <p class="section-note">Comparison on SteppeDNA's held-out test set (ROC-AUC). Competitors have 72% coverage vs. 100% for SteppeDNA.</p>
+      </div>
+    </div>
+
+    <!-- KEY INNOVATION: gnomAD Impact -->
+    <div class="card">
+      <div class="card-title"><div class="icon">💡</div> Key Innovation</div>
+      <div class="card-body">
+        <p><strong>gnomAD proxy-benign augmentation</strong> dramatically improved non-BRCA2 gene performance:</p>
+        <div class="impact-grid">
+          <div class="impact-box">
+            <div class="impact-gene">RAD51C</div>
+            <div class="impact-values">
+              <span class="impact-before">0.509</span>
+              <span class="impact-arrow">→</span>
+              <span class="impact-after">0.743</span>
+            </div>
+            <div class="impact-delta">+0.234</div>
+          </div>
+          <div class="impact-box">
+            <div class="impact-gene">RAD51D</div>
+            <div class="impact-values">
+              <span class="impact-before">0.586</span>
+              <span class="impact-arrow">→</span>
+              <span class="impact-after">0.804</span>
+            </div>
+            <div class="impact-delta">+0.218</div>
+          </div>
+          <div class="impact-box">
+            <div class="impact-gene">BRCA1</div>
+            <div class="impact-values">
+              <span class="impact-before">0.563</span>
+              <span class="impact-arrow">→</span>
+              <span class="impact-after">0.706</span>
+            </div>
+            <div class="impact-delta">+0.143</div>
+          </div>
+          <div class="impact-box">
+            <div class="impact-gene">PALB2</div>
+            <div class="impact-values">
+              <span class="impact-before">0.546</span>
+              <span class="impact-arrow">→</span>
+              <span class="impact-after">0.641</span>
+            </div>
+            <div class="impact-delta">+0.095</div>
+          </div>
+        </div>
+        <p class="section-note">485 common population variants corrected extreme class imbalance (>90% pathogenic) in non-BRCA2 genes</p>
+      </div>
+    </div>
+
+    <!-- CONCLUSIONS -->
+    <div class="card">
+      <div class="card-title"><div class="icon">✦</div> Conclusions</div>
+      <div class="card-body">
+        <ol class="conclusion-list">
+          <li data-num="1.">SteppeDNA achieves <strong>AUC 0.978</strong> across 5 HR genes with <strong>100% variant coverage</strong></li>
+          <li data-num="2.">Population-frequency augmentation is <strong>critical</strong> for data-scarce genes</li>
+          <li data-num="3.">Per-gene reliability tiers ensure <strong>honest, transparent</strong> reporting</li>
+          <li data-num="4.">Web platform delivers <strong>SHAP explanations</strong>, ACMG evidence, and <strong>3D protein visualization</strong></li>
+        </ol>
+        <p class="section-note" style="margin-top:0.5cm; font-size:0.38cm;"><strong>Future work:</strong> Larger ESM-2 models (650M), prospective clinical validation, Central Asian population data</p>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<div class="footer">
+  <div class="footer-text">Research Use Only (RUO) · MIT License · v5.3.0 · March 2026</div>
+  <div class="footer-links">
+    <span class="footer-link">github.com/elnarabzhakhanov/SteppeDNA</span>
+  </div>
+</div>
+
+</body>
+</html>
