@@ -6,7 +6,6 @@ Uses synchronous sqlite3 wrapped in FastAPI async endpoints.
 """
 import os
 import sqlite3
-import json
 import time
 import logging
 
@@ -17,6 +16,7 @@ DB_PATH = os.getenv("STEPPEDNA_DB_PATH", os.path.join(
     "data", "steppedna.db"
 ))
 
+
 def _get_conn():
     """Get a thread-local SQLite connection."""
     conn = sqlite3.connect(DB_PATH)
@@ -24,6 +24,7 @@ def _get_conn():
     conn.execute("PRAGMA journal_mode=WAL")  # Better concurrent read performance
     conn.execute("PRAGMA busy_timeout=5000")
     return conn
+
 
 def init_db():
     """Initialize database tables if they don't exist."""
@@ -75,9 +76,10 @@ def init_db():
     finally:
         conn.close()
 
+
 def record_analysis(gene, cdna_pos, aa_ref, aa_alt, aa_pos, mutation,
-                     prediction, probability, risk_tier, confidence_label,
-                     ci_lower, ci_upper, ip_hash=None, request_id=None, latency_ms=None):
+                    prediction, probability, risk_tier, confidence_label,
+                    ci_lower, ci_upper, ip_hash=None, request_id=None, latency_ms=None):
     """Record a single variant analysis."""
     conn = _get_conn()
     try:
@@ -97,8 +99,9 @@ def record_analysis(gene, cdna_pos, aa_ref, aa_alt, aa_pos, mutation,
     finally:
         conn.close()
 
+
 def record_vcf_upload(filename, gene, total_variants, missense_found,
-                       pathogenic_count, benign_count, ip_hash=None, latency_ms=None):
+                      pathogenic_count, benign_count, ip_hash=None, latency_ms=None):
     """Record a VCF upload analysis."""
     conn = _get_conn()
     try:
@@ -116,6 +119,7 @@ def record_vcf_upload(filename, gene, total_variants, missense_found,
     finally:
         conn.close()
 
+
 def get_recent_analyses(limit=50):
     """Get recent analyses for the history API."""
     conn = _get_conn()
@@ -129,6 +133,7 @@ def get_recent_analyses(limit=50):
         return [dict(row) for row in rows]
     finally:
         conn.close()
+
 
 def get_analysis_stats():
     """Get aggregate analysis statistics."""

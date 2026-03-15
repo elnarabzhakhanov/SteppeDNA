@@ -18,8 +18,8 @@ from scipy.spatial import KDTree
 
 from backend.models import (
     DATA_DIR, SUPPORTED_GENES, GENE_MAX_AA,
-    _get_universal_models, _load_pickle,
-    _BOOTSTRAP_MODELS, _CONFORMAL_THRESHOLDS,
+    _get_universal_models, _BOOTSTRAP_MODELS,
+    _CONFORMAL_THRESHOLDS,
 )
 
 logger = logging.getLogger("steppedna")
@@ -28,6 +28,7 @@ logger = logging.getLogger("steppedna")
 # ─── Training Data Index for Data Scarcity Quantification (Item 41) ──────────
 _TRAINING_INDEX: dict = {}  # gene -> {"aa_positions": np.array, "ref_aas": list, ...}
 DATA_SCARCITY_WINDOW = 50   # +/- AA positions for neighborhood count
+
 
 def _build_training_index():
     """Build per-gene training data index from master dataset for data scarcity computation."""
@@ -145,7 +146,8 @@ def compute_data_support(gene_name: str, aa_pos: int, aa_ref: str, aa_alt: str,
 # ─── Contrastive Explanation Pairs (Item 43) ─────────────────────────────────
 _CONTRASTIVE_INDEX: dict = {}  # gene -> {"tree_path": KDTree, "tree_benign": KDTree, ...}
 
-def _build_contrastive_index():
+
+def _build_contrastive_index():  # noqa: C901
     """Build per-gene KD-trees on scaled training features for contrastive explanations."""
     csv_path = os.path.join(DATA_DIR, "master_training_dataset.csv")
     if not os.path.exists(csv_path):

@@ -232,9 +232,13 @@ body {
 .logo-text {
     font-family: 'Playfair Display', serif;
     font-size: 2.2rem;
-    font-weight: 400;
-    letter-spacing: 0.5px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     color: white;
+}
+
+.logo-text .dna {
+    color: var(--primary);
 }
 
 .tagline {
@@ -1889,6 +1893,14 @@ footer a {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
+@keyframes viewerFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+@keyframes viewerPulse {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+}
 
 .ds-card {
     animation: fadeInUp 0.35s ease both;
@@ -2517,6 +2529,7 @@ footer a {
     overflow: hidden;
     border: 1px solid var(--border);
     background: #000;
+    animation: viewerFadeIn 0.5s ease-out;
 }
 .viewer3d-loading {
     position: absolute;
@@ -2527,6 +2540,7 @@ footer a {
     font-size: 0.85rem;
     z-index: 2;
     display: flex;
+    animation: viewerPulse 1.5s ease-in-out infinite;
     align-items: center;
 }
 .viewer3d-error {

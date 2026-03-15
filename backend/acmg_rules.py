@@ -31,18 +31,19 @@ GENE_BS1_THRESHOLDS = {
     "RAD51D": 0.005,
 }
 
-# BA1 stand-alone benign threshold (ClinGen SVI: AF > 0.05 for dominant disorders)
-# For AR cancer predisposition genes, a lower threshold is appropriate
+# BA1 stand-alone benign threshold — must be HIGHER than BS1 for each gene.
+# BA1 = "benign, stand-alone" (stronger evidence) vs BS1 = "strong benign" (needs corroboration).
+# Lowered from original 0.01 (all genes) to gene-specific values per ClinGen SVI guidance.
 GENE_BA1_THRESHOLDS = {
-    "BRCA1": 0.01,
-    "BRCA2": 0.01,
-    "PALB2": 0.01,
-    "RAD51C": 0.01,
-    "RAD51D": 0.01,
+    "BRCA1": 0.005,   # BS1=0.001, BA1=0.005 (was 0.01)
+    "BRCA2": 0.005,   # BS1=0.001, BA1=0.005 (was 0.01)
+    "PALB2": 0.005,   # BS1=0.002, BA1=0.005 (was 0.01)
+    "RAD51C": 0.01,   # BS1=0.005, BA1=0.01 (unchanged)
+    "RAD51D": 0.01,   # BS1=0.005, BA1=0.01 (unchanged)
 }
 
 
-def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):
+def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):  # noqa: C901
     """
     Evaluate ACMG criteria for a variant.
 
@@ -59,7 +60,7 @@ def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):
     met_codes = {}
 
     # PM1: structural proximity to functional sites (5A threshold)
-    domain = features.get('domain', 'uncharacterized')
+    features.get('domain', 'uncharacterized')
     dist_dna = features.get('dist_dna', 999.0)
     dist_palb2 = features.get('dist_palb2', 999.0)
 
@@ -173,7 +174,7 @@ _BENIGN_STRONG = {"BS1", "BS2", "BS3", "BS4"}
 _BENIGN_SUPPORTING = {"BP1", "BP2", "BP3", "BP4", "BP5", "BP6", "BP7"}
 
 
-def combine_acmg_evidence(met_codes: dict) -> str:
+def combine_acmg_evidence(met_codes: dict) -> str:  # noqa: C901
     """
     Combine ACMG evidence codes into a 5-tier classification per Richards et al. 2015 Table 5.
 

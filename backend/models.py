@@ -11,7 +11,6 @@ import json
 import pickle
 import logging
 
-import numpy as np
 import xgboost as xgb
 
 logger = logging.getLogger("steppedna")
@@ -50,9 +49,9 @@ ESM2_PCA_COMPONENTS = 20   # Number of PCA components from ESM-2 embeddings
 MAX_VCF_SIZE = 50 * 1024 * 1024  # 50 MB
 
 # Valid amino acid codes for input validation
-VALID_AA_CODES = {'Ala','Arg','Asn','Asp','Cys','Gln','Glu','Gly','His','Ile',
-                   'Leu','Lys','Met','Phe','Pro','Ser','Ter','Thr','Trp','Tyr','Val',
-                   'Fs','Del','Ins','Dup','*'}
+VALID_AA_CODES = {'Ala', 'Arg', 'Asn', 'Asp', 'Cys', 'Gln', 'Glu', 'Gly', 'His', 'Ile',
+                  'Leu', 'Lys', 'Met', 'Phe', 'Pro', 'Ser', 'Ter', 'Thr', 'Trp', 'Tyr', 'Val',
+                  'Fs', 'Del', 'Ins', 'Dup', '*'}
 
 
 # ─── Pickle Loading ──────────────────────────────────────────────────────────
@@ -117,6 +116,7 @@ logger.info(f"[OK] Genomic mapping: {len(genomic_to_cdna)} positions")
 # ─── Per-Gene Calibrators (Item 45) ─────────────────────────────────────────
 _GENE_CALIBRATORS: dict = {}  # gene -> IsotonicRegression or None
 
+
 def _load_gene_calibrators():
     """Load per-gene calibrators from data/calibrator_<gene>.pkl files."""
     for gene in SUPPORTED_GENES:
@@ -135,6 +135,7 @@ def _load_gene_calibrators():
 
 # ─── Gene-Adaptive Ensemble Weights (Item 38) ──────────────────────────────
 _GENE_ENSEMBLE_WEIGHTS: dict = {}  # gene -> {"xgb_weight": float, "mlp_weight": float}
+
 
 def _load_gene_ensemble_weights():
     """Load per-gene optimized ensemble weights from data/gene_ensemble_weights.json."""
@@ -158,6 +159,7 @@ def _load_gene_ensemble_weights():
 # ─── Bootstrap Models for Confidence Intervals (Item 39) ─────────────────────
 _BOOTSTRAP_MODELS: list = []  # list of xgb.Booster objects
 N_BOOTSTRAP = 50
+
 
 def _load_bootstrap_models():
     """Load pre-trained bootstrap XGBoost models for confidence interval estimation."""
@@ -187,9 +189,11 @@ def _load_bootstrap_models():
 # ─── Active Learning Priorities (Item 42) ────────────────────────────────────
 _ACTIVE_LEARNING: dict = {}  # loaded from data/active_learning_priorities.json
 
+
 def _get_active_learning() -> dict:
     """Getter to avoid stale module-level import references."""
     return _ACTIVE_LEARNING
+
 
 def _load_active_learning_priorities():
     """Load pre-computed active learning priority rankings."""
@@ -209,6 +213,7 @@ def _load_active_learning_priorities():
 
 # ─── Split Conformal Prediction (Item 5.1) ────────────────────────────────────
 _CONFORMAL_THRESHOLDS: dict = {}  # gene -> {"quantile": float, "alpha": float, ...}
+
 
 def _load_conformal_thresholds():
     """Load per-gene conformal prediction quantile thresholds."""
@@ -234,6 +239,7 @@ DEVICE = "cpu"
 
 # Global Universal ML Model Architecture cache
 _UNIVERSAL_MODELS = None
+
 
 def _get_universal_models():
     """Load universal base ML artifacts only once across the entire application lifetime."""

@@ -10,12 +10,10 @@ Handles:
 import re
 import time
 import logging
-import threading
 
 import numpy as np
 import xgboost as xgb
 from fastapi import APIRouter, UploadFile, File, Form
-from fastapi.responses import JSONResponse
 
 from backend.models import (
     SUPPORTED_GENES, MAX_VCF_SIZE,
@@ -33,6 +31,7 @@ router = APIRouter(tags=["VCF"])
 
 # _metrics_lock is needed for updating _metrics in main.py.
 # We import these from main at call time to avoid circular imports.
+
 
 def _compute_risk_tier(probability: float) -> str:
     """Unified 5-tier risk logic used by both /predict and /predict/vcf.
@@ -107,7 +106,7 @@ def parse_vcf_line(line):
     return chrom, pos, ref, alt, genotype, vcf_filter, vcf_warnings, multi_sample
 
 
-def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_name="BRCA2", gene_data=None):
+def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_name="BRCA2", gene_data=None):  # noqa: C901
     """
     Convert a VCF variant to a prediction.
 
@@ -370,6 +369,8 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
             "hgvs_p": f"p.{ref_aa}{aa_pos}{alt_aa}",
             "prediction": "Pathogenic",
             "probability": 0.9999,
+            # NOTE: Tier 1 truncating variants use "high (Truncating)" to distinguish from
+            # Tier 2 missense "high"/"low"/"uncertain". Frontend handles both via .includes("high").
             "risk_tier": "high (Truncating)",
             "genomic_pos": genomic_pos,
             "variant_type": "nonsense",
@@ -457,8 +458,8 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
 
 
 @router.post("/predict/vcf", summary="Batch VCF prediction",
-          description="Upload a VCF file to predict pathogenicity for all missense variants in the targeted gene. Returns per-variant predictions with risk tiers.")
-async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")):
+             description="Upload a VCF file to predict pathogenicity for all missense variants in the targeted gene. Returns per-variant predictions with risk tiers.")
+async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")):  # noqa: C901
     t_start = time.perf_counter()
     if gene.upper() not in SUPPORTED_GENES:
         return {"error": f"Unsupported gene: {gene}. Supported: {', '.join(sorted(SUPPORTED_GENES))}"}
@@ -490,7 +491,7 @@ async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")):
     has_vcf_header = any(line.startswith("##fileformat=VCF") for line in lines[:50])
     has_chrom_header = any(line.startswith("#CHROM") for line in lines[:100])
     if not has_vcf_header and not has_chrom_header:
-        data_lines = [l for l in lines if l.strip() and not l.startswith("#")]
+        data_lines = [ln for ln in lines if ln.strip() and not ln.startswith("#")]
         if data_lines and len(data_lines[0].split("\t")) < 5:
             return {"error": "File does not appear to be in VCF format. Expected tab-separated columns with CHROM, POS, ID, REF, ALT."}
 

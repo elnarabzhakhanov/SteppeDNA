@@ -16,19 +16,16 @@ import csv
 import json
 import time
 import logging
-import threading
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse
 
 from backend.models import (
     DATA_DIR, SUPPORTED_GENES,
-    _get_active_learning, _get_universal_models,
-    phylop_scores, mave_by_variant, am_by_variant,
-    genomic_to_cdna,
+    _get_active_learning,
 )
 from backend.external_api import _api_cache
-from backend.middleware import _rate_lock, _rate_counts, _API_KEY
+from backend.middleware import _rate_counts, _API_KEY
 from backend.database import get_recent_analyses, get_analysis_stats
 
 logger = logging.getLogger("steppedna")
@@ -42,7 +39,7 @@ MAX_COHORT_FILE_SIZE = 10 * 1024 * 1024
 # ─── UMAP ────────────────────────────────────────────────────────────────────
 
 @router.get("/umap", tags=["Visualization"], summary="UMAP variant landscape",
-         description="Returns precomputed UMAP 2D coordinates for up to 5,000 training variants, used by the frontend variant landscape visualization.")
+            description="Returns precomputed UMAP 2D coordinates for up to 5,000 training variants, used by the frontend variant landscape visualization.")
 async def get_umap():
     umap_path = os.path.join(DATA_DIR, "umap_coordinates.json")
     if os.path.exists(umap_path):
@@ -54,7 +51,7 @@ async def get_umap():
 # ─── Server Monitoring ────────────────────────────────────────────────────────
 
 @router.get("/metrics", tags=["System"], summary="Server metrics",
-         description="Returns server uptime, request counts, latency stats, and memory usage for monitoring dashboards.")
+            description="Returns server uptime, request counts, latency stats, and memory usage for monitoring dashboards.")
 async def server_metrics():
     # Import lazily to avoid circular dependency
     from backend import main as _main_mod
@@ -93,7 +90,7 @@ async def server_metrics():
 # ─── Patient Cohort Tracking ─────────────────────────────────────────────────
 
 @router.post("/cohort/submit", tags=["Cohort"], summary="Submit anonymized variant for cohort tracking",
-          description="Allows hospitals/clinics to submit anonymized variant observations for population-level tracking. No patient identifiers are stored.")
+             description="Allows hospitals/clinics to submit anonymized variant observations for population-level tracking. No patient identifiers are stored.")
 async def cohort_submit(request: Request):
     # Require API key for write operations
     if _API_KEY and request.headers.get("X-API-Key") != _API_KEY:
@@ -152,7 +149,7 @@ async def cohort_submit(request: Request):
 
 
 @router.get("/cohort/stats", tags=["Cohort"], summary="Cohort aggregate statistics",
-         description="Returns aggregate variant observation counts by gene and prediction class. No individual-level data is exposed.")
+            description="Returns aggregate variant observation counts by gene and prediction class. No individual-level data is exposed.")
 async def cohort_stats():
     cohort_file = os.path.join(DATA_DIR, "cohort_observations.csv")
     if not os.path.exists(cohort_file):
@@ -182,7 +179,7 @@ async def cohort_stats():
 # ─── History & Stats ─────────────────────────────────────────────────────────
 
 @router.get("/history", tags=["System"], summary="Recent analysis history",
-         description="Returns recent variant analyses stored in the server-side database.")
+            description="Returns recent variant analyses stored in the server-side database.")
 async def analysis_history(limit: int = 50):
     try:
         return {"analyses": get_recent_analyses(min(limit, 200))}
@@ -190,8 +187,9 @@ async def analysis_history(limit: int = 50):
         logger.error(f"[DB] History query failed: {e}")
         return JSONResponse(status_code=500, content={"error": "Internal server error"})
 
+
 @router.get("/stats", tags=["System"], summary="Analysis statistics",
-         description="Returns aggregate analysis statistics from the server-side database.")
+            description="Returns aggregate analysis statistics from the server-side database.")
 async def analysis_stats():
     try:
         return get_analysis_stats()
@@ -203,9 +201,9 @@ async def analysis_stats():
 # ─── Research Priorities / Active Learning ────────────────────────────────────
 
 @router.get("/research/priorities", tags=["Research"], summary="Active learning priority variants",
-         description="Returns VUS variants ranked by their value for functional validation, "
-                     "computed via query-by-committee (model disagreement), gene scarcity weighting, "
-                     "and positional novelty scoring.")
+            description="Returns VUS variants ranked by their value for functional validation, "
+            "computed via query-by-committee (model disagreement), gene scarcity weighting, "
+            "and positional novelty scoring.")
 async def research_priorities(gene: str = None, limit: int = 10):
     # Validate gene first (even if no data loaded)
     if gene:
