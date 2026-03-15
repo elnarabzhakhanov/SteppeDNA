@@ -28,6 +28,7 @@ router = APIRouter(tags=["External Lookups"])
 EXTERNAL_RATE_LIMIT = int(os.getenv("EXTERNAL_RATE_LIMIT", "20"))  # per window
 _external_rate: dict = collections.defaultdict(list)
 
+
 def _check_external_rate(ip: str) -> bool:
     """Returns True if request is allowed, False if rate-limited."""
     now = time.monotonic()
@@ -50,10 +51,12 @@ _api_cache = collections.OrderedDict()
 MAX_CACHE_SIZE = 1000
 CACHE_TTL = 3600  # 1 hour
 
+
 def _pred_cache_set(key, value):
     while len(_pred_cache) >= MAX_PRED_CACHE:
         _pred_cache.popitem(last=False)
     _pred_cache[key] = (time.time(), value)
+
 
 def _pred_cache_get(key):
     if key in _pred_cache:
@@ -65,11 +68,13 @@ def _pred_cache_get(key):
             del _pred_cache[key]
     return None
 
+
 def _cache_set(key, value):
     # Evict oldest entries when full (LRU)
     while len(_api_cache) >= MAX_CACHE_SIZE:
         _api_cache.popitem(last=False)
     _api_cache[key] = (time.time(), value)
+
 
 def _cache_get(key):
     """Return cached value if present and not expired, else None."""
@@ -86,7 +91,7 @@ def _cache_get(key):
 # ─── ClinVar Lookup ──────────────────────────────────────────────────────────
 
 @router.get("/lookup/clinvar/{variant}", summary="ClinVar lookup",
-         description="Look up a variant in NCBI ClinVar. Accepts format: p.Thr2722Arg or Thr2722Arg. Returns clinical significance and review status.")
+            description="Look up a variant in NCBI ClinVar. Accepts format: p.Thr2722Arg or Thr2722Arg. Returns clinical significance and review status.")
 async def lookup_clinvar(variant: str, request: Request):
     cache_key = f"clinvar_{variant}"
     cached = _cache_get(cache_key)
@@ -106,8 +111,16 @@ async def lookup_clinvar(variant: str, request: Request):
     if not re.match(r'^[A-Za-z]{2,4}\d{1,5}[A-Za-z]{2,4}$', clean):
         return {"variant": clean, "error": "Invalid variant format. Expected e.g. Thr2722Arg"}
 
-    gene_upper = request.query_params.get("gene", "BRCA2").upper()
+    gene_param = request.query_params.get("gene")
+    if gene_param is None:
+        logger.warning("[ClinVar] No gene parameter provided for variant %s, defaulting to BRCA2. "
+                       "Pass ?gene=GENENAME for accurate results.", clean)
+        gene_upper = "BRCA2"
+    else:
+        gene_upper = gene_param.upper()
     if gene_upper not in SUPPORTED_GENES:
+        logger.warning("[ClinVar] Unsupported gene '%s' for variant %s, defaulting to BRCA2.",
+                       gene_upper, clean)
         gene_upper = "BRCA2"
     query = f'{gene_upper}[gene] AND "{clean}"[variant name] AND "homo sapiens"[organism]'
     encoded = urllib.parse.urlencode({
@@ -167,8 +180,8 @@ async def lookup_clinvar(variant: str, request: Request):
 # ─── gnomAD Lookup ────────────────────────────────────────────────────────────
 
 @router.get("/lookup/gnomad/{variant}", summary="gnomAD lookup",
-         description="Look up a variant in gnomAD v4. Accepts format: 13-32316461-A-G (chr-pos-ref-alt). Returns genome/exome allele frequencies and homozygote counts.")
-async def lookup_gnomad(variant: str, request: Request):
+            description="Look up a variant in gnomAD v4. Accepts format: 13-32316461-A-G (chr-pos-ref-alt). Returns genome/exome allele frequencies and homozygote counts.")
+async def lookup_gnomad(variant: str, request: Request):  # noqa: C901
     cache_key = f"gnomad_{variant}"
     cached = _cache_get(cache_key)
     if cached is not None:
@@ -262,7 +275,7 @@ async def lookup_gnomad(variant: str, request: Request):
                 return res
 
             genome = v.get("genome") or {}
-            exome  = v.get("exome") or {}
+            exome = v.get("exome") or {}
             res = {
                 "variant": variant,
                 "variant_id": v.get("variant_id"),

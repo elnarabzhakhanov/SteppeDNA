@@ -10,7 +10,6 @@ Handles:
 """
 
 import os
-import sys
 import json
 import logging
 import threading
@@ -18,16 +17,15 @@ import threading
 import numpy as np
 
 from backend.models import (
-    DATA_DIR, SUPPORTED_GENES, GENE_MAX_AA,
-    ESM2_WINDOW, ESM2_PCA_COMPONENTS,
+    DATA_DIR, ESM2_WINDOW, ESM2_PCA_COMPONENTS,
     _load_pickle, _load_variant_dict,
-    _get_universal_models,
-    esm_model, esm_batch_converter,
+    _get_universal_models, esm_model,
+    esm_batch_converter,
 )
 from backend.feature_engineering import (
-    AA_HYDROPHOBICITY, AA_VOLUME, BLOSUM62,
-    ALL_AMINO_ACIDS, ALL_MUTATIONS,
-    get_blosum62, get_charge,
+    AA_HYDROPHOBICITY, AA_VOLUME, ALL_AMINO_ACIDS,
+    ALL_MUTATIONS, get_blosum62,
+    get_charge,
 )
 
 logger = logging.getLogger("steppedna")
@@ -35,7 +33,7 @@ logger = logging.getLogger("steppedna")
 
 # ─── Exon Boundary Derivation ────────────────────────────────────────────────
 
-def _derive_exon_boundaries(cdna_to_genomic: dict, strand: str) -> dict:
+def _derive_exon_boundaries(cdna_to_genomic: dict, strand: str) -> dict:  # noqa: C901
     """Derive exon-intron boundaries from the cDNA-to-genomic position mapping.
 
     Within an exon, consecutive cDNA positions map to consecutive genomic positions.
@@ -150,6 +148,7 @@ def _derive_exon_boundaries(cdna_to_genomic: dict, strand: str) -> dict:
 _gene_cache: dict = {}
 _gene_cache_lock = threading.Lock()
 
+
 def get_gene_data(gene_name: str) -> dict:
     key = gene_name.upper()
     with _gene_cache_lock:
@@ -235,7 +234,7 @@ def get_gene_data(gene_name: str) -> dict:
 
 # ─── Feature Vector Construction ──────────────────────────────────────────────
 
-def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="BRCA2"):
+def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="BRCA2"):  # noqa: C901
     gene_data = get_gene_data(gene_name)
     features = {}
 
@@ -262,6 +261,7 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     features["hydro_delta"] = alt_hydro - ref_hydro
 
     domains = gene_config.get("domains", {})
+
     def in_domain(pos, d_name):
         rng = domains.get(d_name)
         return int(rng[0] <= pos <= rng[1]) if rng else 0
@@ -359,9 +359,9 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     features["af_x_blosum"] = gnomad_af * features["blosum62_score"]
 
     # ESM-2 Structural Features
-    AA3_TO_1 = {"Ala":"A","Arg":"R","Asn":"N","Asp":"D","Cys":"C","Gln":"Q","Glu":"E",
-                "Gly":"G","His":"H","Ile":"I","Leu":"L","Lys":"K","Met":"M","Phe":"F",
-                "Pro":"P","Ser":"S","Thr":"T","Trp":"W","Tyr":"Y","Val":"V","Ter":"*"}
+    AA3_TO_1 = {"Ala": "A", "Arg": "R", "Asn": "N", "Asp": "D", "Cys": "C", "Gln": "Q", "Glu": "E",
+                "Gly": "G", "His": "H", "Ile": "I", "Leu": "L", "Lys": "K", "Met": "M", "Phe": "F",
+                "Pro": "P", "Ser": "S", "Thr": "T", "Trp": "W", "Tyr": "Y", "Val": "V", "Ter": "*"}
 
     esm_k = f"{AA_ref}{AA_pos}{AA_alt}"
     if esm_k in gene_data["esm2_dict"]:
@@ -386,10 +386,10 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
                 raise ValueError("AA_pos out of range")  # caught by outer except
             WINDOW = ESM2_WINDOW
             win_start = max(0, AA_pos - 1 - WINDOW)
-            win_end   = min(len(protein_seq), AA_pos - 1 + WINDOW + 1)
+            win_end = min(len(protein_seq), AA_pos - 1 + WINDOW + 1)
             local_pos = AA_pos - 1 - win_start
 
-            wt_window  = protein_seq[win_start:win_end]
+            wt_window = protein_seq[win_start:win_end]
             mut_window = list(wt_window)
             m_aa = AA3_TO_1.get(AA_alt, "A")
             if m_aa != "*":
@@ -404,7 +404,7 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
             with torch.no_grad():
                 results = esm_model(batch_tokens, repr_layers=[6], return_contacts=False)
 
-            wt_emb  = results["representations"][6][0, local_pos + 1].cpu().numpy()
+            wt_emb = results["representations"][6][0, local_pos + 1].cpu().numpy()
             mut_emb = results["representations"][6][1, local_pos + 1].cpu().numpy()
 
             diff = mut_emb - wt_emb
@@ -501,6 +501,40 @@ NICE_NAMES = {
     "spliceai_score": "SpliceAI Score",
     "splice_pathogenic": "Splice Pathogenic",
     **{f"esm2_pca_{i}": f"ESM-2 PCA Component {i}" for i in range(20)},
+    # One-hot amino acid reference features
+    "AA_ref_Ala": "Ref AA: Alanine", "AA_ref_Arg": "Ref AA: Arginine",
+    "AA_ref_Asn": "Ref AA: Asparagine", "AA_ref_Asp": "Ref AA: Aspartate",
+    "AA_ref_Cys": "Ref AA: Cysteine", "AA_ref_Gln": "Ref AA: Glutamine",
+    "AA_ref_Glu": "Ref AA: Glutamate", "AA_ref_Gly": "Ref AA: Glycine",
+    "AA_ref_His": "Ref AA: Histidine", "AA_ref_Ile": "Ref AA: Isoleucine",
+    "AA_ref_Leu": "Ref AA: Leucine", "AA_ref_Lys": "Ref AA: Lysine",
+    "AA_ref_Met": "Ref AA: Methionine", "AA_ref_Phe": "Ref AA: Phenylalanine",
+    "AA_ref_Pro": "Ref AA: Proline", "AA_ref_Ser": "Ref AA: Serine",
+    "AA_ref_Ter": "Ref AA: Stop Codon", "AA_ref_Thr": "Ref AA: Threonine",
+    "AA_ref_Trp": "Ref AA: Tryptophan", "AA_ref_Tyr": "Ref AA: Tyrosine",
+    "AA_ref_Val": "Ref AA: Valine",
+    # One-hot amino acid alternate features
+    "AA_alt_Ala": "Alt AA: Alanine", "AA_alt_Arg": "Alt AA: Arginine",
+    "AA_alt_Asn": "Alt AA: Asparagine", "AA_alt_Asp": "Alt AA: Aspartate",
+    "AA_alt_Cys": "Alt AA: Cysteine", "AA_alt_Gln": "Alt AA: Glutamine",
+    "AA_alt_Glu": "Alt AA: Glutamate", "AA_alt_Gly": "Alt AA: Glycine",
+    "AA_alt_His": "Alt AA: Histidine", "AA_alt_Ile": "Alt AA: Isoleucine",
+    "AA_alt_Leu": "Alt AA: Leucine", "AA_alt_Lys": "Alt AA: Lysine",
+    "AA_alt_Met": "Alt AA: Methionine", "AA_alt_Phe": "Alt AA: Phenylalanine",
+    "AA_alt_Pro": "Alt AA: Proline", "AA_alt_Ser": "Alt AA: Serine",
+    "AA_alt_Ter": "Alt AA: Stop Codon", "AA_alt_Thr": "Alt AA: Threonine",
+    "AA_alt_Trp": "Alt AA: Tryptophan", "AA_alt_Tyr": "Alt AA: Tyrosine",
+    "AA_alt_Val": "Alt AA: Valine",
+    # Mutation type features
+    "Mutation_A>C": "Mutation A\u2192C", "Mutation_A>G": "Mutation A\u2192G",
+    "Mutation_A>T": "Mutation A\u2192T", "Mutation_C>A": "Mutation C\u2192A",
+    "Mutation_C>G": "Mutation C\u2192G", "Mutation_C>T": "Mutation C\u2192T",
+    "Mutation_G>A": "Mutation G\u2192A", "Mutation_G>C": "Mutation G\u2192C",
+    "Mutation_G>T": "Mutation G\u2192T", "Mutation_T>A": "Mutation T\u2192A",
+    "Mutation_T>C": "Mutation T\u2192C", "Mutation_T>G": "Mutation T\u2192G",
+    # Missing gnomAD features
+    "gnomad_popmax_log": "gnomAD PopMax AF (log)",
+    "is_popmax_rare": "Rare in All Populations",
 }
 
 

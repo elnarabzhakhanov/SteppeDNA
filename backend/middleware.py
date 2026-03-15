@@ -33,7 +33,7 @@ if os.getenv("ENVIRONMENT", "").lower() == "production" and not _API_KEY:
 MAX_JSON_BODY = 1 * 1024 * 1024  # 1 MB limit for JSON endpoints
 
 
-def register_middleware(app):
+def register_middleware(app):  # noqa: C901
     """Register all middleware on the FastAPI app."""
 
     @app.middleware("http")
@@ -49,6 +49,9 @@ def register_middleware(app):
     async def api_key_middleware(request: Request, call_next):
         if _API_KEY:
             # Public paths accessible without API key
+            # NOTE: /model_metrics is intentionally public (no API key required)
+            # to allow monitoring dashboards. This is a deliberate access control decision.
+            # If metrics should be private, remove them from this set.
             public_paths = {"/", "/health", "/docs", "/openapi.json", "/redoc",
                             "/model_metrics", "/umap", "/stats",
                             "/history", "/research/priorities",
@@ -110,4 +113,13 @@ def register_middleware(app):
         response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
         response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' https://cdn.jsdelivr.net https://unpkg.com; "
+            "style-src 'self' 'unsafe-inline'; "
+            "img-src 'self' data: blob:; "
+            "connect-src 'self'; "
+            "frame-src 'none'; "
+            "object-src 'none'"
+        )
         return response

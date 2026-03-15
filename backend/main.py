@@ -51,56 +51,45 @@ _metrics = {"predictions": 0, "vcf_uploads": 0, "total_predict_ms": 0.0}
 
 from backend.models import (
     DATA_DIR, SUPPORTED_GENES, MAX_CDNA_LENGTHS, GENE_MAX_AA,
-    GENE_RELIABILITY, MAX_CDNA_POS, MAX_AA_POS,
-    XGB_WEIGHT, NN_WEIGHT, N_EFFECTIVE, ESM2_WINDOW, ESM2_PCA_COMPONENTS,
-    MAX_VCF_SIZE, VALID_AA_CODES,
-    _load_pickle, _load_variant_dict,
-    phylop_scores, mave_by_variant, mave_by_position,
-    am_by_variant, am_by_position, structural_features,
-    gnomad_by_variant, gnomad_by_position,
-    cdna_to_genomic, genomic_to_cdna,
-    _GENE_CALIBRATORS, _load_gene_calibrators,
-    _GENE_ENSEMBLE_WEIGHTS, _load_gene_ensemble_weights,
-    _BOOTSTRAP_MODELS, _load_bootstrap_models, N_BOOTSTRAP,
-    _ACTIVE_LEARNING, _load_active_learning_priorities,
-    _CONFORMAL_THRESHOLDS, _load_conformal_thresholds,
-    esm_model, esm_batch_converter, DEVICE,
-    _get_universal_models,
+    GENE_RELIABILITY, XGB_WEIGHT, NN_WEIGHT,
+    N_EFFECTIVE, VALID_AA_CODES, phylop_scores, mave_by_variant, am_by_variant,
+    genomic_to_cdna, _GENE_CALIBRATORS,
+    _load_gene_calibrators, _GENE_ENSEMBLE_WEIGHTS,
+    _load_gene_ensemble_weights, _load_bootstrap_models, _load_active_learning_priorities,
+    _load_conformal_thresholds, _get_universal_models,
 )
 
 from backend.explanations import (
-    _TRAINING_INDEX, _build_training_index, compute_data_support,
-    _CONTRASTIVE_INDEX, _build_contrastive_index, find_contrastive_explanation,
-    compute_bootstrap_ci, compute_conformal_set,
+    _build_training_index, compute_data_support, _build_contrastive_index,
+    find_contrastive_explanation, compute_bootstrap_ci, compute_conformal_set,
 )
 
 from backend.features import (
-    _derive_exon_boundaries, get_gene_data,
-    build_feature_vector, NICE_NAMES, _safe_critical_domain,
+    get_gene_data, build_feature_vector,
+    NICE_NAMES, _safe_critical_domain,
 )
 
 from backend.external_api import (
-    _pred_cache_get, _pred_cache_set, _api_cache,
+    _pred_cache_get, _pred_cache_set,
 )
 
 from backend.vcf import (
-    parse_vcf_line, vcf_variant_to_prediction, _compute_risk_tier,
+    _compute_risk_tier,
 )
 
 from backend.feature_engineering import (
-    AA_HYDROPHOBICITY, AA_VOLUME, BLOSUM62,
-    ALL_AMINO_ACIDS, ALL_MUTATIONS,
-    get_blosum62, get_charge,
+    AA_HYDROPHOBICITY, AA_VOLUME, get_blosum62,
+    get_charge,
 )
 from backend.acmg_rules import evaluate_acmg_rules, combine_acmg_evidence
 from backend import __version__ as STEPPEDNA_VERSION
-from backend.database import init_db, record_analysis, record_vcf_upload, get_recent_analyses, get_analysis_stats
-from backend.constants import CODON_TABLE, COMPLEMENT
+from backend.database import init_db, record_analysis
 
 
 # ─── Gene Config Validation ──────────────────────────────────────────────────
 _GENE_CONFIG_REQUIRED_KEYS = {"cds_length", "aa_length", "domains", "chromosome", "strand"}
 _unavailable_genes: set = set()
+
 
 def _validate_gene_configs():
     """Validate all gene config JSONs have required keys on startup."""
@@ -125,6 +114,8 @@ def _validate_gene_configs():
             _unavailable_genes.add(gene)
 
 # ─── Model Checksum Verification ─────────────────────────────────────────────
+
+
 def _verify_model_checksums():
     """Verify SHA256 checksums of model files against data/checksums.json."""
     checksums_path = os.path.join(
@@ -159,6 +150,7 @@ def _verify_model_checksums():
         else:
             logger.info(f"[CHECKSUM] {filename} OK")
 
+
 # ─── Prediction Audit Logger ─────────────────────────────────────────────────
 _audit_logger = logging.getLogger("steppedna.audit")
 _audit_logger.setLevel(logging.INFO)
@@ -177,6 +169,7 @@ _audit_logger.addHandler(_audit_handler)
 _audit_stderr = logging.StreamHandler()
 _audit_stderr.setFormatter(logging.Formatter("%(message)s"))
 _audit_logger.addHandler(_audit_stderr)
+
 
 def _log_prediction_audit(*, gene: str, hgvs_c: str, hgvs_p: str,
                           probability: float, risk_tier: str,
@@ -331,11 +324,11 @@ class MutationInput(BaseModel):
 
 @app.post("/predict", tags=["Prediction"], summary="Predict variant pathogenicity",
           description="Accepts a single missense variant and returns pathogenicity probability, SHAP explanations, ACMG evidence, and data source scores.")
-async def predict(mutation_data: MutationInput, request: Request):
+async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     t_start = time.perf_counter()
     max_len = MAX_CDNA_LENGTHS.get(mutation_data.gene_name.upper(), 15000)
     if mutation_data.cDNA_pos > max_len:
-         return JSONResponse(status_code=400, content={"error": f"cDNA position cannot exceed {max_len} for {mutation_data.gene_name}"})
+        return JSONResponse(status_code=400, content={"error": f"cDNA position cannot exceed {max_len} for {mutation_data.gene_name}"})
 
     # ─── Prediction cache (avoids re-computing identical variants) ──────────
     pred_cache_key = f"pred_{mutation_data.gene_name}_{mutation_data.cDNA_pos}_{mutation_data.AA_ref}_{mutation_data.AA_alt}_{mutation_data.Mutation}"
@@ -364,6 +357,8 @@ async def predict(mutation_data: MutationInput, request: Request):
     if is_truncating:
         label = "Pathogenic"
         probability = 0.9999
+        # NOTE: Tier 1 truncating variants use "high (Truncating)" to distinguish from
+        # Tier 2 missense "high"/"low"/"uncertain". Frontend handles both via .includes("high").
         risk = "high (Truncating)"
         acmg_eval = {"PVS1": "Pathogenic truncating null variant (Nonsense/Frameshift) in a recognized tumor suppressor."}
 
@@ -496,10 +491,10 @@ async def predict(mutation_data: MutationInput, request: Request):
         # Fallback: Beta-distribution approximation
         N_eff = N_EFFECTIVE
         alpha_param = probability * N_eff + 1
-        beta_param  = (1 - probability) * N_eff + 1
+        beta_param = (1 - probability) * N_eff + 1
         ci_lower = float(beta_dist.ppf(0.025, alpha_param, beta_param))
         ci_upper = float(beta_dist.ppf(0.975, alpha_param, beta_param))
-        ci_std   = float(beta_dist.std(alpha_param, beta_param))
+        ci_std = float(beta_dist.std(alpha_param, beta_param))
         ci_width = ci_upper - ci_lower
         ci_method = "beta_approximation"
 
@@ -534,7 +529,7 @@ async def predict(mutation_data: MutationInput, request: Request):
                     try:
                         with open(triage_file, "r", encoding="utf-8") as rf:
                             reader = csv.reader(rf)
-                            header = next(reader, None)
+                            next(reader, None)
                             for row in reader:
                                 if len(row) >= 3:
                                     existing_keys.add(f"{row[0]}_{row[2]}")
@@ -598,8 +593,12 @@ async def predict(mutation_data: MutationInput, request: Request):
     gnomad_val = gene_data["gnomad_v"].get(f"{mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt}", gene_data["gnomad_p"].get(int(mutation_data.cDNA_pos), 0.0))
     gnomad_af_raw = gnomad_val.get("af", 0.0) if isinstance(gnomad_val, dict) else float(gnomad_val)
 
-    # OOD warning for gnomAD allele frequency
-    if gnomad_af_raw > 0.01:
+    # OOD warning for gnomAD allele frequency (gene-specific thresholds)
+    _GENE_OOD_THRESHOLDS = {
+        "BRCA1": 0.005, "BRCA2": 0.005,
+        "PALB2": 0.005, "RAD51C": 0.01, "RAD51D": 0.01,
+    }
+    if gnomad_af_raw > _GENE_OOD_THRESHOLDS.get(mutation_data.gene_name, 0.01):
         _warnings.append(f"gnomAD allele frequency ({gnomad_af_raw:.4f}) is unusually high for a rare-disease variant. This variant may be benign or a common polymorphism.")
 
     # PM5: check if a different pathogenic missense exists at this AA position
@@ -607,7 +606,7 @@ async def predict(mutation_data: MutationInput, request: Request):
     known_path_at_pos = int(aa_pos) in pm5_positions if pm5_positions else False
 
     # Data Scarcity Quantification (Item 41)
-    _variant_domain = sf.get('domain', 'uncharacterized')
+    sf.get('domain', 'uncharacterized')
     # Map structural domain to feature column name for matching
     _domain_for_scarcity = "uncharacterized"
     if _safe_critical_domain(raw_vector, gene_data, aa_pos):
@@ -756,6 +755,7 @@ async def root():
 
 # Note: startup logic is handled by the lifespan context manager (defined at app creation)
 
+
 @app.get("/model_metrics", tags=["System"], summary="Model evaluation metrics",
          description="Returns trained model ROC-AUC, MCC, balanced accuracy, confusion matrix, and per-gene performance from the test set.")
 async def model_metrics():
@@ -791,6 +791,7 @@ async def health():
 
 _PROJECT_ROOT = os.path.realpath(os.path.join(os.path.dirname(__file__), ".."))
 
+
 def _safe_file_response(path: str, **kwargs):
     """Serve a file only if its resolved path stays within the project directory."""
     resolved = os.path.realpath(path)
@@ -800,10 +801,12 @@ def _safe_file_response(path: str, **kwargs):
         return JSONResponse(status_code=404, content={"error": "File not found"})
     return FileResponse(resolved, **kwargs)
 
+
 @app.get("/docs/validation-report", tags=["System"], summary="Serve VALIDATION_REPORT.md")
 async def validation_report():
     path = os.path.join(os.path.dirname(__file__), "..", "VALIDATION_REPORT.md")
     return _safe_file_response(path, media_type="text/markdown", filename="VALIDATION_REPORT.md")
+
 
 @app.get("/structure/brca2/{fragment}", tags=["System"], summary="Serve BRCA2 AlphaFold fragment PDB")
 async def brca2_fragment(fragment: int):
