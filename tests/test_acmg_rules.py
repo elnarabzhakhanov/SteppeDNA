@@ -62,8 +62,9 @@ def test_pm1_not_fired_just_outside_5A():
 # ─── BS1: Common population frequency ────────────────────────────────────────
 
 def test_bs1_fires_for_common_variant():
-    """gnomAD AF > gene BS1 threshold but below BA1 should trigger BS1 (not BA1)."""
-    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.005}
+    """gnomAD AF > gene BS1 threshold but below BA1 should trigger BS1 (not BA1).
+    ClinGen SVI thresholds: BRCA2 BS1=0.0001, BA1=0.001."""
+    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.0005}
     result = evaluate_acmg_rules(feats, 0.3, gene_name="BRCA2")
     assert "BS1" in result
     assert "BA1" not in result
@@ -78,38 +79,42 @@ def test_ba1_fires_for_very_common_variant():
 
 
 def test_bs1_not_fired_for_rare_variant():
-    """gnomAD AF below gene threshold should NOT trigger BS1."""
-    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.0005}
+    """gnomAD AF below gene threshold should NOT trigger BS1.
+    ClinGen SVI: BRCA2 BS1=0.0001."""
+    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.00005}
     result = evaluate_acmg_rules(feats, 0.3, gene_name="BRCA2")
     assert "BS1" not in result
 
 
 def test_bs1_boundary_at_gene_threshold():
-    """gnomAD AF exactly at gene threshold (0.001 for BRCA2) should NOT fire (needs to exceed)."""
-    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.001}
+    """gnomAD AF exactly at gene threshold (0.0001 for BRCA2) should NOT fire (needs to exceed).
+    ClinGen SVI: BRCA2 BS1=0.0001."""
+    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.0001}
     result = evaluate_acmg_rules(feats, 0.3, gene_name="BRCA2")
     assert "BS1" not in result
 
 
 def test_bs1_fires_above_gene_threshold():
-    """gnomAD AF above BRCA2 threshold (0.001) should trigger BS1."""
-    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.002}
+    """gnomAD AF above BRCA2 BS1 (0.0001) but below BA1 (0.001) should trigger BS1."""
+    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.0005}
     result = evaluate_acmg_rules(feats, 0.3, gene_name="BRCA2")
     assert "BS1" in result
+    assert "BA1" not in result
 
 
 def test_bs1_gene_specific_rad51d():
-    """RAD51D with AF=0.003 should NOT trigger BS1 (threshold is 0.005)."""
-    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.003}
+    """RAD51D with AF=0.0005 should NOT trigger BS1 (BS1 threshold is 0.001)."""
+    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.0005}
     result = evaluate_acmg_rules(feats, 0.3, gene_name="RAD51D")
     assert "BS1" not in result
 
 
 def test_bs1_gene_specific_rad51d_above():
-    """RAD51D with AF=0.006 should trigger BS1 (threshold is 0.005)."""
-    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.006}
+    """RAD51D with AF=0.003 should trigger BS1 (BS1=0.001) but not BA1 (BA1=0.005)."""
+    feats = {"domain": "uncharacterized", "dist_dna": 999.0, "dist_palb2": 999.0, "gnomad_af": 0.003}
     result = evaluate_acmg_rules(feats, 0.3, gene_name="RAD51D")
     assert "BS1" in result
+    assert "BA1" not in result
 
 
 # ─── PP3: Strong computational prediction of pathogenicity ────────────────────

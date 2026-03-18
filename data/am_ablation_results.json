@@ -1,0 +1,27 @@
+{
+  "with_am": 0.9846,
+  "without_am": 0.9853,
+  "delta": -0.0007,
+  "per_gene": {
+    "BRCA1": {
+      "with": 0.7648,
+      "without": 0.7843
+    },
+    "BRCA2": {
+      "with": 0.9971,
+      "without": 0.9967
+    },
+    "PALB2": {
+      "with": 0.5703,
+      "without": 0.5857
+    },
+    "RAD51C": {
+      "with": 0.7985,
+      "without": 0.8168
+    },
+    "RAD51D": {
+      "with": 0.8213,
+      "without": 0.8146
+    }
+  }
+}

@@ -253,6 +253,49 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
     X["in_NLS"] = check_domains("NLS_nuclear_localization", "N_terminal_domain")
     X["in_primary_interaction"] = check_domains("PALB2_interaction", "BRCA1_interaction", "BARD1_interaction", "RAD51B_RAD51D_XRCC3_interaction", "Holliday_junction_resolution")
 
+    # Gene-specific computed features (domain distance, multi-domain, functional zone)
+    aa_len = gene_config.get("aa_length", 1000)
+    aa_pos_series = mutation_df["AA_pos"].astype(int)
+
+    # Distance to nearest domain boundary (normalized)
+    def _dist_nearest(pos):
+        min_d = aa_len
+        for d_name, d_range in domains.items():
+            if isinstance(d_range, (list, tuple)) and len(d_range) >= 2:
+                if d_range[0] <= pos <= d_range[1]:
+                    return 0.0
+                dist = min(abs(pos - d_range[0]), abs(pos - d_range[1]))
+                min_d = min(min_d, dist)
+        return min_d / aa_len
+
+    # Number of domains at this position
+    def _n_domains(pos):
+        count = 0
+        for d_name, d_range in domains.items():
+            if isinstance(d_range, (list, tuple)) and len(d_range) >= 2:
+                if d_range[0] <= pos <= d_range[1]:
+                    count += 1
+        return count
+
+    # Functional zone score (weighted proximity to all domains)
+    def _func_zone(pos):
+        score = 0.0
+        for d_name, d_range in domains.items():
+            if isinstance(d_range, (list, tuple)) and len(d_range) >= 2:
+                if d_range[0] <= pos <= d_range[1]:
+                    score += 1.0
+                else:
+                    dist = min(abs(pos - d_range[0]), abs(pos - d_range[1]))
+                    score += 1.0 / (1.0 + dist / 50.0)
+        return score
+
+    X["dist_nearest_domain"] = aa_pos_series.apply(_dist_nearest)
+    X["n_domains_hit"] = aa_pos_series.apply(_n_domains)
+    X["in_multi_domain"] = (X["n_domains_hit"] > 1).astype(int)
+    X["functional_zone_score"] = aa_pos_series.apply(_func_zone)
+    X["func_zone_x_blosum"] = X["functional_zone_score"] * X["blosum62_score"]
+    # func_zone_x_phylop deferred until after phylop_score is created
+
     X["is_nonsense"] = (mutation_df["AA_alt"] == "Ter").astype(int)
     transitions = {"A>G", "G>A", "C>T", "T>C"}
     X["is_transition"] = mutation_df["Mutation"].isin(transitions).astype(int)
@@ -273,6 +316,9 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
         X["high_conservation"] = 0
         X["ultra_conservation"] = 0
         X["conserv_x_blosum"] = 0.0
+
+    # Deferred interaction: needs phylop_score to exist
+    X["func_zone_x_phylop"] = X["functional_zone_score"] * X["phylop_score"]
 
     # MAVE HDR functional scores (Hu et al. 2024, BRCA2 only)
     # MAVE leakage assessment status: ASSESSED (see VALIDATION_REPORT.md Section 7).
@@ -341,10 +387,21 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
         X["dist_palb2"] = mutation_df.apply(lambda r: get_struct_feat(r, "dist_palb2", 999.0), axis=1)
         X["is_dna_contact"] = mutation_df.apply(lambda r: int(get_struct_feat(r, "is_dna_contact", False)), axis=1)
 
-        # Secondary structure one-hot
-        ss = mutation_df.apply(lambda r: get_struct_feat(r, "ss", "C"), axis=1)
-        X["ss_helix"] = (ss == "H").astype(int)
-        X["ss_sheet"] = (ss == "E").astype(int)
+        # Secondary structure one-hot (supports both old 'ss' string and new 'ss_helix' int format)
+        def _get_ss_helix(row):
+            aa_pos = int(row['AA_pos'])
+            entry = structural_data.get(aa_pos, {})
+            if 'ss_helix' in entry:
+                return int(entry['ss_helix'])
+            return 1 if entry.get('ss', 'C') in ('H', 'G', 'I') else 0
+        def _get_ss_sheet(row):
+            aa_pos = int(row['AA_pos'])
+            entry = structural_data.get(aa_pos, {})
+            if 'ss_sheet' in entry:
+                return int(entry['ss_sheet'])
+            return 1 if entry.get('ss', 'C') in ('E', 'B') else 0
+        X["ss_helix"] = mutation_df.apply(_get_ss_helix, axis=1)
+        X["ss_sheet"] = mutation_df.apply(_get_ss_sheet, axis=1)
 
         # Interaction features
         X["buried_x_blosum"] = X["is_buried"] * X["blosum62_score"]
@@ -367,17 +424,27 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
         gnomad_by_position = gnomad_data.get("by_position", {})
 
         def get_gnomad_af(row, freq_type="af"):
+            # Handle field name aliases (popmax -> popmax_af)
+            lookup_keys = [freq_type]
+            if freq_type == 'popmax':
+                lookup_keys = ['popmax', 'popmax_af']
             key = f"{row['AA_ref']}{int(row['AA_pos'])}{row['AA_alt']}"
             if key in gnomad_by_variant:
                 if isinstance(gnomad_by_variant[key], dict):
-                    return gnomad_by_variant[key].get(freq_type, 0.0)
+                    for lk in lookup_keys:
+                        if lk in gnomad_by_variant[key]:
+                            return gnomad_by_variant[key][lk]
+                    return 0.0
                 elif freq_type == "af":  # Backwards compatibility with old pickle format
                     return gnomad_by_variant[key]
                 return 0.0
 
             if int(row["cDNA_pos"]) in gnomad_by_position:
                 if isinstance(gnomad_by_position[int(row["cDNA_pos"])], dict):
-                    return gnomad_by_position[int(row["cDNA_pos"])].get(freq_type, 0.0)
+                    for lk in lookup_keys:
+                        if lk in gnomad_by_position[int(row["cDNA_pos"])]:
+                            return gnomad_by_position[int(row["cDNA_pos"])][lk]
+                    return 0.0
                 elif freq_type == "af":
                     return gnomad_by_position[int(row["cDNA_pos"])]
             return 0.0
@@ -481,6 +548,12 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
             return 0.0
 
         X["eve_score"] = X.apply(_lookup_eve, axis=1)
+        X["eve_pathogenic"] = (X["eve_score"] > 0.5).astype(int)
+        X["eve_x_phylop"] = X["eve_score"] * X["phylop_score"]
+    else:
+        X["eve_score"] = 0.0
+        X["eve_pathogenic"] = 0
+        X["eve_x_phylop"] = 0.0
 
     # We enforce generic structural domain names to support any gene dynamically (e.g. PALB2, RAD51C)
     # The machine learning model now receives these generic flags regardless of the exact domain name.
@@ -493,12 +566,13 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
         'is_nonsense', 'is_transition', 'is_transversion', 'charge_change', 'nonpolar_to_charged',
         'phylop_score', 'high_conservation', 'ultra_conservation', 'conserv_x_blosum',
         'mave_score', 'has_mave', 'mave_abnormal', 'mave_x_blosum',
-        'am_score', 'am_pathogenic', 'am_x_phylop',
+        # AM features removed (v5.4): ablation showed leakage hurts non-BRCA2 genes
+        'dist_nearest_domain', 'n_domains_hit', 'in_multi_domain', 'functional_zone_score', 'func_zone_x_blosum', 'func_zone_x_phylop',
         'rsa', 'is_buried', 'bfactor', 'dist_dna', 'dist_palb2', 'is_dna_contact',
         'ss_helix', 'ss_sheet', 'buried_x_blosum', 'dna_contact_x_blosum',
         # Sub-pop AF integration
         'gnomad_af', 'gnomad_popmax_af', 'gnomad_af_afr', 'gnomad_af_amr', 'gnomad_af_eas', 'gnomad_af_nfe',
-        'gnomad_af_log', 'is_rare', 'af_x_blosum',
+        'gnomad_af_log', 'gnomad_popmax_log', 'is_rare', 'is_popmax_rare', 'af_x_blosum',
         'spliceai_score', 'splice_pathogenic',
         'esm2_cosine_sim', 'esm2_l2_shift',
         'esm2_pca_0', 'esm2_pca_1', 'esm2_pca_2', 'esm2_pca_3', 'esm2_pca_4',
@@ -515,9 +589,8 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
     for aa in ALL_AMINO_ACIDS:
         final_cols.append(f"AA_alt_{aa}")
 
-    # Append EVE score when eve_data was provided (104-feature model)
-    if eve_data is not None:
-        final_cols.append("eve_score")
+    # EVE evolutionary coupling features
+    final_cols.extend(["eve_score", "eve_pathogenic", "eve_x_phylop"])
 
     for col in final_cols:
         if col not in X.columns:

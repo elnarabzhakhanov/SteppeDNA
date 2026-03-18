@@ -13,34 +13,34 @@ SteppeDNA classifies missense variants in 5 Homologous Recombination DNA repair 
 
 | Metric | Value |
 |--------|-------|
-| ROC-AUC (overall) | **0.978** (per-gene: 0.641–0.983)* |
-| Macro-Averaged AUC | **0.775** (equal-weight per-gene mean) |
+| ROC-AUC (overall) | **0.985** (per-gene: 0.605–0.994)* |
+| Macro-Averaged AUC | **0.791** (equal-weight per-gene mean) |
 | MCC | **0.881** |
 | Balanced Accuracy | **94.1%** |
 | 10-Fold CV | 0.9797 +/- 0.0031 |
 | Training Variants | 19,223 |
-| Features | 103 |
+| Features | 120 |
 
 *Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants. See per-gene breakdown below.
 
-Outperforms REVEL (0.725), BayesDel (0.721), and CADD (0.539) on SteppeDNA's own held-out test set. Competitor tools were not trained on this distribution, giving SteppeDNA a methodological advantage. Evaluated on SteppeDNA's own test set -- see [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for independent benchmark results. On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719-0.793.
+Achieves higher test-set ROC-AUC than REVEL (0.725), BayesDel (0.721), and CADD (0.539) on SteppeDNA's own held-out test set. Competitor tools were not trained on this distribution, giving SteppeDNA a methodological advantage. Evaluated on SteppeDNA's own test set -- see [VALIDATION_REPORT.md](VALIDATION_REPORT.md) for independent benchmark results. On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719-0.793.
 
 ## Supported Genes
 
 | Gene | Test AUC | Training Variants |
 |------|----------|-------------------|
-| BRCA2 | 0.983 | 14,200+ |
-| RAD51D | 0.804 | 128 gnomAD-augmented |
-| RAD51C | 0.743 | 86 gnomAD-augmented |
-| BRCA1 | 0.706 | 97 gnomAD-augmented |
-| PALB2 | 0.641 | 60 gnomAD-augmented |
+| BRCA2 | 0.994 | 10,085 |
+| RAD51D | 0.824 | 410 |
+| RAD51C | 0.785 | 675 |
+| BRCA1 | 0.747 | 5,432 |
+| PALB2 | 0.605 | 2,621 |
 
 ## Features
 
 ML model handles missense variants only. Nonsense, frameshift, and splice variants use rule-based classification. Germline variants only.
 
-- **Ensemble ML**: XGBoost (60%) + MLP (40%) with isotonic probability calibration
-- **103 Engineered Features**: BLOSUM62, ESM-2 embeddings, AlphaMissense, MAVE, PhyloP, SpliceAI, AlphaFold 3D structure
+- **Ensemble ML**: XGBoost + MLP with per-gene weights and isotonic probability calibration
+- **120 Engineered Features**: BLOSUM62, ESM-2 embeddings, EVE, MAVE/DMS, PhyloP, SpliceAI, AlphaFold 3D structure, gnomAD frequencies
 - **SHAP Explanations**: Every prediction shows which features drove the classification
 - **ACMG Evidence Codes**: Computational ACMG criteria (PP3, PM1, BP4, etc.)
 - **Live Database Lookups**: Real-time ClinVar and gnomAD queries
@@ -85,14 +85,24 @@ docker-compose up --build
 
 This starts the FastAPI backend on port 8000 and an nginx frontend on port 3000.
 
+## Known Limitations
+
+SteppeDNA has 19 documented limitations — see [VALIDATION_REPORT.md](VALIDATION_REPORT.md#9-known-limitations) for full details. Key caveats:
+
+- **Population bias:** Training data predominantly European ancestry (ClinVar submission bias)
+- **BRCA2 dominance:** Headline AUC 0.985 is sample-weighted; macro-averaged across genes: 0.791
+- **Temporal generalization:** Non-BRCA2 temporal AUCs are near-random (0.51–0.61)
+- **AlphaMissense removed:** AM was removed in v5.4 due to indirect label leakage (ClinVar circularity)
+- **Research use only:** Not validated for clinical diagnostic decisions
+
 ## Project Structure
 
 ```
 SteppeDNA/
 +-- backend/
 |   +-- main.py                 # FastAPI server + prediction endpoints
-|   +-- feature_engineering.py  # 103-feature pipeline
-|   +-- models/                 # Trained model artifacts
+|   +-- feature_engineering.py  # 120-feature pipeline
+|   +-- models.py               # Model loading and weight management
 +-- frontend/
 |   +-- index.html              # Main UI
 |   +-- app.js                  # Application logic
@@ -105,7 +115,7 @@ SteppeDNA/
 |   +-- sota_comparison.json         # REVEL/CADD/BayesDel comparison
 |   +-- benchmark/                   # Gold-standard benchmark data
 +-- scripts/
-|   +-- train_universal_model.py     # Model training (v4)
+|   +-- vus_reclassification_multigene.py  # VUS reclassification analysis
 |   +-- build_master_dataset.py      # Dataset builder with gnomAD
 |   +-- sota_comparison.py           # SOTA comparison pipeline
 |   +-- evaluate_benchmark.py        # Gold-standard evaluation
@@ -133,17 +143,17 @@ SteppeDNA/
 User Input (Gene + AA Change)
         |
         v
-Feature Engineering (103 features)
+Feature Engineering (120 features)
   - BLOSUM62, volume/hydro/charge diffs
   - ESM-2 protein language model (20 PCA components)
-  - AlphaMissense, MAVE, PhyloP scores
+  - EVE, MAVE/DMS, PhyloP scores
   - AlphaFold 3D structure features
   - SpliceAI splice predictions
         |
         v
 Ensemble Prediction
-  - XGBoost (60% weight)
-  - MLP Neural Network (40% weight)
+  - XGBoost (per-gene weight)
+  - MLP Neural Network (per-gene weight)
         |
         v
 Isotonic Calibration --> Probability [0.5% - 99.5%]
@@ -154,7 +164,7 @@ SHAP Explanation + ACMG Evidence + Confidence Interval
 
 ## Validation
 
-- **SOTA Comparison**: Outperforms REVEL, BayesDel, and CADD on SteppeDNA's held-out test set (competitor tools were not trained on this distribution)
+- **SOTA Comparison**: Achieves higher ROC-AUC than REVEL, BayesDel, and CADD on SteppeDNA's held-out test set (competitor tools were not trained on this distribution)
 - **Gold-Standard Benchmark**: Evaluated on 2,234 variants from ProteinGym DMS + ClinVar Expert Panel
 - **MAVE Leakage Assessment**: Ablation shows minimal dependence on MAVE features (dAUC = -0.0017)
 - **Cross-Validation**: 10-fold CV AUC = 0.9797 +/- 0.0031

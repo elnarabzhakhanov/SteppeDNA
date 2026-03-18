@@ -1,0 +1,235 @@
+{
+  "class_imbalance": {
+    "BRCA1": {
+      "total": 5432,
+      "benign": 280,
+      "pathogenic": 5152,
+      "pct_pathogenic": 94.8
+    },
+    "BRCA2": {
+      "total": 10085,
+      "benign": 9061,
+      "pathogenic": 1024,
+      "pct_pathogenic": 10.2
+    },
+    "PALB2": {
+      "total": 2621,
+      "benign": 180,
+      "pathogenic": 2441,
+      "pct_pathogenic": 93.1
+    },
+    "RAD51C": {
+      "total": 675,
+      "benign": 449,
+      "pathogenic": 226,
+      "pct_pathogenic": 33.5
+    },
+    "RAD51D": {
+      "total": 410,
+      "benign": 231,
+      "pathogenic": 179,
+      "pct_pathogenic": 43.7
+    }
+  },
+  "population_coverage": {
+    "BRCA1": {
+      "total": 5432,
+      "global_nonzero": 846,
+      "AFR": 163,
+      "AMR": 155,
+      "EAS": 107,
+      "NFE": 410
+    },
+    "BRCA2": {
+      "total": 10085,
+      "global_nonzero": 1788,
+      "AFR": 340,
+      "AMR": 321,
+      "EAS": 244,
+      "NFE": 863
+    },
+    "PALB2": {
+      "total": 2621,
+      "global_nonzero": 546,
+      "AFR": 108,
+      "AMR": 116,
+      "EAS": 76,
+      "NFE": 265
+    },
+    "RAD51C": {
+      "total": 675,
+      "global_nonzero": 173,
+      "AFR": 32,
+      "AMR": 34,
+      "EAS": 19,
+      "NFE": 91
+    },
+    "RAD51D": {
+      "total": 410,
+      "global_nonzero": 155,
+      "AFR": 47,
+      "AMR": 26,
+      "EAS": 12,
+      "NFE": 89
+    }
+  },
+  "acmg_frequency_disparity": {
+    "BRCA1": {
+      "Global": {
+        "PM2": 4586,
+        "BS1": 43,
+        "BA1": 21,
+        "pct_PM2": 84.4
+      },
+      "NFE": {
+        "PM2": 5022,
+        "BS1": 40,
+        "BA1": 12,
+        "pct_PM2": 92.5
+      },
+      "EAS": {
+        "PM2": 5325,
+        "BS1": 41,
+        "BA1": 17,
+        "pct_PM2": 98.0
+      },
+      "AFR": {
+        "PM2": 5269,
+        "BS1": 87,
+        "BA1": 22,
+        "pct_PM2": 97.0
+      }
+    },
+    "BRCA2": {
+      "Global": {
+        "PM2": 8297,
+        "BS1": 80,
+        "BA1": 42,
+        "pct_PM2": 82.3
+      },
+      "NFE": {
+        "PM2": 9222,
+        "BS1": 59,
+        "BA1": 20,
+        "pct_PM2": 91.4
+      },
+      "EAS": {
+        "PM2": 9841,
+        "BS1": 86,
+        "BA1": 25,
+        "pct_PM2": 97.6
+      },
+      "AFR": {
+        "PM2": 9745,
+        "BS1": 173,
+        "BA1": 45,
+        "pct_PM2": 96.6
+      }
+    },
+    "PALB2": {
+      "Global": {
+        "PM2": 2075,
+        "BS1": 6,
+        "BA1": 9,
+        "pct_PM2": 79.2
+      },
+      "NFE": {
+        "PM2": 2356,
+        "BS1": 1,
+        "BA1": 6,
+        "pct_PM2": 89.9
+      },
+      "EAS": {
+        "PM2": 2545,
+        "BS1": 16,
+        "BA1": 5,
+        "pct_PM2": 97.1
+      },
+      "AFR": {
+        "PM2": 2513,
+        "BS1": 5,
+        "BA1": 9,
+        "pct_PM2": 95.9
+      }
+    },
+    "RAD51C": {
+      "Global": {
+        "PM2": 502,
+        "BS1": 2,
+        "BA1": 1,
+        "pct_PM2": 74.4
+      },
+      "NFE": {
+        "PM2": 584,
+        "BS1": 1,
+        "BA1": 2,
+        "pct_PM2": 86.5
+      },
+      "EAS": {
+        "PM2": 656,
+        "BS1": 1,
+        "BA1": 0,
+        "pct_PM2": 97.2
+      },
+      "AFR": {
+        "PM2": 643,
+        "BS1": 2,
+        "BA1": 0,
+        "pct_PM2": 95.3
+      }
+    },
+    "RAD51D": {
+      "Global": {
+        "PM2": 255,
+        "BS1": 2,
+        "BA1": 2,
+        "pct_PM2": 62.2
+      },
+      "NFE": {
+        "PM2": 321,
+        "BS1": 3,
+        "BA1": 2,
+        "pct_PM2": 78.3
+      },
+      "EAS": {
+        "PM2": 398,
+        "BS1": 3,
+        "BA1": 1,
+        "pct_PM2": 97.1
+      },
+      "AFR": {
+        "PM2": 363,
+        "BS1": 4,
+        "BA1": 3,
+        "pct_PM2": 88.5
+      }
+    }
+  },
+  "vus_resolution_capacity": {
+    "BRCA1": {
+      "auc": 0.7474,
+      "n": 1087,
+      "status": "LOW confidence"
+    },
+    "BRCA2": {
+      "auc": 0.9938,
+      "n": 2017,
+      "status": "HIGH confidence"
+    },
+    "PALB2": {
+      "auc": 0.6053,
+      "n": 524,
+      "status": "UNRELIABLE"
+    },
+    "RAD51C": {
+      "auc": 0.7847,
+      "n": 135,
+      "status": "MODERATE confidence"
+    },
+    "RAD51D": {
+      "auc": 0.8243,
+      "n": 82,
+      "status": "MODERATE confidence"
+    }
+  }
+}

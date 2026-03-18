@@ -1,0 +1,99 @@
+{
+  "metadata": {
+    "version": "1.0",
+    "sources": [
+      "Oncotarget 2023 - 38 pathogenic variants in 224 Kazakh women",
+      "CAJGH editorial - BRCA1/BRCA2 in Kazakhstan",
+      "Zholdybayeva et al. 2020 - Genetic predisposition to breast cancer in Kazakh women",
+      "Djansugurova et al. 2023 - BRCA mutations in Central Asia"
+    ],
+    "population": "Kazakh / Central Asian",
+    "note": "Founder mutations are recurrent pathogenic variants enriched in specific populations"
+  },
+  "mutations": [
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.5266dup",
+      "hgvs_p": "p.Gln1756ProfsTer74",
+      "common_name": "5382insC",
+      "type": "frameshift",
+      "clinvar_id": "VCV000017661",
+      "frequency_kz": 0.035,
+      "notes": "Most common Kazakh BRCA1 founder mutation. Also Ashkenazi Jewish founder.",
+      "cdna_pos": 5266,
+      "pathogenicity": "Pathogenic"
+    },
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.5278-2del",
+      "hgvs_p": "splice acceptor",
+      "type": "splice",
+      "clinvar_id": null,
+      "frequency_kz": 0.008,
+      "notes": "Splice site variant found in Kazakh cohort",
+      "cdna_pos": 5278,
+      "pathogenicity": "Pathogenic"
+    },
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.2T>C",
+      "hgvs_p": "p.Met1Thr",
+      "type": "missense_start_loss",
+      "clinvar_id": "VCV000125383",
+      "frequency_kz": 0.006,
+      "notes": "Start codon loss variant in Kazakh population",
+      "cdna_pos": 2,
+      "aa_pos": 1,
+      "aa_ref": "Met",
+      "aa_alt": "Thr",
+      "pathogenicity": "Pathogenic"
+    },
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.4035del",
+      "hgvs_p": "p.Glu1346LysfsTer19",
+      "type": "frameshift",
+      "clinvar_id": "VCV000017578",
+      "frequency_kz": 0.005,
+      "notes": "Recurrent in Kazakh and Russian populations",
+      "cdna_pos": 4035,
+      "pathogenicity": "Pathogenic"
+    },
+    {
+      "gene": "BRCA2",
+      "hgvs_c": "c.9409dup",
+      "hgvs_p": "p.Arg3137LysfsTer41",
+      "type": "frameshift",
+      "clinvar_id": null,
+      "frequency_kz": 0.012,
+      "notes": "Most common Kazakh BRCA2 founder mutation",
+      "cdna_pos": 9409,
+      "pathogenicity": "Pathogenic"
+    },
+    {
+      "gene": "BRCA2",
+      "hgvs_c": "c.9253del",
+      "hgvs_p": "p.Tyr3085IlefsTer27",
+      "type": "frameshift",
+      "clinvar_id": null,
+      "frequency_kz": 0.008,
+      "notes": "Second most common Kazakh BRCA2 founder mutation",
+      "cdna_pos": 9253,
+      "pathogenicity": "Pathogenic"
+    },
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.181T>G",
+      "hgvs_p": "p.Cys61Gly",
+      "type": "missense",
+      "clinvar_id": "VCV000017694",
+      "frequency_kz": 0.004,
+      "notes": "RING domain missense found across Central Asian populations",
+      "cdna_pos": 181,
+      "aa_pos": 61,
+      "aa_ref": "Cys",
+      "aa_alt": "Gly",
+      "pathogenicity": "Pathogenic"
+    }
+  ]
+}

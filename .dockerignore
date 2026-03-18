@@ -13,3 +13,15 @@ __pycache__/
 .coverage
 htmlcov/
 *.egg-info/
+
+# Large data files not needed in production
+data/master_training_dataset*.csv
+data/bootstrap_models/
+data/dbnsfp_scores_cache.json
+data/eve_scores_cache.json
+visual_proofs/
+logs/
+.claude/
+.env
+*.key
+*.pem

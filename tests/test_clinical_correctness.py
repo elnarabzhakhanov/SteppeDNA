@@ -130,3 +130,29 @@ class TestClinicalInvariants:
         data = resp.json()
         if gene != "BRCA2":
             assert "reliability" in data or "gene_reliability" in data
+
+
+class TestKnownBenignPolymorphisms:
+    """Regression tests for known benign variants that must not be flagged pathogenic."""
+
+    def test_brca1_p871l_is_benign(self, client):
+        """Pro871Leu (rs799917) is a common benign polymorphism (MAF ~30%).
+
+        ClinVar: Benign/Likely Benign (ENIGMA consortium).
+        If the model scores this as pathogenic, it's a critical false positive.
+        NOTE: This test may fail until gnomAD AF data is fixed (issue B7).
+        """
+        resp = client.post("/predict", json={
+            "gene_name": "BRCA1",
+            "cDNA_pos": 2612,
+            "AA_ref": "Pro",
+            "AA_alt": "Leu",
+            "Mutation": "C>T",
+            "AA_pos": 871
+        })
+        assert resp.status_code == 200
+        data = resp.json()
+        # ML model still scores high (~0.995) but ACMG BA1 correctly overrides to Benign
+        # (AF=48.4% far exceeds BA1 threshold). Check the safety net works:
+        assert "BA1" in data.get("acmg_evidence", {}), "P871L must trigger BA1 (AF=48.4%)"
+        assert data.get("acmg_classification") == "Benign", "P871L must be classified Benign via BA1 override"

@@ -48,9 +48,34 @@ node_modules/
 # ============================================
 # Large binary files (kept locally, not in git)
 # ============================================
-data/*.pkl
-data/*.h5
+# Large binary files - ignored
 data/*.db
+data/bootstrap_models/
+data/master_training_dataset*.csv
+
+# Model files - TRACKED (needed for deployment)
+# data/*.pkl — selectively tracked below
+# data/*.h5 — selectively tracked below
+!data/universal_scaler_ensemble.pkl
+!data/universal_calibrator_ensemble.pkl
+!data/universal_threshold_ensemble.pkl
+!data/universal_feature_names.pkl
+!data/gene_ensemble_weights.json
+!data/universal_nn.h5
+# Per-gene calibrators
+!data/*_calibrator.pkl
+# Feature data files
+!data/*_structural_features.pkl
+!data/*_gnomad_frequencies.pkl
+!data/eve_scores.pkl
+!data/brca1_mave_scores.pkl
+
+# Still ignore large/cache pkl files
+data/dbnsfp_scores_cache.pkl
+data/phylop_scores*.pkl
+data/alphamissense*.pkl
+data/spliceai*.pkl
+data/esm2*.pkl
 data/variant_summary.txt.gz
 data/bootstrap_models/
 data/dbnsfp_scores_cache.json

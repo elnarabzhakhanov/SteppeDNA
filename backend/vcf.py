@@ -13,6 +13,7 @@ import logging
 
 import numpy as np
 import xgboost as xgb
+from fastapi.responses import JSONResponse
 from fastapi import APIRouter, UploadFile, File, Form
 
 from backend.models import (
@@ -462,11 +463,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
 async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")):  # noqa: C901
     t_start = time.perf_counter()
     if gene.upper() not in SUPPORTED_GENES:
-        return {"error": f"Unsupported gene: {gene}. Supported: {', '.join(sorted(SUPPORTED_GENES))}"}
+        return JSONResponse(status_code=400, content={"error": f"Unsupported gene: {gene}. Supported: {', '.join(sorted(SUPPORTED_GENES))}"})
     gene = gene.upper()
     gene_data = get_gene_data(gene)
     if not gene_data.get("genomic_to_cdna"):
-        return {"error": f"VCF parsing not available -- {gene} genomic mapping not loaded"}
+        return JSONResponse(status_code=503, content={"error": f"VCF parsing not available -- {gene} genomic mapping not loaded"})
 
     # Read in chunks with early abort to prevent memory exhaustion
     chunks = []
@@ -477,13 +478,13 @@ async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")): 
             break
         total_size += len(chunk)
         if total_size > MAX_VCF_SIZE:
-            return {"error": f"File too large (>{MAX_VCF_SIZE // (1024*1024)} MB). Maximum is {MAX_VCF_SIZE // (1024*1024)} MB."}
+            return JSONResponse(status_code=413, content={"error": f"File too large (>{MAX_VCF_SIZE // (1024*1024)} MB). Maximum is {MAX_VCF_SIZE // (1024*1024)} MB."})
         chunks.append(chunk)
     content = b"".join(chunks)
     try:
         text = content.decode("utf-8")
     except UnicodeDecodeError:
-        return {"error": "Could not read file as UTF-8"}
+        return JSONResponse(status_code=400, content={"error": "Could not read file as UTF-8"})
 
     lines = text.strip().split("\n")
 
@@ -493,7 +494,7 @@ async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")): 
     if not has_vcf_header and not has_chrom_header:
         data_lines = [ln for ln in lines if ln.strip() and not ln.startswith("#")]
         if data_lines and len(data_lines[0].split("\t")) < 5:
-            return {"error": "File does not appear to be in VCF format. Expected tab-separated columns with CHROM, POS, ID, REF, ALT."}
+            return JSONResponse(status_code=400, content={"error": "File does not appear to be in VCF format. Expected tab-separated columns with CHROM, POS, ID, REF, ALT."})
 
     results = []
     skipped = []
@@ -574,7 +575,7 @@ async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")): 
                 "message": (
                     f"{len(het_variants)} heterozygous variants detected in {gene}. "
                     f"Compound heterozygosity may affect pathogenicity -- "
-                    f"consider phasing analysis to determine if variants are in cis (same allele) or trans (different alleles)."
+                    f"consider phasing analysis to determine if variants are in cis (same allele) or trans (different alleles). ""True compound heterozygosity confirmation requires family trio sequencing (proband + parents). ""Statistical phasing alone is insufficient for clinical decisions."
                 ),
             }
 

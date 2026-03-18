@@ -113,15 +113,10 @@ async def lookup_clinvar(variant: str, request: Request):
 
     gene_param = request.query_params.get("gene")
     if gene_param is None:
-        logger.warning("[ClinVar] No gene parameter provided for variant %s, defaulting to BRCA2. "
-                       "Pass ?gene=GENENAME for accurate results.", clean)
-        gene_upper = "BRCA2"
-    else:
-        gene_upper = gene_param.upper()
+        return {"variant": clean, "error": "Missing required parameter: gene. Pass ?gene=BRCA1|BRCA2|PALB2|RAD51C|RAD51D"}
+    gene_upper = gene_param.upper()
     if gene_upper not in SUPPORTED_GENES:
-        logger.warning("[ClinVar] Unsupported gene '%s' for variant %s, defaulting to BRCA2.",
-                       gene_upper, clean)
-        gene_upper = "BRCA2"
+        return {"variant": clean, "error": f"Unsupported gene '{gene_param}'. Supported: BRCA1, BRCA2, PALB2, RAD51C, RAD51D"}
     query = f'{gene_upper}[gene] AND "{clean}"[variant name] AND "homo sapiens"[organism]'
     encoded = urllib.parse.urlencode({
         "db": "clinvar", "term": query, "retmax": 5, "retmode": "json"

@@ -110,6 +110,7 @@ for g in GENES:
 
     esm2_raw = _load_pickle(g, "esm2_embeddings.pkl")
     esm2 = esm2_raw.get("embeddings", {}) if isinstance(esm2_raw, dict) else None
+    eve      = _load_pickle(g, "eve_scores.pkl")
 
     loaded = []
     if phylop is not None: loaded.append("PhyloP")
@@ -118,11 +119,13 @@ for g in GENES:
     if struct is not None: loaded.append("Structure")
     if gnomad is not None: loaded.append("gnomAD")
     if esm2 is not None: loaded.append("ESM-2")
+    if eve is not None: loaded.append("EVE")
     print(f"  Data sources loaded: {', '.join(loaded) if loaded else 'NONE'}")
 
     # ── Run feature engineering ─────────────────────────────────────────
     X_features = engineer_features(
-        df, phylop, mave, am, struct, gnomad, spliceai, esm2, gene_name=g
+        df, phylop, mave, am, struct, gnomad, spliceai, esm2, gene_name=g,
+        eve_data=eve,
     )
 
     # Attach metadata for training
@@ -132,6 +135,10 @@ for g in GENES:
 
     print(f"  Engineered {X_features.shape[1] - 3} features for {len(X_features)} variants")
     all_dfs.append(X_features)
+
+    # Free memory before next gene
+    del phylop, mave, am, struct, gnomad, spliceai, esm2_raw, esm2, eve, df, X_features
+    import gc; gc.collect()
 
 if not all_dfs:
     print("\n[ERROR] No variants engineered. Check data paths.")

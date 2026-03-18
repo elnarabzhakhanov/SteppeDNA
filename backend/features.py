@@ -167,9 +167,11 @@ def get_gene_data(gene_name: str) -> dict:
 
     phylop = load_with_fallback("phylop_scores.pkl", _load_pickle) or {}
     mave_v, mave_p = load_with_fallback("mave_scores.pkl", _load_variant_dict)
+    # AM removed in v5.4 (label leakage). Keep loading for ACMG rules if needed.
     am_v, am_p = load_with_fallback("alphamissense_scores.pkl", _load_variant_dict)
     struct = load_with_fallback("structural_features.pkl", _load_pickle) or {}
     gnomad_v, gnomad_p = load_with_fallback("gnomad_frequencies.pkl", _load_variant_dict)
+    eve_v, eve_p = load_with_fallback("eve_scores.pkl", _load_variant_dict)
 
     esm2 = load_with_fallback("esm2_embeddings.pkl", _load_pickle) or {}
     esm2_dict_local = esm2.get("embeddings", {})
@@ -197,7 +199,7 @@ def get_gene_data(gene_name: str) -> dict:
 
     # Load PM5 pathogenic position lookup (AA positions with known pathogenic missense)
     pm5_positions = set()
-    pm5_path = os.path.join(DATA_DIR, "pathogenic_positions.json")
+    pm5_path = os.path.join(DATA_DIR, "pathogenic_positions_clinvar.json")
     if os.path.exists(pm5_path):
         with open(pm5_path, "r") as f:
             pm5_data = json.load(f)
@@ -212,6 +214,7 @@ def get_gene_data(gene_name: str) -> dict:
         "am_v": am_v, "am_p": am_p,
         "struct": struct,
         "gnomad_v": gnomad_v, "gnomad_p": gnomad_p,
+        "eve_v": eve_v, "eve_p": eve_p,
         "esm2_dict": esm2_dict_local,
         "esm2_pca": esm2_pca_model_local,
         "cds": cds,
@@ -241,7 +244,7 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     # Early guard: reject clearly invalid positions
     if cDNA_pos < 1 or AA_pos < 1:
         logger.warning(f"[FEATURE] Invalid positions: cDNA={cDNA_pos}, AA={AA_pos} for {gene_name}")
-        return np.zeros((1, len(gene_data.get("feature_names", []) or range(103))), dtype=np.float32)
+        return np.zeros((1, len(gene_data.get("feature_names", []) or range(120))), dtype=np.float32)
 
     gene_config = gene_data.get("gene_config", {})
     if not gene_config:
@@ -280,6 +283,36 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     features["in_NLS"] = check_domains("NLS_nuclear_localization", "N_terminal_domain")
     features["in_primary_interaction"] = check_domains("PALB2_interaction", "BRCA1_interaction", "BARD1_interaction", "RAD51B_RAD51D_XRCC3_interaction", "Holliday_junction_resolution")
 
+    # Gene-specific computed features
+    # Distance to nearest critical domain boundary (normalized by protein length)
+    aa_len = gene_config.get("aa_length", 1000)
+    min_dist_to_domain = aa_len  # worst case: far from all domains
+    n_domains_hit = 0
+    for d_name, d_range in domains.items():
+        if isinstance(d_range, (list, tuple)) and len(d_range) >= 2:
+            if d_range[0] <= AA_pos <= d_range[1]:
+                min_dist_to_domain = 0
+                n_domains_hit += 1
+            else:
+                dist = min(abs(AA_pos - d_range[0]), abs(AA_pos - d_range[1]))
+                min_dist_to_domain = min(min_dist_to_domain, dist)
+    features["dist_nearest_domain"] = min_dist_to_domain / aa_len  # normalized 0-1
+    features["n_domains_hit"] = n_domains_hit
+    features["in_multi_domain"] = int(n_domains_hit > 1)
+
+    # Functional zone score: weighted inverse distance to all domains (captures cumulative proximity)
+    func_zone_score = 0.0
+    for d_name, d_range in domains.items():
+        if isinstance(d_range, (list, tuple)) and len(d_range) >= 2:
+            if d_range[0] <= AA_pos <= d_range[1]:
+                func_zone_score += 1.0
+            else:
+                dist = min(abs(AA_pos - d_range[0]), abs(AA_pos - d_range[1]))
+                func_zone_score += 1.0 / (1.0 + dist / 50.0)  # decay over ~50 residues
+    features["functional_zone_score"] = func_zone_score
+    features["func_zone_x_blosum"] = func_zone_score * features["blosum62_score"]
+    # NOTE: func_zone_x_phylop deferred to after phylop_score is computed (below)
+
     features["is_nonsense"] = int(AA_alt == "Ter")
     ref_charge = get_charge(AA_ref)
     alt_charge = get_charge(AA_alt)
@@ -292,6 +325,7 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     features["high_conservation"] = int(phylop > 4.0)
     features["ultra_conservation"] = int(phylop > 7.0)
     features["conserv_x_blosum"] = phylop * features["blosum62_score"]
+    features["func_zone_x_phylop"] = features["functional_zone_score"] * phylop
 
     # MAVE HDR functional features
     mave_key = f"{AA_ref}{AA_pos}{AA_alt}"
@@ -301,12 +335,14 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     features["mave_abnormal"] = int(0.01 <= mave <= 1.49)
     features["mave_x_blosum"] = mave * features["blosum62_score"]
 
-    # AlphaMissense features
-    am_key = f"{AA_ref}{AA_pos}{AA_alt}"
-    am = gene_data["am_v"].get(am_key, gene_data["am_p"].get(int(AA_pos), 0.0))
-    features["am_score"] = am
-    features["am_pathogenic"] = int(am > 0.564)
-    features["am_x_phylop"] = am * features["phylop_score"]
+    # AlphaMissense features REMOVED in v5.4 (label leakage — see AM ablation study)
+
+    # EVE evolutionary coupling features
+    eve_key = f"{AA_ref}{AA_pos}{AA_alt}"
+    eve = gene_data["eve_v"].get(eve_key, gene_data["eve_p"].get(int(AA_pos), 0.0))
+    features["eve_score"] = eve
+    features["eve_pathogenic"] = int(eve > 0.5)
+    features["eve_x_phylop"] = eve * features["phylop_score"]
 
     # 3D Structural Features
     sf = gene_data["struct"].get(int(AA_pos), {})
@@ -316,9 +352,14 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     features["dist_dna"] = sf.get("dist_dna", 999.0)
     features["dist_palb2"] = sf.get("dist_palb2", 999.0)
     features["is_dna_contact"] = int(sf.get("is_dna_contact", False))
-    ss = sf.get("ss", "C")
-    features["ss_helix"] = int(ss == "H")
-    features["ss_sheet"] = int(ss == "E")
+    # Handle both old format (ss string) and new AlphaFold format (ss_helix/ss_sheet ints)
+    if "ss_helix" in sf:
+        features["ss_helix"] = int(sf["ss_helix"])
+        features["ss_sheet"] = int(sf.get("ss_sheet", 0))
+    else:
+        ss = sf.get("ss", "C")
+        features["ss_helix"] = int(ss in ("H", "G", "I"))
+        features["ss_sheet"] = int(ss in ("E", "B"))
     features["buried_x_blosum"] = features["is_buried"] * features["blosum62_score"]
     features["dna_contact_x_blosum"] = features["is_dna_contact"] * features["blosum62_score"]
 
@@ -329,7 +370,7 @@ def build_feature_vector(cDNA_pos, AA_ref, AA_alt, Mutation, AA_pos, gene_name="
     # Normalize gnomAD value -- it can be a dict (new format) or float (legacy)
     if isinstance(gnomad_af_val, dict):
         gnomad_af = float(gnomad_af_val.get("af", 0.0))
-        gnomad_popmax = float(gnomad_af_val.get("popmax", gnomad_af))
+        gnomad_popmax = float(gnomad_af_val.get("popmax_af", gnomad_af_val.get("popmax", gnomad_af)))
         gnomad_afr = float(gnomad_af_val.get("afr", 0.0))
         gnomad_amr = float(gnomad_af_val.get("amr", 0.0))
         gnomad_eas = float(gnomad_af_val.get("eas", 0.0))
@@ -472,9 +513,7 @@ NICE_NAMES = {
     "has_mave": "Has MAVE Data",
     "mave_abnormal": "MAVE Abnormal",
     "mave_x_blosum": "MAVE x BLOSUM62",
-    "am_score": "AlphaMissense Score",
-    "am_pathogenic": "AM Pathogenic",
-    "am_x_phylop": "AM x PhyloP",
+    # AM features removed in v5.4 (label leakage)
     "rsa": "Solvent Accessibility",
     "is_buried": "Buried Residue",
     "bfactor": "Structural Confidence",
@@ -535,6 +574,17 @@ NICE_NAMES = {
     # Missing gnomAD features
     "gnomad_popmax_log": "gnomAD PopMax AF (log)",
     "is_popmax_rare": "Rare in All Populations",
+    # Gene-specific computed features
+    "dist_nearest_domain": "Distance to Nearest Domain",
+    "n_domains_hit": "# Domains at Position",
+    "in_multi_domain": "In Multiple Domains",
+    "functional_zone_score": "Functional Zone Score",
+    "func_zone_x_blosum": "Func Zone x BLOSUM62",
+    "func_zone_x_phylop": "Func Zone x PhyloP",
+    # EVE evolutionary coupling features
+    "eve_score": "EVE Score",
+    "eve_pathogenic": "EVE Pathogenic",
+    "eve_x_phylop": "EVE x PhyloP",
 }
 
 

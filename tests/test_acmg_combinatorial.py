@@ -120,14 +120,18 @@ def test_ba1_supersedes_bs1_all_genes(gene):
     assert "BS1" not in result, f"BS1 should be suppressed by BA1 for {gene}: {result}"
 
 
-@pytest.mark.parametrize("gene", ["BRCA1", "BRCA2", "PALB2", "RAD51C", "RAD51D"])
-def test_ba1_not_triggered_at_exact_threshold(gene):
-    """AF exactly equal to the BA1 threshold (0.01) must NOT trigger BA1
-    because the rule requires strictly greater-than."""
-    feats = _feats(gnomad_af=0.01)
+@pytest.mark.parametrize("gene, threshold", [
+    ("BRCA1", 0.001), ("BRCA2", 0.001), ("PALB2", 0.002),
+    ("RAD51C", 0.005), ("RAD51D", 0.005),
+])
+def test_ba1_not_triggered_at_exact_threshold(gene, threshold):
+    """AF exactly equal to the gene-specific BA1 threshold must NOT trigger BA1
+    because the rule requires strictly greater-than.
+    Updated for ClinGen SVI thresholds (v5.4)."""
+    feats = _feats(gnomad_af=threshold)
     result = evaluate_acmg_rules(feats, 0.5, gene_name=gene)
     assert "BA1" not in result, (
-        f"BA1 fired at exact threshold for {gene}: {result}"
+        f"BA1 fired at exact threshold {threshold} for {gene}: {result}"
     )
 
 
@@ -177,22 +181,23 @@ def test_middle_probability_fires_neither_pp3_nor_bp4():
 
 
 @pytest.mark.parametrize("gene, af, should_trigger", [
-    # BRCA1 threshold = 0.001
-    ("BRCA1", 0.0011, True),   # just above
-    ("BRCA1", 0.0009, False),  # just below
-    ("BRCA1", 0.001,  False),  # exactly at threshold (strict >)
-    # PALB2 threshold = 0.002
-    ("PALB2", 0.0021, True),   # just above
-    ("PALB2", 0.0019, False),  # just below
-    # RAD51C threshold = 0.005
-    ("RAD51C", 0.0051, True),  # just above
-    ("RAD51C", 0.0049, False), # just below
-    # RAD51D threshold = 0.005 (same family as RAD51C)
-    ("RAD51D", 0.0051, True),  # just above
-    ("RAD51D", 0.0049, False), # just below
+    # BRCA1: BS1=0.0001, BA1=0.001. BS1 fires between 0.0001 and 0.001.
+    ("BRCA1", 0.00015, True),  # between BS1 and BA1 -> BS1 fires
+    ("BRCA1", 0.00009, False), # below BS1 -> neither fires
+    ("BRCA1", 0.0001, False),  # exactly at BS1 threshold (strict >)
+    # PALB2: BS1=0.0005, BA1=0.002
+    ("PALB2", 0.0008, True),   # between BS1 and BA1
+    ("PALB2", 0.0004, False),  # below BS1
+    # RAD51C: BS1=0.001, BA1=0.005
+    ("RAD51C", 0.002, True),   # between BS1 and BA1
+    ("RAD51C", 0.0009, False), # below BS1
+    # RAD51D: BS1=0.001, BA1=0.005
+    ("RAD51D", 0.002, True),   # between BS1 and BA1
+    ("RAD51D", 0.0009, False), # below BS1
 ])
 def test_bs1_gene_specific_thresholds(gene, af, should_trigger):
-    """BS1 must use the gene-specific AF threshold and not fire below it."""
+    """BS1 must use the gene-specific AF threshold and not fire below it.
+    Updated for ClinGen SVI thresholds (v5.4): BS1 < BA1 per gene."""
     feats = _feats(gnomad_af=af)
     result = evaluate_acmg_rules(feats, 0.5, gene_name=gene)
     if should_trigger:
@@ -326,7 +331,7 @@ def test_all_flags_neutral_returns_only_pm2():
     probability, only PM2 should fire (since AF=0 means absent from population DB)."""
     feats = _feats()
     result = evaluate_acmg_rules(feats, 0.5, gene_name="BRCA2")
-    assert result == {"PM2": "Variant absent from gnomAD population database (AF = 0)"}, (
+    assert result == {"PM2": "Variant absent from gnomAD population database (global AF = 0)"}, (
         f"Expected only PM2, got: {result}"
     )
 

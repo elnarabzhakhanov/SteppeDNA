@@ -21,29 +21,36 @@ Note: PS2/PM6 (de novo), PP1/BS4 (co-segregation), PS3/BS3 (functional studies),
 PS4 (prevalence), PP2/BP1 (gene mechanism) require data not available to this tool.
 """
 
-# Gene-specific BS1 AF thresholds based on ClinGen SVI recommendations
-# High-penetrance genes (BRCA1/2) use stricter thresholds
+# Gene-specific BS1 AF thresholds based on ClinGen SVI recommendations.
+# BS1 = "strong benign" � AF above this threshold provides strong evidence.
+# Must be LOWER than BA1 (BA1 is stand-alone, BS1 needs corroboration).
 GENE_BS1_THRESHOLDS = {
-    "BRCA1": 0.001,
-    "BRCA2": 0.001,
-    "PALB2": 0.002,
-    "RAD51C": 0.005,
-    "RAD51D": 0.005,
+    "BRCA1": 0.0001,  # ClinGen SVI: 0.01% (BA1=0.1%)
+    "BRCA2": 0.0001,  # ClinGen SVI: 0.01% (BA1=0.1%)
+    "PALB2": 0.0005,  # 0.05% (BA1=0.2%)
+    "RAD51C": 0.001,   # 0.1% (BA1=0.5%)
+    "RAD51D": 0.001,   # 0.1% (BA1=0.5%)
 }
 
 # BA1 stand-alone benign threshold — must be HIGHER than BS1 for each gene.
 # BA1 = "benign, stand-alone" (stronger evidence) vs BS1 = "strong benign" (needs corroboration).
-# Lowered from original 0.01 (all genes) to gene-specific values per ClinGen SVI guidance.
+# ClinGen SVI recommends ~0.001 for high-penetrance cancer genes (BRCA1/2).
 GENE_BA1_THRESHOLDS = {
-    "BRCA1": 0.005,   # BS1=0.001, BA1=0.005 (was 0.01)
-    "BRCA2": 0.005,   # BS1=0.001, BA1=0.005 (was 0.01)
-    "PALB2": 0.005,   # BS1=0.002, BA1=0.005 (was 0.01)
-    "RAD51C": 0.01,   # BS1=0.005, BA1=0.01 (unchanged)
-    "RAD51D": 0.01,   # BS1=0.005, BA1=0.01 (unchanged)
+    "BRCA1": 0.001,   # ClinGen SVI high-penetrance (was 0.005)
+    "BRCA2": 0.001,   # ClinGen SVI high-penetrance (was 0.005)
+    "PALB2": 0.002,   # Moderate penetrance (was 0.005)
+    "RAD51C": 0.005,  # Lower penetrance (was 0.01)
+    "RAD51D": 0.005,  # Lower penetrance (was 0.01)
 }
 
+# ACMG Computational Evidence Thresholds (ClinGen SVI recommendations)
+PP3_PATHOGENIC_THRESHOLD = 0.70  # Model probability >= this triggers PP3
+BP4_BENIGN_THRESHOLD = 0.20     # Model probability <= this triggers BP4
+PM1_DISTANCE_THRESHOLD = 5.0    # Angstroms to functional site for PM1
+PM1_DISTANCE_UNKNOWN = 999.0    # Sentinel value for unknown distances
 
-def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):  # noqa: C901
+
+def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2", population=None):  # noqa: C901
     """
     Evaluate ACMG criteria for a variant.
 
@@ -53,11 +60,27 @@ def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):  # noqa:
                   exon_number, total_exons (optional for PVS1 modifier) keys
         model_prediction: calibrated probability of pathogenicity (0.0 to 1.0)
         gene_name: gene name for gene-specific thresholds
+        population: optional population code ('eas','afr','nfe','sas','amr') for population-aware AF
 
     Returns:
         dict mapping ACMG codes to human-readable rationale strings
     """
     met_codes = {}
+
+    # Population-aware allele frequency selection
+    # If a population is specified, use that population's AF for BA1/BS1/PM2
+    POP_AF_KEYS = {
+        'afr': 'gnomad_af_afr', 'amr': 'gnomad_af_amr',
+        'asj': 'gnomad_af_asj', 'eas': 'gnomad_af_eas',
+        'fin': 'gnomad_af_fin', 'nfe': 'gnomad_af_nfe',
+        'sas': 'gnomad_af_sas',
+    }
+    if population and population.lower() in POP_AF_KEYS:
+        af = features.get(POP_AF_KEYS[population.lower()], features.get('gnomad_af', 0.0))
+        pop_label = population.upper()
+    else:
+        af = features.get('gnomad_af', 0.0)
+        pop_label = 'global'
 
     # PM1: structural proximity to functional sites (5A threshold)
     features.get('domain', 'uncharacterized')
@@ -65,9 +88,9 @@ def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):  # noqa:
     dist_palb2 = features.get('dist_palb2', 999.0)
 
     pm1_reasons = []
-    if dist_dna <= 5.0 and dist_dna != 999.0:
+    if dist_dna <= PM1_DISTANCE_THRESHOLD and dist_dna != PM1_DISTANCE_UNKNOWN:
         pm1_reasons.append(f"Located within {dist_dna}A of DNA binding interface")
-    if dist_palb2 <= 5.0 and dist_palb2 != 999.0:
+    if dist_palb2 <= PM1_DISTANCE_THRESHOLD and dist_palb2 != PM1_DISTANCE_UNKNOWN:
         pm1_reasons.append(f"Located within {dist_palb2}A of Primary Interaction interface")
     if features.get('in_critical_domain', False):
         pm1_reasons.append("Located inside a Critical Functional Repeat or Domain")
@@ -87,21 +110,21 @@ def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):  # noqa:
         met_codes['PM5'] = "Different pathogenic missense variant previously established at this amino acid position"
 
     # PM2: Absent from population databases
-    af = features.get('gnomad_af', 0.0)
+    # Uses population-specific AF if selected, otherwise global AF
     if af == 0.0:
-        met_codes['PM2'] = "Variant absent from gnomAD population database (AF = 0)"
+        met_codes['PM2'] = f"Variant absent from gnomAD population database ({pop_label} AF = 0)"
 
     # BA1: Stand-alone benign — AF above population threshold
     ba1_threshold = GENE_BA1_THRESHOLDS.get(gene_name.upper(), 0.01)
     if af > ba1_threshold:
-        met_codes['BA1'] = f"Allele frequency ({af*100:.3f}%) exceeds stand-alone benign threshold ({ba1_threshold*100:.1f}%) for {gene_name}"
+        met_codes['BA1'] = f"Allele frequency ({af*100:.3f}%, {pop_label}) exceeds stand-alone benign threshold ({ba1_threshold*100:.1f}%) for {gene_name}"
 
     # BS1: common variant in gnomAD (gene-specific AF threshold)
     # Only apply BS1 if BA1 was not triggered (BA1 supersedes BS1)
     if 'BA1' not in met_codes:
         bs1_threshold = GENE_BS1_THRESHOLDS.get(gene_name.upper(), 0.001)
         if af > bs1_threshold:
-            met_codes['BS1'] = f"Population frequency ({af*100:.4f}%) exceeds threshold ({bs1_threshold*100:.3f}%) for {gene_name}"
+            met_codes['BS1'] = f"Population frequency ({af*100:.4f}%, {pop_label}) exceeds threshold ({bs1_threshold*100:.3f}%) for {gene_name}"
 
     # PVS1: Null variant (nonsense, frameshift) in a gene where LOF is a known mechanism
     # With last-exon/NMD modifier per ACMG guidelines
@@ -154,9 +177,9 @@ def evaluate_acmg_rules(features, model_prediction, gene_name="BRCA2"):  # noqa:
 
     # PP3/BP4: computational prediction evidence
     # Thresholds aligned with ClinGen SVI recommendations (lowered from 0.90/0.10)
-    if model_prediction >= 0.70:
+    if model_prediction >= PP3_PATHOGENIC_THRESHOLD:
         met_codes['PP3'] = f"Computational model predicts pathogenicity (p={model_prediction:.3f})"
-    elif model_prediction <= 0.20:
+    elif model_prediction <= BP4_BENIGN_THRESHOLD:
         met_codes['BP4'] = f"Computational model predicts benign (p={model_prediction:.3f})"
 
     return met_codes
