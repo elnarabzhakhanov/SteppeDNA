@@ -2656,3 +2656,12 @@ footer a {
     max-width: 600px;
     margin: 0 auto;
 }
+
+/* Result card fade-in animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.result-card, .acmg-card, .shap-card {
+    animation: fadeIn 0.3s ease-out;
+}

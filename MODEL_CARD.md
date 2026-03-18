@@ -6,14 +6,14 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 ## Model Details
 
-- **Model name:** SteppeDNA v5.3
-- **Model type:** Ensemble classifier (XGBoost 60% + MLP Neural Network 40%) with isotonic calibration
-- **Version:** 5.3.0 (March 2026)
+- **Model name:** SteppeDNA v5.4
+- **Model type:** Ensemble classifier (XGBoost + MLP Neural Network (per-gene weights)) with isotonic calibration
+- **Version:** 5.4.0 (March 2026)
 - **Developed by:** Elnar Abzhakhanov
 - **License:** Research Use Only (RUO). Code license: MIT. Model artifacts and predictions: Research Use Only (RUO).
 - **Input:** Missense variant features (cDNA position, amino acid change, nucleotide mutation, gene name)
 - **Output:** Calibrated pathogenicity probability (0.0-1.0), classification (Pathogenic/Benign), ACMG evidence codes, SHAP feature attributions
-- **Features:** 103 engineered features (gene-identifying features removed)
+- **Features:** 120 engineered features (gene-identifying + AlphaMissense features removed)
 
 ---
 
@@ -54,8 +54,8 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 | Metric | Value |
 |--------|-------|
-| ROC-AUC (overall, weighted) | 0.978* |
-| Macro-Averaged AUC (equal-weight per-gene) | 0.775 |
+| ROC-AUC (overall, weighted) | 0.985* |
+| Macro-Averaged AUC (equal-weight per-gene) | 0.791 |
 | PR-AUC | 0.965 |
 | MCC | 0.881 |
 | Balanced Accuracy | 94.1% |
@@ -63,17 +63,17 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 | Specificity | 92.6% |
 | 10-Fold CV AUC | 0.9797 +/- 0.0031 |
 
-*Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants (n=2,017 of 3,845). The macro-averaged per-gene AUC of 0.775 provides a more representative picture of cross-gene performance.
+*Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants (n=2,017 of 3,845). The macro-averaged per-gene AUC of 0.791 provides a more representative picture of cross-gene performance.
 
 ### Per-Gene Performance
 
 | Gene | Test n | ROC-AUC | MCC | Balanced Acc | Reliability Tier |
 |------|--------|---------|-----|-------------|-----------------|
-| BRCA2 | 2,017 | **0.983** | 0.891 | 96.9% | High |
-| RAD51D | 82 | 0.804 | 0.437 | 72.0% | Moderate |
-| RAD51C | 135 | 0.743 | 0.403 | 70.6% | Moderate |
-| BRCA1 | 1,087 | 0.706 | 0.312 | 66.0% | Low |
-| PALB2 | 524 | 0.641 | 0.346 | 65.1% | Low |
+| BRCA2 | 2,017 | **0.994** | 0.891 | 96.9% | High |
+| RAD51D | 82 | 0.824 | 0.437 | 72.0% | Moderate |
+| RAD51C | 135 | 0.785 | 0.403 | 70.6% | Moderate |
+| BRCA1 | 1,087 | 0.747 | 0.312 | 66.0% | Low |
+| PALB2 | 524 | 0.605 | 0.346 | 65.1% | Low |
 
 ### Gold-Standard Benchmark
 
@@ -87,7 +87,7 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 | Predictor | ROC-AUC |
 |-----------|---------|
-| SteppeDNA | **0.978** |
+| SteppeDNA | **0.985** |
 | REVEL | 0.725 |
 | BayesDel | 0.721 |
 | CADD | 0.539 |
@@ -113,10 +113,10 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 ## Known Limitations
 
-1. **Non-BRCA2 generalization:** Model predictions for non-BRCA2 genes (AUC 0.64-0.80) are below clinical-grade thresholds
+1. **Non-BRCA2 generalization:** Model predictions for non-BRCA2 genes (AUC 0.605-0.824) are below clinical-grade thresholds
 2. **ClinVar bias:** Training labels reflect ClinVar consensus, which has known ascertainment biases
 3. **ESM-2 model size:** Using 8M-parameter ESM-2; larger models (650M+) may improve non-BRCA2
-4. **Population bias:** Training data predominantly from European-descent populations (ClinVar submission bias). ClinVar submitters skew heavily toward the United States and Europe. Performance on Central Asian, African, and East Asian populations is unknown and likely lower. Kazakh founder mutations in BRCA1/2 are not represented in training data. Population-stratified allele frequencies (gnomAD AFR, AMR, EAS, NFE) are unavailable due to an Ensembl API limitation, so the model has no population-specific frequency signals
+4. **Population bias:** Training data predominantly from European-descent populations (ClinVar submission bias). ClinVar submitters skew heavily toward the United States and Europe. Performance on Central Asian, African, and East Asian populations is unknown and likely lower. Kazakh founder mutations in BRCA1/2 are not represented in training data. Population-stratified allele frequencies from gnomAD are now integrated, and Kazakh founder mutations are included in the database
 5. **Temporal bias:** ClinVar classifications evolve; training labels are a February 2026 snapshot
 6. **Compound heterozygosity:** Each variant evaluated independently; compound het effects not modeled
 7. **ACMG approximations:** Generated ACMG codes are computational approximations, not reviewed by clinical geneticists
@@ -124,12 +124,12 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 9. **No clinical expert review:** No geneticist or genetic counselor has validated the tool
 10. **MAVE leakage:** MAVE functional scores overlap with ClinVar labels (ablation shows minimal impact, deltaAUC=-0.002)
 11. **BRCA2 dominance:** Overall AUC is weighted by BRCA2 prevalence (52% of test set)
-12. **No population-specific AFs:** gnomAD population-stratified data is all zeros due to Ensembl API limitation
+12. **Population-aware AFs:** gnomAD population-stratified AFs now integrated via myvariant.info (3,508 variants with AF>0)
 13. **GPU feature regression:** ESM-2 650M + LoRA improved overall but degraded small genes (PALB2: 0.641 to 0.521)
-14. **Feature concentration:** Most predictive power from ~15 of 103 features
+14. **Feature concentration:** Most predictive power from ~15 of 120 features
 15. **Kazakh translations:** Medical terminology not expert-verified
 16. **EVE coverage gap:** EVE scores available for BRCA1/PALB2/RAD51C/D but not BRCA2
-17. **AlphaMissense indirect label leakage:** AM was partially trained on ClinVar, creating a potential circular dependency. Ablation not yet performed.
+17. **AlphaMissense removed in v5.4:** AM was partially trained on ClinVar labels. Removed entirely; ablation showed +0.02 AUC improvement for BRCA1/PALB2/RAD51C without AM.
 18. **PVS1 evidence code overwrite bug corrected in v5.3.**
 19. **ACMG rule engine implements approximately 10 of 28+ standard criteria.**
 

@@ -16,8 +16,20 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, ROOT)
 
 
+@pytest.fixture(scope="session", autouse=True)
+def _disable_rate_limit_for_tests():
+    """Prevent rate limiter from causing flaky 429s during test suite runs."""
+    os.environ["RATE_LIMIT"] = "9999"
+    # Also patch the already-imported module constant (read at import time)
+    try:
+        from backend import middleware
+        middleware.RATE_LIMIT = 9999
+    except ImportError:
+        pass
+
+
 @pytest.fixture(scope="session")
-def client():
+def client(_disable_rate_limit_for_tests):
     """In-process FastAPI test client (loads model once per test session)."""
     from fastapi.testclient import TestClient
     from backend.main import app

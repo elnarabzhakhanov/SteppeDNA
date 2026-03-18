@@ -189,6 +189,41 @@ def _log_prediction_audit(*, gene: str, hgvs_c: str, hgvs_p: str,
     _audit_logger.info(json.dumps(record))
 
 
+
+
+# ─── Kazakh Founder Mutation Data ───────────────────────────────────────────
+_FOUNDER_MUTATIONS = {}
+
+def _load_founder_mutations():
+    """Load Kazakh/Central Asian founder mutation data from JSON."""
+    global _FOUNDER_MUTATIONS
+    fpath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kazakh_founder_mutations.json")
+    if os.path.exists(fpath):
+        try:
+            with open(fpath, "r") as f:
+                data = json.load(f)
+            # Build lookup: gene -> {hgvs_c -> mutation_info}
+            mutations_list = data.get("mutations", []) if isinstance(data, dict) else data
+            for entry in mutations_list:
+                gene = entry.get("gene", "").upper()
+                hgvs = entry.get("hgvs_c", entry.get("hgvs_cdna", ""))
+                if gene and hgvs:
+                    if gene not in _FOUNDER_MUTATIONS:
+                        _FOUNDER_MUTATIONS[gene] = {}
+                    _FOUNDER_MUTATIONS[gene][hgvs] = {
+                        "name": entry.get("common_name", hgvs),
+                        "population": entry.get("population", "Kazakh"),
+                        "frequency": entry.get("frequency_kz", entry.get("estimated_frequency", "unknown")),
+                        "source": entry.get("notes", entry.get("source", "")),
+                        "clinvar_id": entry.get("clinvar_id", ""),
+                        "mutation_type": entry.get("type", entry.get("mutation_type", "")),
+                        "pathogenicity": entry.get("pathogenicity", ""),
+                        "hgvs_p": entry.get("hgvs_p", ""),
+                    }
+            logger.info(f"[FOUNDER] Loaded {sum(len(v) for v in _FOUNDER_MUTATIONS.values())} founder mutations across {len(_FOUNDER_MUTATIONS)} genes")
+        except Exception as e:
+            logger.warning(f"[FOUNDER] Failed to load founder mutations: {e}")
+
 # ─── Lifespan & App Creation ─────────────────────────────────────────────────
 
 @asynccontextmanager
@@ -204,6 +239,7 @@ async def lifespan(app):
     _load_gene_ensemble_weights()
     _load_bootstrap_models()
     _load_active_learning_priorities()
+    _load_founder_mutations()
     _load_conformal_thresholds()
     logger.info("Server ready.")
     try:
@@ -235,7 +271,7 @@ _is_production = os.getenv("ENVIRONMENT", "").lower() == "production"
 app = FastAPI(
     title="SteppeDNA API",
     description="Multi-gene HR variant pathogenicity classifier for Homologous Recombination DNA repair genes (BRCA1, BRCA2, PALB2, RAD51C, RAD51D). "
-                "Ensemble of XGBoost + MLP with isotonic calibration, trained on 19,000+ ClinVar & gnomAD variants across 103 engineered features.",
+                "Ensemble of XGBoost + MLP with isotonic calibration, trained on 19,000+ ClinVar & gnomAD variants across 120 engineered features.",
     version=STEPPEDNA_VERSION,
     docs_url="/docs" if not _is_production else None,
     redoc_url="/redoc" if not _is_production else None,
@@ -284,6 +320,7 @@ class MutationInput(BaseModel):
     AA_pos: int = 0
 
     gene_name: str = "BRCA2"
+    population: str | None = None  # gnomAD population code (afr, amr, asj, eas, fin, nfe, sas)
 
     @field_validator('gene_name')
     @classmethod
@@ -395,7 +432,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     # Track warnings for response (initialized early so calibrator fallback can append)
     _warnings = []
 
-    if gene_data.get("ensemble_model") is None or gene_data.get("scaler") is None:
+    if gene_data.get("scaler") is None:
         return JSONResponse(status_code=500, content={"error": f"ML Model artifacts not available for gene: {mutation_data.gene_name}"})
 
     raw_vector = build_feature_vector(mutation_data.cDNA_pos, mutation_data.AA_ref, mutation_data.AA_alt, mutation_data.Mutation, aa_pos, mutation_data.gene_name)
@@ -418,7 +455,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     xgb_model = gene_data.get("booster")
 
     if universal_calibrator and nn_model and xgb_model:
-        # Native model pass
+        # Full ensemble: XGBoost + MLP
         nn_p = nn_model.predict(scaled_vector, verbose=0).flatten()[0]
         xgb_p = xgb_model.predict(xgb.DMatrix(scaled_vector))[0]
 
@@ -442,12 +479,29 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
             calibrated = active_calibrator.predict([blended])[0]
             probability = float(calibrated)
         except Exception:
-            # Fallback to raw blended if calibrator fails
             probability = float(blended)
             calibrator_type = "raw_fallback"
             _warnings.append("Calibrator failed — using raw model score. Probability may be less well-calibrated.")
+    elif xgb_model and universal_calibrator:
+        # XGBoost-only fallback (MLP unavailable due to Keras version mismatch)
+        xgb_p = xgb_model.predict(xgb.DMatrix(scaled_vector))[0]
+        blended = float(xgb_p)
+        model_disagreement = 0.0  # no second model to compare
+        _xgb_w = 1.0
+        _mlp_w = 0.0
+
+        gene_cal = _GENE_CALIBRATORS.get(mutation_data.gene_name.upper())
+        active_calibrator = gene_cal if gene_cal is not None else universal_calibrator
+        calibrator_type = ("gene_specific" if gene_cal is not None else "universal") + "_xgb_only"
+
+        try:
+            calibrated = active_calibrator.predict([blended])[0]
+            probability = float(calibrated)
+        except Exception:
+            probability = float(blended)
+            calibrator_type = "raw_fallback_xgb_only"
+        _warnings.append("MLP model unavailable (Keras version mismatch). Using XGBoost-only predictions.")
     else:
-        # Models failed to load — cannot produce a valid prediction
         return JSONResponse(status_code=503, content={
             "error": "ML models could not be loaded. Prediction unavailable.",
             "detail": "The server failed to initialize required model artifacts. This is a server-side issue, not a problem with your input."
@@ -592,11 +646,13 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
 
     gnomad_val = gene_data["gnomad_v"].get(f"{mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt}", gene_data["gnomad_p"].get(int(mutation_data.cDNA_pos), 0.0))
     gnomad_af_raw = gnomad_val.get("af", 0.0) if isinstance(gnomad_val, dict) else float(gnomad_val)
+    eve_key = f"{mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt}"
+    eve_val = gene_data["eve_v"].get(eve_key, gene_data["eve_p"].get(int(aa_pos), None))
 
-    # OOD warning for gnomAD allele frequency (gene-specific thresholds)
+    # OOD warning for gnomAD allele frequency (aligned with BA1 thresholds)
     _GENE_OOD_THRESHOLDS = {
-        "BRCA1": 0.005, "BRCA2": 0.005,
-        "PALB2": 0.005, "RAD51C": 0.01, "RAD51D": 0.01,
+        "BRCA1": 0.001, "BRCA2": 0.001,
+        "PALB2": 0.002, "RAD51C": 0.005, "RAD51D": 0.005,
     }
     if gnomad_af_raw > _GENE_OOD_THRESHOLDS.get(mutation_data.gene_name, 0.01):
         _warnings.append(f"gnomAD allele frequency ({gnomad_af_raw:.4f}) is unusually high for a rare-disease variant. This variant may be benign or a common polymorphism.")
@@ -624,6 +680,18 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         in_domain_name=_domain_for_scarcity,
     )
 
+    # Extract population-specific gnomAD AFs for ACMG rules
+    _gnomad_pop_afs = {}
+    if isinstance(gnomad_val, dict):
+        _gnomad_pop_afs = {
+            'gnomad_af_afr': float(gnomad_val.get('afr', 0.0)),
+            'gnomad_af_amr': float(gnomad_val.get('amr', 0.0)),
+            'gnomad_af_asj': float(gnomad_val.get('asj', 0.0)),
+            'gnomad_af_eas': float(gnomad_val.get('eas', 0.0)),
+            'gnomad_af_fin': float(gnomad_val.get('fin', 0.0)),
+            'gnomad_af_nfe': float(gnomad_val.get('nfe', 0.0)),
+            'gnomad_af_sas': float(gnomad_val.get('sas', 0.0)),
+        }
     features_dict = {
         'domain': sf.get('domain', 'uncharacterized'),
         'dist_dna': sf.get('dist_dna', 999.0),
@@ -631,8 +699,9 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         'gnomad_af': gnomad_af_raw,
         'in_critical_domain': _safe_critical_domain(raw_vector, gene_data, aa_pos),
         'known_pathogenic_at_pos': known_path_at_pos,
+        **_gnomad_pop_afs,  # population-specific AFs for population-aware ACMG
     }
-    acmg_eval = evaluate_acmg_rules(features_dict, probability, gene_name=mutation_data.gene_name)
+    acmg_eval = evaluate_acmg_rules(features_dict, probability, gene_name=mutation_data.gene_name, population=mutation_data.population)
     acmg_classification = combine_acmg_evidence(acmg_eval)
 
     # Contrastive Explanation Pairs (Item 43)
@@ -646,6 +715,23 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
 
     latency_ms = (time.perf_counter() - t_start) * 1000
     logger.info(f"[PREDICT] {mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt} (cDNA:{mutation_data.cDNA_pos}) -> {label} p={probability:.4f} ({latency_ms:.0f}ms)")
+
+    # Kazakh/Central Asian founder mutation check
+    _founder_info = None
+    hgvs_c = f"c.{mutation_data.cDNA_pos}{mutation_data.Mutation}"
+    gene_founders = _FOUNDER_MUTATIONS.get(mutation_data.gene_name.upper(), {})
+    if hgvs_c in gene_founders:
+        _founder_info = gene_founders[hgvs_c]
+        _founder_info["is_founder"] = True
+        logger.info(f"[FOUNDER] Matched founder mutation: {mutation_data.gene_name} {hgvs_c}")
+    elif not _founder_info:
+        # Try matching by cDNA position alone (some notations may differ)
+        for fhgvs, finfo in gene_founders.items():
+            if str(mutation_data.cDNA_pos) in fhgvs:
+                _founder_info = finfo
+                _founder_info["is_founder"] = True
+                _founder_info["match_type"] = "position_approximate"
+                break
 
     result = {
         "prediction": label,
@@ -682,6 +768,8 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
                      "label": "Abnormal" if mave_val is not None and mave_val < 1.49 else ("Normal" if mave_val is not None and mave_val > 2.50 else ("Intermediate" if mave_val is not None else "No data"))},
             "alphamissense": {"score": round(am_val, 3) if am_val is not None else None,
                               "label": "Pathogenic" if am_val is not None and am_val > 0.564 else ("Benign" if am_val is not None and am_val < 0.340 else ("Ambiguous" if am_val is not None else "No data"))},
+            "eve": {"score": round(eve_val, 3) if eve_val is not None else None,
+                     "label": "Pathogenic" if eve_val is not None and eve_val > 0.5 else ("Benign" if eve_val is not None and eve_val <= 0.5 else "No data")},
             "structure": {
                 "domain": sf.get("domain", "Unknown"),
                 "rsa": round(sf.get("rsa", 0.4), 3) if sf else None,
@@ -700,6 +788,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         "contrastive_explanation": _contrastive,
         "conformal_prediction": _conformal,
         "calibrator_type": calibrator_type,
+        "founder_mutation": _founder_info,
         "warnings": _warnings if _warnings else None,
     }
     _pred_cache_set(pred_cache_key, result)
@@ -738,7 +827,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
 @app.get("/")
 async def root():
     uni = _get_universal_models()
-    per_gene_aucs = [0.983, 0.804, 0.743, 0.706, 0.641]
+    per_gene_aucs = [0.994, 0.824, 0.785, 0.747, 0.605]
     return {
         "status": "SteppeDNA API running",
         "version": STEPPEDNA_VERSION,
@@ -746,8 +835,8 @@ async def root():
         "model_type": "Ensemble (XGBoost + MLP, gene-adaptive weights)",
         "macro_avg_auc": round(float(np.mean(per_gene_aucs)), 3),
         "per_gene_auc": {
-            "BRCA2": 0.983, "RAD51D": 0.804, "RAD51C": 0.743,
-            "BRCA1": 0.706, "PALB2": 0.641
+            "BRCA2": 0.994, "RAD51D": 0.824, "RAD51C": 0.785,
+            "BRCA1": 0.747, "PALB2": 0.605
         },
         "shap": uni.get("booster") is not None,
         "vcf": True
@@ -767,20 +856,21 @@ async def model_metrics():
 
 
 @app.get("/health", tags=["System"], summary="Health check",
-         description="Validates all critical ML model artifacts, data files, and mappings are loaded and ready.")
+         description="Quick liveness check. Returns 200 immediately. Use /health/ready for full model readiness.")
 async def health():
+    return {"status": "ok"}
 
+
+@app.get("/health/ready", tags=["System"], summary="Readiness check",
+         description="Validates all critical ML model artifacts are loaded and ready.")
+async def health_ready():
     uni = _get_universal_models()
     checks = {
-        "universal_models": uni.get("ensemble_model") is not None,
+        "universal_models": uni.get("ensemble_model") is not None or uni.get("booster") is not None,
         "universal_scaler": uni.get("scaler") is not None,
         "universal_calibrator": uni.get("calibrator") is not None,
         "feature_names": len(uni.get("feature_names", [])),
-        "phylop_scores": len(phylop_scores) > 0,
-        "mave_scores": len(mave_by_variant) > 0,
-        "alphamissense_scores": len(am_by_variant) > 0,
         "shap_booster": uni.get("booster") is not None,
-        "genomic_mapping": len(genomic_to_cdna) > 0,
     }
     all_ok = all(checks.values())
     status_code = 200 if all_ok else 503

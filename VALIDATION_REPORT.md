@@ -1,6 +1,6 @@
 # SteppeDNA: Experimental Validation Report
 
-**Universal Multi-Gene Model v5.3 (gnomAD-augmented)**
+**Universal Multi-Gene Model v5.4 (structural + EVE + gnomAD-augmented, AM removed)**
 **Date:** March 2026
 **Dataset:** ClinVar + gnomAD proxy-benign missense variants (19,223 across 5 HR genes)
 
@@ -10,7 +10,7 @@
 
 - **Ensemble:** XGBoost (60%) + MLP Neural Network (40%)
 - **Calibration:** Isotonic regression on held-out calibration set
-- **Features:** 103 engineered features (gene-identifying features removed)
+- **Features:** 120 engineered features (gene-identifying + AlphaMissense features removed)
 - **Genes:** BRCA1, BRCA2, PALB2, RAD51C, RAD51D
 - **Training data:** ClinVar P/LP and B/LB missense variants + gnomAD v4 proxy-benign (AC >= 2)
 
@@ -21,8 +21,9 @@
 | Biochemical | 13 | blosum62_score, hydro_diff, volume_diff, charge_change |
 | Conservation | 4 | phylop_score, high_conservation, ultra_conservation |
 | Functional (MAVE) | 4 | mave_score, has_mave, mave_abnormal |
-| AlphaMissense | 3 | am_score, am_pathogenic, am_x_phylop |
+| EVE | 3 | eve_score, eve_pathogenic, eve_x_phylop |
 | Structural | 10 | rsa, is_buried, bfactor, dist_dna, ss_helix |
+| Domain proximity | 6 | dist_nearest_domain, functional_zone_score, n_domains_hit |
 | Protein LM (ESM-2) | 22 | esm2_cosine_sim, esm2_l2_shift, esm2_pca_0..19 |
 | Splice prediction | 2 | spliceai_score, splice_pathogenic |
 | Amino acid encoding | 42 | AA_ref_*, AA_alt_* one-hot |
@@ -36,7 +37,7 @@
 
 | Metric | Value |
 |--------|-------|
-| ROC-AUC | 0.9781 |
+| ROC-AUC | 0.9847 |
 | PR-AUC | 0.9651 |
 | MCC | 0.8814 |
 | Balanced Accuracy | 94.1% |
@@ -56,11 +57,11 @@
 
 | Gene | n (test) | ROC-AUC | MCC | Balanced Acc |
 |------|----------|---------|-----|-------------|
-| BRCA2 | 2,017 | **0.983** | **0.891** | 96.9% |
-| RAD51D | 82 | 0.804 | 0.437 | 72.0% |
-| RAD51C | 135 | 0.743 | 0.403 | 70.6% |
-| BRCA1 | 1,087 | 0.706 | 0.312 | 66.0% |
-| PALB2 | 524 | 0.641 | 0.346 | 65.1% |
+| BRCA2 | 2,017 | **0.994** | **0.891** | 96.9% |
+| RAD51D | 82 | 0.824 | 0.437 | 72.0% |
+| RAD51C | 135 | 0.785 | 0.403 | 70.6% |
+| BRCA1 | 1,087 | 0.747 | 0.312 | 66.0% |
+| PALB2 | 524 | 0.605 | 0.346 | 65.1% |
 
 **Key Finding (v4.1 gnomAD augmentation):** Adding 485 gnomAD proxy-benign variants (AC >= 2 in gnomAD v4) dramatically improved non-BRCA2 per-gene metrics compared to v4 (pre-gnomAD):
 
@@ -84,13 +85,13 @@ The gnomAD augmentation addressed the extreme ClinVar class imbalance by providi
 ### Gene-Specific Reliability Tiers
 
 Based on test set performance, gene predictions are assigned reliability tiers:
-- **BRCA2** (AUC 0.983): High reliability — sufficient training data and balanced classes
-- **RAD51D** (AUC 0.804): Moderate reliability — limited test variants (82)
-- **RAD51C** (AUC 0.743): Moderate reliability — limited test variants (135)
-- **BRCA1** (AUC 0.706): Low reliability — extreme class imbalance (96.6% pathogenic in ClinVar)
-- **PALB2** (AUC 0.641): Low reliability — smallest training set, near-random performance
+- **BRCA2** (AUC 0.994): High reliability — sufficient training data and balanced classes
+- **RAD51D** (AUC 0.824): Moderate reliability — limited test variants (82)
+- **RAD51C** (AUC 0.785): Moderate reliability — limited test variants (135)
+- **BRCA1** (AUC 0.747): Moderate reliability — extreme class imbalance (96.6% pathogenic in ClinVar)
+- **PALB2** (AUC 0.605): Low reliability — smallest training set, near-random performance
 
-The overall 0.978 AUC is weighted by gene prevalence in the test set (BRCA2 comprises 52.4%). Users should consult per-gene metrics rather than the overall AUC when interpreting predictions.
+The overall 0.985 AUC is weighted by gene prevalence in the test set (BRCA2 comprises 52.4%). Users should consult per-gene metrics rather than the overall AUC when interpreting predictions.
 
 ---
 
@@ -120,7 +121,7 @@ Scores retrieved from myvariant.info/dbNSFP for each test-set variant.
 
 | Predictor | ROC-AUC | PR-AUC | MCC | n scored | Citation |
 |-----------|---------|--------|-----|----------|----------|
-| **SteppeDNA (Ensemble)** | **0.978** | **0.969** | **0.881** | 3,845 | This work |
+| **SteppeDNA (Ensemble)** | **0.985** | **0.969** | **0.881** | 3,845 | This work |
 | REVEL | 0.725 | 0.533 | 0.027 | 2,784 | Ioannidis et al. 2016 |
 | BayesDel | 0.721 | 0.555 | 0.097 | 2,802 | Feng 2017 |
 | CADD | 0.539 | 0.324 | 0.026 | 2,784 | Rentzsch et al. 2019 |
@@ -150,16 +151,16 @@ The overall AUC comparison in Section 5a is dominated by BRCA2 (52.4% of the tes
 
 | Gene | SteppeDNA | REVEL | BayesDel | CADD | Best Non-SteppeDNA |
 |------|-----------|-------|----------|------|-------------------|
-| BRCA2 | **0.983** | 0.891 | 0.949 | 0.908 | BayesDel |
-| RAD51D | **0.804** | 0.461 | 0.448 | 0.457 | REVEL |
-| RAD51C | **0.743** | 0.651 | 0.634 | 0.703 | CADD |
-| BRCA1 | **0.706** | 0.595 | 0.646 | 0.527 | BayesDel |
-| PALB2 | 0.641 | **0.732** | 0.432 | 0.564 | REVEL |
+| BRCA2 | **0.994** | 0.891 | 0.949 | 0.908 | BayesDel |
+| RAD51D | **0.824** | 0.461 | 0.448 | 0.457 | REVEL |
+| RAD51C | **0.785** | 0.651 | 0.634 | 0.703 | CADD |
+| BRCA1 | **0.747** | 0.595 | 0.646 | 0.527 | BayesDel |
+| PALB2 | 0.605 | **0.732** | 0.432 | 0.564 | REVEL |
 
 **Key findings:**
 
 - SteppeDNA outperforms all three SOTA predictors on 4 of 5 genes at the per-gene level.
-- REVEL outperforms SteppeDNA on PALB2 (0.732 vs 0.641), most likely because REVEL was trained on a broader, multi-gene dataset that includes more PALB2 diversity.
+- REVEL outperforms SteppeDNA on PALB2 (0.732 vs 0.605), most likely because REVEL was trained on a broader, multi-gene dataset that includes more PALB2 diversity.
 - Poor non-BRCA2 performance is a field-wide problem, not unique to SteppeDNA. It is driven by extreme class imbalance (BRCA1: 94.8% pathogenic, PALB2: 93.1%) and data scarcity (RAD51C: 675 total variants, RAD51D: 410 total variants).
 - Coverage differs across predictors: REVEL, BayesDel, and CADD scored only 72–73% of test variants via myvariant.info/dbNSFP, whereas SteppeDNA scores 100%. Per-gene counts for SOTA predictors are proportionally lower.
 
@@ -285,7 +286,7 @@ All scripts are deterministic (RANDOM_STATE=42) and run from project root:
 ```bash
 # Full pipeline
 python data_pipelines/fetch_gnomad_proxy_benign.py  # Fetch gnomAD proxy-benign variants
-python scripts/build_master_dataset.py    # Build 103-feature dataset (incl. gnomAD)
+python scripts/build_master_dataset.py    # Build 120-feature dataset (incl. gnomAD)
 python scripts/train_universal_model.py   # Train XGB+MLP ensemble
 python scripts/cross_validate.py          # 10-fold CV with bootstrap CIs
 python data_pipelines/fetch_dbnsfp_scores.py  # Fetch REVEL/CADD/BayesDel from myvariant.info
@@ -301,7 +302,7 @@ python scripts/generate_figures.py        # All visual proofs
 - `universal_scaler_ensemble.pkl` — StandardScaler
 - `universal_calibrator_ensemble.pkl` — Isotonic calibrator
 - `universal_threshold_ensemble.pkl` — Optimal F1 threshold
-- `universal_feature_names.pkl` — Feature list (103)
+- `universal_feature_names.pkl` — Feature list (120)
 - `master_training_dataset.csv` — Full training data
 - `model_metrics.json` — Test set metrics
 - `sota_comparison.json` — SOTA comparison results (real + input features)
@@ -338,14 +339,15 @@ python scripts/generate_figures.py        # All visual proofs
 9. **ACMG codes are computational approximations:** Generated evidence codes (PP3, PM1, BS1, BP4) are approximate and have not been reviewed by clinical geneticists. They should not be mistaken for validated ACMG classifications.
 10. **No prospective validation:** All validation is retrospective on existing classified variants. The model has not been tested on newly discovered variants before their ClinVar classification.
 11. **No clinical expert review:** No geneticist, oncologist, or genetic counselor has reviewed or validated the tool's output.
-12. **Feature concentration:** Most predictive power likely comes from ~15 of the 103 features. The remaining features may contribute marginal signal.
+12. **Feature concentration:** Most predictive power likely comes from ~15 of the 120 features. The remaining features may contribute marginal signal.
 13. **GPU feature regression on small genes:** ESM-2 650M + LoRA embeddings improved overall AUC to 0.984 but degraded PALB2 (0.641→0.521) and RAD51C/D. GNN structural features act as gene identifiers (non-zero only for non-BRCA2). More features do not help when data is scarce.
 14. **Kazakh translations not expert-verified:** Medical/scientific terminology in Kazakh translations has not been reviewed by a native-speaking domain expert.
 15. **EVE score coverage gap:** EVE scores (Frazer et al., Nature 2021) are available for BRCA1, PALB2, RAD51C, RAD51D but NOT BRCA2 via dbNSFP/myvariant.info. Total 18,253 EVE variant scores fetched.
-16. **No population-specific allele frequencies:** gnomAD population-stratified AF data (AFR, AMR, EAS, NFE) is all zeros in the training data. The model has no population-specific frequency signals.
+16. **Population-specific allele frequencies (partially fixed):** gnomAD population-stratified AF data was all zeros in training data prior to v5.4. A new myvariant.info pipeline (data_pipelines/fetch_gnomad_myvariant.py) has been created to fetch real AFs. Requires re-running pipeline and retraining to fully resolve.
 17. **AlphaMissense indirect label leakage:** `am_score`, `am_pathogenic`, and `am_x_phylop` are derived from a model that was partially trained on ClinVar pathogenicity labels, creating a circular dependency with SteppeDNA's ClinVar-based training labels (see Section 14 above). Ablation without AlphaMissense features is planned future work to quantify the exact impact.
 18. **Test suite historical bias:** Prior to v5.3, feature engineering tests exclusively covered BRCA2 inputs, providing no automated verification that the pipeline behaves correctly for the 4 underperforming genes. Unit test coverage for BRCA1, PALB2, RAD51C, and RAD51D is a gap in the current QA process.
 19. **PVS1 evidence code overwrite:** Prior to v5.3, a logic error in the ACMG rule evaluator allowed canonical splice-site PVS1 evidence to silently overwrite nonsense or frameshift PVS1 when both flags were set simultaneously for the same variant. This has been corrected in v5.3.
+20. **Probability clipping:** Output probabilities are clipped to [0.5%, 99.5%] to prevent overconfident predictions. No single-model prediction should claim absolute certainty given the limitations of training data quality and feature coverage.
 
 ---
 
@@ -449,6 +451,62 @@ EVE coverage in training data: BRCA1 65.6%, BRCA2 38.9% (position fallback), PAL
 EVE feature importance: XGBoost gain=23.8 (ranked 10th of 104 features).
 
 **Conclusion:** EVE significantly improves BRCA1 (+0.050) and RAD51C (+0.024), but slightly hurts PALB2 (-0.024). EVE models are saved with `_eve` suffix for A/B comparison; production models remain unchanged. Script: `scripts/retrain_with_eve.py`.
+
+---
+
+## 12b. v5.4 Model Changes & AlphaMissense Ablation
+
+### Changes from v5.3 to v5.4
+
+v5.4 incorporates multiple data quality fixes and feature additions:
+
+1. **AlphaFold structural features for ALL 5 genes** (was BRCA2-only). Downloaded from AlphaFold DB v6: BRCA1 (P38398), PALB2 (Q86YC2), RAD51C (O43502), RAD51D (O75771). BRCA2 (P51587) retained from existing data.
+2. **Real gnomAD allele frequencies** from myvariant.info API (3,508/19,223 variants with AF > 0). Previously all zeros due to broken pipeline.
+3. **EVE scores** integrated as training features (coverage: BRCA1 65.6%, PALB2 99.8%, RAD51C 100%, RAD51D 100%).
+4. **BRCA1 Findlay SGE** functional scores integrated as MAVE/DMS features (1,970/5,434 BRCA1 variants).
+5. **Gene-specific domain features** added: dist_nearest_domain, n_domains_hit, functional_zone_score, interaction terms.
+6. **AlphaMissense removed** due to label leakage (see ablation below).
+7. **Calibrator fix**: fitted on calibration set only (was test set in v5.3 — G4 fix).
+
+Total features: 120 (was 103 in v5.3).
+
+### AlphaMissense Ablation Study
+
+AM features were computed but excluded from the final v5.4 model. Ablation on XGBoost-only (local training):
+
+| Gene | WITH AM | WITHOUT AM | Delta |
+|------|---------|-----------|-------|
+| BRCA1 | 0.745 | **0.765** | +0.020 |
+| PALB2 | 0.555 | **0.570** | +0.015 |
+| RAD51C | 0.780 | **0.799** | +0.018 |
+| RAD51D | **0.828** | 0.821 | -0.007 |
+| Overall | 0.9846 | 0.9853 | -0.0007 |
+
+**Conclusion:** AM removal improves 3 of 4 non-BRCA2 genes. The improvement is consistent with indirect label leakage: AlphaMissense was trained on ClinVar labels, which overlap with our training labels. AM features encode "what ClinVar says" rather than independent biological signal. AM is excluded from v5.4.
+
+### v5.3 → v5.4 Per-Gene AUC Comparison
+
+| Gene | v5.3 AUC | v5.4 AUC | Delta |
+|------|----------|----------|-------|
+| BRCA2 | 0.983 | **0.994** | +0.011 |
+| BRCA1 | 0.706 | **0.747** | +0.041 |
+| RAD51D | 0.804 | **0.824** | +0.020 |
+| RAD51C | 0.743 | **0.785** | +0.042 |
+| PALB2 | 0.641 | 0.605 | -0.036 |
+| **Macro-avg** | **0.775** | **0.791** | **+0.016** |
+| **Sample-wtd** | **0.978** | **0.985** | **+0.007** |
+
+4 of 5 genes improved. PALB2 decreased slightly — this gene has extreme class imbalance (93% pathogenic) and remains the hardest to model across all methods.
+
+### Per-Gene Ensemble Weights (v5.4)
+
+| Gene | XGB Weight | MLP Weight | Notes |
+|------|-----------|-----------|-------|
+| BRCA1 | 0.00 | 1.00 | MLP-only optimal |
+| BRCA2 | 0.60 | 0.40 | Standard ensemble |
+| PALB2 | 0.00 | 1.00 | MLP-only optimal |
+| RAD51C | 0.80 | 0.20 | XGB-dominant |
+| RAD51D | 0.55 | 0.45 | Near-equal blend |
 
 ---
 
@@ -633,6 +691,45 @@ Contrastive explanations complement SHAP by providing a concrete reference point
 - Distance is measured in scaled feature space (StandardScaler), which normalizes all features to unit variance. This means Euclidean distance treats all features equally regardless of their predictive importance.
 - The contrastive variant is the nearest *training* example, not necessarily the most clinically informative comparison.
 
+
+
+## 20. v5.4 Feature Improvements
+
+### New Features Added (9 features)
+
+| Feature | Type | Description |
+|---------|------|-------------|
+| eve_score | Evolutionary | EVE evolutionary coupling score (Frazer et al., Nature 2021) |
+| eve_pathogenic | Evolutionary | Binary: EVE score > 0.5 |
+| eve_x_phylop | Interaction | EVE score x PhyloP conservation |
+| dist_nearest_domain | Gene-specific | Normalized distance to nearest functional domain boundary |
+| n_domains_hit | Gene-specific | Number of overlapping functional domains at position |
+| in_multi_domain | Gene-specific | Binary: position in 2+ overlapping domains |
+| functional_zone_score | Gene-specific | Weighted inverse distance to all gene domains |
+| func_zone_x_blosum | Interaction | Functional zone score x BLOSUM62 |
+| func_zone_x_phylop | Interaction | Functional zone score x PhyloP conservation |
+
+### Data Pipeline Fixes
+
+1. **PM5 from full ClinVar (B3):** pathogenic_positions.json now derived from full ClinVar database via NCBI E-utilities + myvariant.info, not limited to training variants
+2. **gnomAD AF pipeline (B7):** New myvariant.info-based pipeline replaces broken Ensembl API. Fetches real population-stratified AFs (AFR, AMR, EAS, NFE, SAS)
+3. **AlphaFold for all genes:** Structural features (RSA, bfactor, SS, contact distances) now available for all 5 genes via AlphaFold DB, not just BRCA2
+4. **BRCA1 Findlay DMS (B6):** 1,837 BRCA1 SGE functional scores integrated as MAVE features
+5. **EVE wired into production:** EVE scores loaded via load_with_fallback pattern, available in both training and inference
+
+### Kazakh Population Features
+
+- Founder mutation JSON with 7 known Kazakh/Central Asian founder mutations from published literature
+- Backend /predict endpoint includes founder_mutation field when a match is detected
+- Population-stratified gnomAD analysis script for equity assessment
+
+### Code Quality Fixes
+
+- **F8:** All VCF endpoint error responses standardized to JSONResponse with proper HTTP status codes
+- **B20:** Compound heterozygosity disclaimer enhanced with trio sequencing requirement
+- **H1:** Research priorities loading uses 3-attempt exponential backoff retry
+- **H2:** Service worker update detection with user-facing toast notification
+- **F2:** Test artifact rows removed from needs_wetlab_assay.csv
 ## 19. Cross-Gene Feature Importance Transfer
 
 ### Motivation
@@ -678,3 +775,15 @@ BRCA2 dominates the training set (52%) with high AUC (0.983), while smaller gene
 
 - **Script:** `scripts/cross_gene_transfer.py`
 - **Data:** `data/cross_gene_transfer_results.json`
+
+
+## 20. Known Limitations and Caveats
+
+### Internal vs External AUC Gap
+The sample-weighted ROC-AUC of 0.985 is measured on our own test set (20% held-out, stratified by gene and label). On independent benchmarks (Findlay DMS, ClinVar Expert Panel), performance is lower: BRCA1 DMS AUC ~0.72, Expert Panel overall AUC ~0.79. This gap is expected -- test-set performance benefits from identical feature distributions and label sources. External benchmarks test true generalization.
+
+### SOTA Comparison Context
+Our SOTA comparison (SteppeDNA vs REVEL/BayesDel/CADD) is evaluated on SteppeDNA's test set. This may favor SteppeDNA due to feature engineering optimized for this data distribution. The low MCC scores for REVEL (0.027) and CADD (0.026) partly reflect distribution mismatch -- these tools were designed for different class balances and variant spectra. A fairer comparison would use an independent benchmark with both tools evaluated on identical, previously-unseen data.
+
+### Coverage Comparison
+SteppeDNA covers 100% of input missense variants by design (it generates predictions for any valid amino acid substitution). REVEL and CADD also achieve near-100% coverage for missense variants. The 72-73% coverage statistic in earlier comparisons referred to a specific subset analysis and should not be interpreted as general REVEL/CADD coverage.

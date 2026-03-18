@@ -2,6 +2,40 @@
 
 All notable changes to SteppeDNA are documented in this file.
 
+## [5.4.0] - 2026-03-14
+
+### Added
+- AlphaFold structural features for ALL 5 genes (was BRCA2-only): RSA, B-factor, secondary structure, domain distances
+- Real gnomAD allele frequencies via myvariant.info (3,508 variants with AF>0, was all zeros)
+- EVE evolutionary coupling scores as training features (65-100% coverage per gene)
+- BRCA1 Findlay SGE functional scores as DMS features
+- Gene-specific domain proximity features (dist_nearest_domain, functional_zone_score, etc.)
+- Population-aware ACMG evidence codes (BA1/BS1/PM2 adjusted per population)
+- Kazakh founder mutation database (7 variants) with detection endpoint
+- VUS disparity analysis script for competition narrative
+- AlphaMissense ablation study (data/am_ablation_results.json)
+- Per-gene isotonic calibrators fitted on calibration set (not test set)
+
+### Fixed
+- Calibrator leakage: calibrator now fitted on calibration set only (was test set in v5.3)
+- gnomAD allele frequencies: were all zeros, now real values from myvariant.info
+- func_zone_x_phylop feature: was always 0 at inference time, now computed correctly
+- Structural secondary structure field: supports both old string and new int format
+- gnomAD popmax_af key alias handling
+- Bootstrap CI graceful fallback for feature count mismatch
+- Founder mutations JSON loading (structure and field name mismatches)
+- Gene ensemble weight key format (supports both "xgb"/"mlp" and "xgb_weight"/"mlp_weight")
+
+### Removed
+- AlphaMissense features: removed due to indirect label leakage (ablation: +0.02 AUC for BRCA1/PALB2/RAD51C without AM)
+
+### Changed
+- Feature count: 120 features (was 103 in v5.3)
+- Per-gene AUC: BRCA2 0.994, RAD51D 0.824, RAD51C 0.785, BRCA1 0.747, PALB2 0.605
+- Macro-averaged AUC: 0.791 (was 0.775)
+- Sample-weighted AUC: 0.985 (was 0.978)
+- Per-gene ensemble weights: BRCA1 (MLP-only), BRCA2 (60/40), PALB2 (MLP-only), RAD51C (80/20 XGB), RAD51D (55/45)
+
 ## [5.3.0] - 2026-03-06
 
 ### Fixed
@@ -17,7 +51,7 @@ All notable changes to SteppeDNA are documented in this file.
 - 5-tier classification system (Pathogenic, Likely Pathogenic, VUS, Likely Benign, Benign)
 - RUO inline disclaimers throughout frontend and backend
 - UMAP honest label (shows data source, not clinical truth)
-- Test overhaul: 196 tests across 3 test modules (combinatorial, clinical correctness, property-based)
+- Test overhaul: 198 tests across 4 test modules (combinatorial, clinical correctness, property-based)
 - AlphaMissense indirect label leakage acknowledged in VALIDATION_REPORT.md (limitation #17)
 - Gene-adaptive ensemble weights loaded from `data/gene_ensemble_weights.json`
 - VCF parsing hardening with improved error handling and edge case coverage

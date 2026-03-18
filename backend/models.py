@@ -148,8 +148,9 @@ def _load_gene_ensemble_weights():
             raw = json.load(f)
         for gene, info in raw.items():
             gene_upper = gene.upper()
-            xgb_w = float(info.get("xgb_weight", XGB_WEIGHT))
-            mlp_w = float(info.get("mlp_weight", NN_WEIGHT))
+            # Support both key formats: {"xgb": 0.6} and {"xgb_weight": 0.6}
+            xgb_w = float(info.get("xgb_weight", info.get("xgb", XGB_WEIGHT)))
+            mlp_w = float(info.get("mlp_weight", info.get("mlp", NN_WEIGHT)))
             _GENE_ENSEMBLE_WEIGHTS[gene_upper] = {"xgb_weight": xgb_w, "mlp_weight": mlp_w}
             logger.info(f"[WEIGHTS] {gene_upper}: XGB={xgb_w:.2f} / MLP={mlp_w:.2f}")
     except Exception as e:
@@ -247,7 +248,6 @@ def _get_universal_models():
     if _UNIVERSAL_MODELS is not None:
         return _UNIVERSAL_MODELS
 
-    from tensorflow.keras.models import load_model
     import xgboost as xgb
 
     _UNIVERSAL_MODELS = {}
@@ -256,7 +256,13 @@ def _get_universal_models():
     _UNIVERSAL_MODELS["feature_names"] = _load_pickle("universal_feature_names.pkl")
     _UNIVERSAL_MODELS["threshold"] = _load_pickle("universal_threshold_ensemble.pkl") or 0.5
 
-    _UNIVERSAL_MODELS["ensemble_model"] = load_model(f"{DATA_DIR}/universal_nn.h5") if os.path.exists(f"{DATA_DIR}/universal_nn.h5") else None
+    # Try loading MLP; gracefully fall back to XGBoost-only if TF missing or version mismatch
+    try:
+        from tensorflow.keras.models import load_model
+        _UNIVERSAL_MODELS["ensemble_model"] = load_model(f"{DATA_DIR}/universal_nn.h5") if os.path.exists(f"{DATA_DIR}/universal_nn.h5") else None
+    except Exception as e:
+        logger.warning(f"[WARN] Could not load MLP model: {e}. Using XGBoost-only mode.")
+        _UNIVERSAL_MODELS["ensemble_model"] = None
 
     xgb_path = f"{DATA_DIR}/universal_xgboost_final.json"
     if os.path.exists(xgb_path):

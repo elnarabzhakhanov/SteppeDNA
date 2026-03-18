@@ -1,0 +1,73 @@
+{
+  "date": "2026-03-16",
+  "version": "5.4.0",
+  "results": [
+    {
+      "gene": "BRCA1",
+      "variant": "p.Met1Thr",
+      "prob": 0.9906,
+      "prediction": "Pathogenic",
+      "acmg": "Uncertain Significance",
+      "acmg_codes": [
+        "PM5",
+        "PM2",
+        "PP3"
+      ],
+      "freq": 0.006,
+      "founder_detected": true
+    },
+    {
+      "gene": "BRCA1",
+      "variant": "p.Cys61Gly",
+      "prob": 0.9906,
+      "prediction": "Pathogenic",
+      "acmg": "Uncertain Significance",
+      "acmg_codes": [
+        "PM1",
+        "PM5",
+        "PP3"
+      ],
+      "freq": 0.004,
+      "founder_detected": true,
+      "revel": 0.956,
+      "cadd": 25.6,
+      "bayesdel": null,
+      "revel_note": "Via rs28897672 (GRCh37 chr17:g.41258504A>G)"
+    }
+  ],
+  "non_missense": [
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.5266dup",
+      "type": "frameshift",
+      "common_name": "5382insC",
+      "freq_kz": 0.035,
+      "note": "Most common KZ BRCA1 founder"
+    },
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.5278-2del",
+      "type": "splice",
+      "freq_kz": 0.008
+    },
+    {
+      "gene": "BRCA1",
+      "hgvs_c": "c.4035del",
+      "type": "frameshift",
+      "freq_kz": 0.005
+    },
+    {
+      "gene": "BRCA2",
+      "hgvs_c": "c.9409dup",
+      "type": "frameshift",
+      "freq_kz": 0.012,
+      "note": "Most common KZ BRCA2 founder"
+    },
+    {
+      "gene": "BRCA2",
+      "hgvs_c": "c.9253del",
+      "type": "frameshift",
+      "freq_kz": 0.008
+    }
+  ]
+}

@@ -349,19 +349,25 @@ def compute_bootstrap_ci(scaled_vector: np.ndarray, feature_names_list: list) ->
     """Compute bootstrap confidence interval from pre-trained models.
 
     Returns dict with ci_lower, ci_upper, ci_width, n_models, or None if unavailable.
+    Gracefully returns None if bootstrap models have a different feature count
+    (e.g., trained on v5.3 with 103 features but current model uses 120).
     """
     if not _BOOTSTRAP_MODELS:
         return None
-    dmat = xgb.DMatrix(scaled_vector, feature_names=feature_names_list)
-    preds = np.array([m.predict(dmat)[0] for m in _BOOTSTRAP_MODELS])
-    ci_lower = float(np.percentile(preds, 5))
-    ci_upper = float(np.percentile(preds, 95))
-    return {
-        "ci_lower": round(ci_lower, 4),
-        "ci_upper": round(ci_upper, 4),
-        "ci_width": round(ci_upper - ci_lower, 4),
-        "n_models": len(_BOOTSTRAP_MODELS),
-    }
+    try:
+        dmat = xgb.DMatrix(scaled_vector, feature_names=feature_names_list)
+        preds = np.array([m.predict(dmat)[0] for m in _BOOTSTRAP_MODELS])
+        ci_lower = float(np.percentile(preds, 5))
+        ci_upper = float(np.percentile(preds, 95))
+        return {
+            "ci_lower": round(ci_lower, 4),
+            "ci_upper": round(ci_upper, 4),
+            "ci_width": round(ci_upper - ci_lower, 4),
+            "n_models": len(_BOOTSTRAP_MODELS),
+        }
+    except Exception as e:
+        logger.warning(f"[BOOTSTRAP-CI] Failed: {e}. Falling back to Beta approximation.")
+        return None
 
 
 # ─── Split Conformal Prediction (Item 5.1) ────────────────────────────────────

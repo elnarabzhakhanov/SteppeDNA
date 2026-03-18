@@ -33,7 +33,7 @@ def _get_strand(gene):
 
 def _derive():
     """Import the derivation function."""
-    from backend.main import _derive_exon_boundaries
+    from backend.features import _derive_exon_boundaries
     return _derive_exon_boundaries
 
 
@@ -109,7 +109,7 @@ def test_empty_mapping():
 
 def test_parse_vcf_line_basic():
     """Basic 5-column VCF line should parse correctly."""
-    from backend.main import parse_vcf_line
+    from backend.vcf import parse_vcf_line
     result = parse_vcf_line("13\t32316462\t.\tA\tG")
     assert result is not None
     chrom, pos, ref, alt, gt, vcf_filter, warnings, multi_sample = result
@@ -122,7 +122,7 @@ def test_parse_vcf_line_basic():
 
 def test_parse_vcf_line_with_genotype():
     """VCF line with FORMAT + SAMPLE columns should extract genotype."""
-    from backend.main import parse_vcf_line
+    from backend.vcf import parse_vcf_line
     line = "13\t32316462\t.\tA\tG\t30\tPASS\t.\tGT:DP:GQ\t0/1:30:99"
     result = parse_vcf_line(line)
     assert result is not None
@@ -132,7 +132,7 @@ def test_parse_vcf_line_with_genotype():
 
 def test_parse_vcf_line_homozygous():
     """Homozygous genotype should be parsed."""
-    from backend.main import parse_vcf_line
+    from backend.vcf import parse_vcf_line
     line = "13\t32316462\t.\tA\tG\t30\tPASS\t.\tGT:DP\t1/1:30"
     result = parse_vcf_line(line)
     chrom, pos, ref, alt, gt, vcf_filter, warnings, multi_sample = result
@@ -141,7 +141,7 @@ def test_parse_vcf_line_homozygous():
 
 def test_parse_vcf_line_chr_prefix():
     """chr prefix should be stripped."""
-    from backend.main import parse_vcf_line
+    from backend.vcf import parse_vcf_line
     result = parse_vcf_line("chr13\t32316462\t.\tA\tG")
     assert result[0] == "13"
 
@@ -150,7 +150,7 @@ def test_parse_vcf_line_chr_prefix():
 
 def test_vcf_variant_frameshift_has_type():
     """Frameshift variants should have variant_type='frameshift'."""
-    from backend.main import vcf_variant_to_prediction, get_gene_data
+    from backend.vcf import vcf_variant_to_prediction; from backend.features import get_gene_data
     gd = get_gene_data("BRCA2")
     # Use a known CDS position with a 2bp deletion (frameshift)
     cds_positions = list(gd["genomic_to_cdna"].keys())[:5]

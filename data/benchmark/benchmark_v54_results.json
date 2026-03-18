@@ -1,0 +1,45 @@
+{
+  "total_predicted": 2234,
+  "errors": 0,
+  "dms": {
+    "BRCA1": {
+      "n": 1837,
+      "spearman_r": -0.3013,
+      "roc_auc": 0.75,
+      "mcc": 0.0669
+    }
+  },
+  "expert": {
+    "overall": {
+      "n": 397,
+      "roc_auc": 0.6989,
+      "mcc": 0.1672,
+      "bal_acc": 0.5914
+    },
+    "BRCA1": {
+      "n": 214,
+      "roc_auc": 0.6556,
+      "mcc": 0.1125
+    },
+    "BRCA2": {
+      "n": 177,
+      "roc_auc": 0.9109,
+      "mcc": 0.2769
+    },
+    "PALB2": {
+      "n": 6,
+      "roc_auc": 0.0,
+      "mcc": 0.0
+    }
+  },
+  "overlap": {
+    "training": 1711,
+    "test": 460,
+    "novel": 63
+  },
+  "novel_only": {
+    "n": 66,
+    "roc_auc": 0.3359,
+    "mcc": 0.0048
+  }
+}

@@ -878,12 +878,14 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
         return;
     }
 
+    const popVal = document.getElementById('populationSelect')?.value || '';
     const body = {
         gene_name: document.getElementById('geneSelect').value,
         cDNA_pos: parseInt(document.getElementById('cDNA_pos').value),
         AA_ref: aaRef,
         AA_alt: aaAlt,
         Mutation: document.getElementById('mutation').value.trim() || 'Unknown',
+        population: popVal || null,
     };
 
     try {
@@ -1036,6 +1038,22 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
             disagreeDiv.style.display = 'block';
         } else if (disagreeDiv) {
             disagreeDiv.style.display = 'none';
+        }
+
+        // Kazakh/Central Asian founder mutation badge
+        const founderDiv = document.getElementById('founderMutation');
+        if (founderDiv && data.founder_mutation && data.founder_mutation.is_founder) {
+            const fm = data.founder_mutation;
+            const matchNote = fm.match_type === 'position_approximate' ? ' (position match)' : '';
+            founderDiv.innerHTML =
+                '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#0ea5e9" stroke-width="2" style="vertical-align:-3px;margin-right:4px"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' +
+                '<strong>' + escapeHtml(tr('founder_badge') || 'Known Founder Mutation') + '</strong> ' +
+                escapeHtml(fm.population || 'Kazakh/Central Asian') + matchNote +
+                (fm.frequency ? ' &middot; ' + escapeHtml(tr('founder_freq') || 'Frequency') + ': ' + escapeHtml(fm.frequency) : '') +
+                (fm.source ? ' <span style="font-size:0.75rem;opacity:0.7">(' + escapeHtml(fm.source) + ')</span>' : '');
+            founderDiv.style.display = 'block';
+        } else if (founderDiv) {
+            founderDiv.style.display = 'none';
         }
 
         // VUS guidance for uncertain predictions
@@ -1458,10 +1476,10 @@ function generatePDFReport(data, input) {
 
 <h2>Variant Information</h2>
 <table class="info-table">
-    <tr><td>Gene</td><td>${input.gene_name}</td></tr>
-    <tr><td>HGVS Protein</td><td>${hgvs}</td></tr>
-    <tr><td>cDNA Position</td><td>c.${input.cDNA_pos}</td></tr>
-    <tr><td>Amino Acid Change</td><td>${input.AA_ref} &rarr; ${input.AA_alt}</td></tr>
+    <tr><td>Gene</td><td>${escapeHtml(String(input.gene_name))}</td></tr>
+    <tr><td>HGVS Protein</td><td>${escapeHtml(String(hgvs))}</td></tr>
+    <tr><td>cDNA Position</td><td>c.${escapeHtml(String(input.cDNA_pos))}</td></tr>
+    <tr><td>Amino Acid Change</td><td>${escapeHtml(String(input.AA_ref))} &rarr; ${escapeHtml(String(input.AA_alt))}</td></tr>
     <tr><td>Nucleotide Change</td><td>${input.Mutation || 'Not specified'}</td></tr>
     <tr><td>Classification</td><td>${pred} (${(prob * 100).toFixed(1)}%)</td></tr>
 </table>
@@ -1472,17 +1490,17 @@ ${ciText}
     <tr><td>AlphaMissense</td><td>${am.score != null ? am.score + ' (' + (am.label || '-') + ')' : 'No data'}</td></tr>
     <tr><td>MAVE Functional Assay</td><td>${mave.score != null ? mave.score + ' (' + (mave.label || '-') + ')' : 'No data'}</td></tr>
     <tr><td>PhyloP Conservation</td><td>${phy.score != null ? phy.score + ' (' + (phy.label || '-') + ')' : 'No data'}</td></tr>
-    <tr><td>3D Structure Domain</td><td>${struct.domain || 'Unknown'}</td></tr>
-    <tr><td>Secondary Structure</td><td>${struct.secondary_structure || '-'}</td></tr>
-    <tr><td>Solvent Accessibility</td><td>${struct.is_buried ? 'Buried' : 'Surface'} (RSA: ${struct.rsa || '-'})</td></tr>
+    <tr><td>3D Structure Domain</td><td>${escapeHtml(String(struct.domain || 'Unknown'))}</td></tr>
+    <tr><td>Secondary Structure</td><td>${escapeHtml(String(struct.secondary_structure || '-'))}</td></tr>
+    <tr><td>Solvent Accessibility</td><td>${struct.is_buried ? 'Buried' : 'Surface'} (RSA: ${escapeHtml(String(struct.rsa || '-'))})</td></tr>
     <tr><td>DNA Contact</td><td>${struct.is_dna_contact ? 'Yes' : 'No'}</td></tr>
 </table>
 
 <h2>Biochemical Features</h2>
 <table class="info-table">
-    <tr><td>BLOSUM62 Score</td><td>${f.blosum62_score}</td></tr>
-    <tr><td>Volume Difference</td><td>${f.volume_diff}</td></tr>
-    <tr><td>Hydrophobicity Diff</td><td>${f.hydro_diff}</td></tr>
+    <tr><td>BLOSUM62 Score</td><td>${escapeHtml(String(f.blosum62_score))}</td></tr>
+    <tr><td>Volume Difference</td><td>${escapeHtml(String(f.volume_diff))}</td></tr>
+    <tr><td>Hydrophobicity Diff</td><td>${escapeHtml(String(f.hydro_diff))}</td></tr>
     <tr><td>Charge Changed</td><td>${f.charge_changed ? 'Yes' : 'No'}</td></tr>
     <tr><td>Critical Domain</td><td>${f.in_critical_domain ? 'Yes' : 'No'}</td></tr>
     <tr><td>Nonsense Mutation</td><td>${f.is_nonsense ? 'Yes' : 'No'}</td></tr>
@@ -1496,9 +1514,9 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
 <table class="info-table">
     <tr><td>Model</td><td>XGBoost (60%) + MLP (40%) Ensemble</td></tr>
     <tr><td>Calibration</td><td>Isotonic regression on held-out data</td></tr>
-    <tr><td>Features</td><td>103 engineered features from 5 databases</td></tr>
-    <tr><td>Training Data</td><td>19,223 variants (ClinVar + gnomAD)</td></tr>
-    <tr><td>Validation ROC-AUC</td><td>0.978</td></tr>
+    <tr><td>Features</td><td>120 engineered features from 7 databases</td></tr>
+    <tr><td>Training Data</td><td>19,223 variants (BRCA2: 10,048 | BRCA1: 4,219 | PALB2: 2,835 | RAD51C: 1,711 | RAD51D: 410)</td></tr>
+    <tr><td>Validation ROC-AUC</td><td>0.985</td></tr>
     ${data.gene_reliability?.auc ? `<tr><td>Gene-Specific AUC (${data.gene_reliability?.gene || input.gene_name})</td><td>${data.gene_reliability.auc}</td></tr>` : ''}
     <tr><td>Validation MCC</td><td>0.881</td></tr>
     <tr><td>Genes Covered</td><td>BRCA1, BRCA2, PALB2, RAD51C, RAD51D</td></tr>
@@ -1517,7 +1535,7 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
 </div>
 
 <div class="footer">
-    SteppeDNA v5.3 &mdash; Multi-Gene HR Variant Classifier &bull; Research Use Only &mdash; Not a diagnostic tool<br>
+    SteppeDNA v5.4 &mdash; Multi-Gene HR Variant Classifier &bull; Research Use Only &mdash; Not a diagnostic tool<br>
     ACMG evidence codes are computational approximations and do not replace expert clinical curation.<br>
     Training data predominantly European ancestry. Performance on other populations unknown.
 </div>
@@ -1999,9 +2017,10 @@ async function render3DViewer(geneName, aaPos, prediction) {
 let _researchPrioritiesData = null;
 let _researchActiveGene = null;
 
-async function loadResearchPriorities() {
+async function loadResearchPriorities(attempt = 1, maxAttempts = 3) {
     const section = document.getElementById('researchPriorities');
     if (!section) return;
+    const delays = [3000, 6000, 12000]; // Exponential backoff
     try {
         const resp = await fetchWithTimeout(API_URL.replace('/predict', '/research/priorities') + '?limit=10', {}, 10000);
         if (!resp.ok) { section.style.display = 'none'; return; }
@@ -2011,8 +2030,13 @@ async function loadResearchPriorities() {
         renderResearchPriorities(data);
         section.style.display = 'block';
     } catch (e) {
-        console.warn('[SteppeDNA] Research priorities not available:', e.message);
-        section.style.display = 'none';
+        if (attempt < maxAttempts) {
+            console.warn('[SteppeDNA] Research priorities attempt ' + attempt + ' failed, retrying in ' + delays[attempt - 1] + 'ms');
+            setTimeout(() => loadResearchPriorities(attempt + 1, maxAttempts), delays[attempt - 1]);
+        } else {
+            console.warn('[SteppeDNA] Research priorities: all retries exhausted:', e.message);
+            section.style.display = 'none';
+        }
     }
 }
 

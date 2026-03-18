@@ -1,7 +1,7 @@
 {
-  "version": "5.3.0",
-  "training_date": "2026-02-15",
-  "feature_count": 103,
+  "version": "5.4.0",
+  "training_date": "2026-03-14",
+  "feature_count": 120,
   "training_size": 19223,
   "calibration_size": 3845,
   "test_size": 3845,
@@ -10,11 +10,18 @@
     "xgboost": 0.6,
     "mlp": 0.4
   },
-  "genes": ["BRCA1", "BRCA2", "PALB2", "RAD51C", "RAD51D"],
+  "genes": [
+    "BRCA1",
+    "BRCA2",
+    "PALB2",
+    "RAD51C",
+    "RAD51D"
+  ],
   "data_sources": {
     "clinvar": 18738,
     "gnomad_proxy_benign": 485
   },
   "clinvar_release": "2026-02-01",
-  "license": "RUO"
+  "license": "RUO",
+  "notes": "AlphaFold structural features for all 5 genes, real gnomAD AFs, EVE scores, BRCA1 SGE DMS, AlphaMissense removed"
 }

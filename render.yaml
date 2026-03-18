@@ -9,24 +9,14 @@ services:
         value: production
       - key: PYTHONUNBUFFERED
         value: "1"
-      - key: STEPPEDNA_API_KEY
-        generateValue: true
+      # API key disabled for competition demo — uncomment for production
+      # - key: STEPPEDNA_API_KEY
+      #   generateValue: true
       - key: ALLOWED_ORIGINS
-        value: "https://steppedna.onrender.com,https://steppedna.vercel.app"
+        value: "https://steppedna.com,https://www.steppedna.com,https://steppedna.vercel.app"
+      - key: RATE_LIMIT
+        value: "60"
+      - key: RATE_WINDOW
+        value: "60"
     healthCheckPath: /health
-    plan: free
-
-  - type: web
-    name: steppedna-frontend
-    runtime: static
-    buildCommand: echo "Static site - no build needed"
-    staticPublishPath: frontend
-    headers:
-      - path: /*
-        name: X-Content-Type-Options
-        value: nosniff
-    routes:
-      - type: rewrite
-        source: /*
-        destination: /index.html
-    plan: free
+    plan: starter
