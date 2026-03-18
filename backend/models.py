@@ -248,7 +248,6 @@ def _get_universal_models():
     if _UNIVERSAL_MODELS is not None:
         return _UNIVERSAL_MODELS
 
-    from tensorflow.keras.models import load_model
     import xgboost as xgb
 
     _UNIVERSAL_MODELS = {}
@@ -257,8 +256,9 @@ def _get_universal_models():
     _UNIVERSAL_MODELS["feature_names"] = _load_pickle("universal_feature_names.pkl")
     _UNIVERSAL_MODELS["threshold"] = _load_pickle("universal_threshold_ensemble.pkl") or 0.5
 
-    # Try loading MLP; gracefully fall back to XGBoost-only if Keras version mismatch
+    # Try loading MLP; gracefully fall back to XGBoost-only if TF missing or version mismatch
     try:
+        from tensorflow.keras.models import load_model
         _UNIVERSAL_MODELS["ensemble_model"] = load_model(f"{DATA_DIR}/universal_nn.h5") if os.path.exists(f"{DATA_DIR}/universal_nn.h5") else None
     except Exception as e:
         logger.warning(f"[WARN] Could not load MLP model: {e}. Using XGBoost-only mode.")
