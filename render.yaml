@@ -9,8 +9,9 @@ services:
         value: production
       - key: PYTHONUNBUFFERED
         value: "1"
-      - key: STEPPEDNA_API_KEY
-        generateValue: true
+      # API key disabled for competition demo — uncomment for production
+      # - key: STEPPEDNA_API_KEY
+      #   generateValue: true
       - key: ALLOWED_ORIGINS
         value: "https://steppedna.vercel.app"
       - key: RATE_LIMIT

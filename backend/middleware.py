@@ -25,9 +25,7 @@ _rate_lock = threading.Lock()
 _rate_counts: dict = collections.defaultdict(list)
 
 # ─── API Key ─────────────────────────────────────────────────────────────────
-_API_KEY = os.getenv("STEPPEDNA_API_KEY")
-if os.getenv("ENVIRONMENT", "").lower() == "production" and not _API_KEY:
-    raise RuntimeError("STEPPEDNA_API_KEY is required when ENVIRONMENT=production")
+_API_KEY = os.getenv("STEPPEDNA_API_KEY")  # Optional — if not set, all endpoints are public
 
 # ─── Body Size Limit ─────────────────────────────────────────────────────────
 MAX_JSON_BODY = 1 * 1024 * 1024  # 1 MB limit for JSON endpoints
