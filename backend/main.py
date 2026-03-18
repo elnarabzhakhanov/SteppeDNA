@@ -856,20 +856,21 @@ async def model_metrics():
 
 
 @app.get("/health", tags=["System"], summary="Health check",
-         description="Validates all critical ML model artifacts, data files, and mappings are loaded and ready.")
+         description="Quick liveness check. Returns 200 immediately. Use /health/ready for full model readiness.")
 async def health():
+    return {"status": "ok"}
 
+
+@app.get("/health/ready", tags=["System"], summary="Readiness check",
+         description="Validates all critical ML model artifacts are loaded and ready.")
+async def health_ready():
     uni = _get_universal_models()
     checks = {
-        "universal_models": uni.get("ensemble_model") is not None or uni.get("booster") is not None,  # OK if either MLP or XGBoost loaded
+        "universal_models": uni.get("ensemble_model") is not None or uni.get("booster") is not None,
         "universal_scaler": uni.get("scaler") is not None,
         "universal_calibrator": uni.get("calibrator") is not None,
         "feature_names": len(uni.get("feature_names", [])),
-        "phylop_scores": len(phylop_scores) > 0,
-        "mave_scores": len(mave_by_variant) > 0,
-        "alphamissense_scores": len(am_by_variant) > 0,
         "shap_booster": uni.get("booster") is not None,
-        "genomic_mapping": len(genomic_to_cdna) > 0,
     }
     all_ok = all(checks.values())
     status_code = 200 if all_ok else 503
