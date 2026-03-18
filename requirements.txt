@@ -7,7 +7,7 @@ numpy==1.26.4
 xgboost==2.1.4
 scikit-learn==1.7.2
 biopython==1.85
-# tensorflow>=2.15.0,<2.17.0  # Optional: only needed for MLP ensemble. Server uses XGBoost-only mode without it.
+tensorflow-cpu>=2.15.0,<2.17.0  # MLP ensemble (cpu-only build, ~200MB smaller than full TF)
 httpx==0.28.1
 scipy==1.15.3
 psutil==6.1.1
