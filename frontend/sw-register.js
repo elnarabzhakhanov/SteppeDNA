@@ -4,9 +4,10 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('sw.js').then(function(reg) {
         reg.addEventListener('updatefound', function() {
             var newWorker = reg.installing;
+            if (!newWorker) return;
             newWorker.addEventListener('statechange', function() {
-                if (newWorker.state === 'activated' && navigator.serviceWorker.controller) {
-                    // Show update toast to user
+                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New SW installed while old one still controls — show update toast
                     var toast = document.createElement('div');
                     toast.className = 'sw-update-toast';
                     toast.setAttribute('role', 'alert');

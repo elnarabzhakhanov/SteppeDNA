@@ -797,11 +797,6 @@ input:focus {
     color: white;
 }
 
-.badge-uncertain {
-    background: var(--warning);
-    color: white;
-}
-
 .badge-info {
     background: #3B82F6;
     color: white;
@@ -874,18 +869,6 @@ input:focus {
     font-size: 2.2rem;
     font-weight: 800;
     letter-spacing: -1px;
-}
-
-.conf-pathogenic {
-    color: var(--danger);
-}
-
-.conf-benign {
-    color: var(--success);
-}
-
-.conf-uncertain {
-    color: var(--warning);
 }
 
 .prediction-meta {
@@ -2662,6 +2645,6 @@ footer a {
     from { opacity: 0; transform: translateY(8px); }
     to { opacity: 1; transform: translateY(0); }
 }
-.result-card, .acmg-card, .shap-card {
+.result-card {
     animation: fadeIn 0.3s ease-out;
 }

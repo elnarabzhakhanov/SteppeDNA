@@ -1,0 +1,67 @@
+{
+  "total_variants": 3845,
+  "resolved": 792,
+  "vus_count": 3053,
+  "vus_rate": 0.794,
+  "agreement_rate": 0.7121,
+  "cohen_kappa": 0.1538,
+  "classification_distribution": {
+    "Likely Pathogenic": 569,
+    "Uncertain Significance": 3053,
+    "Benign": 17,
+    "Likely Benign": 21,
+    "Pathogenic": 185
+  },
+  "code_frequency": {
+    "PM2": 3112,
+    "PM1": 2102,
+    "BP4": 1915,
+    "PP3": 1827,
+    "PM5": 1323,
+    "PVS1": 190,
+    "BS1": 28,
+    "BA1": 17
+  },
+  "per_gene": {
+    "BRCA1": {
+      "total": 1087,
+      "resolved": 339,
+      "vus": 748,
+      "correct": 322,
+      "agreement": 0.9499,
+      "vus_rate": 0.6881
+    },
+    "BRCA2": {
+      "total": 2017,
+      "resolved": 431,
+      "vus": 1586,
+      "correct": 230,
+      "agreement": 0.5336,
+      "vus_rate": 0.7863
+    },
+    "PALB2": {
+      "total": 524,
+      "resolved": 11,
+      "vus": 513,
+      "correct": 7,
+      "agreement": 0.6364,
+      "vus_rate": 0.979
+    },
+    "RAD51C": {
+      "total": 135,
+      "resolved": 8,
+      "vus": 127,
+      "correct": 3,
+      "agreement": 0.375,
+      "vus_rate": 0.9407
+    },
+    "RAD51D": {
+      "total": 82,
+      "resolved": 3,
+      "vus": 79,
+      "correct": 2,
+      "agreement": 0.6667,
+      "vus_rate": 0.9634
+    }
+  }
+}

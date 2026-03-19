@@ -638,10 +638,10 @@ function setLang(lang) {
                     if (childElements.length > 0) {
                         // Save child elements, replace content, re-append children
                         const savedChildren = childElements.map(c => c.cloneNode(true));
-                        el.innerHTML = d[key] + ' ';
+                        el.textContent = d[key] + ' ';
                         savedChildren.forEach(c => el.appendChild(c));
                     } else {
-                        el.innerHTML = d[key];
+                        el.textContent = d[key];
                     }
                 }
             }
@@ -651,7 +651,7 @@ function setLang(lang) {
         // Handle the submit button explicitly so it doesn't overwrite spinner text if disabled
         const btnText = document.getElementById('btnText');
         if (btnText && !document.getElementById('submitBtn').disabled) {
-            btnText.innerHTML = d['analyze_btn'];
+            btnText.textContent = d['analyze_btn'];
             btnText.style.opacity = '1';
         }
 
@@ -677,7 +677,7 @@ function setLang(lang) {
     // Ensure initial load doesn't trigger a visual pop
     const btnText = document.getElementById('btnText');
     if (btnText && !document.getElementById('submitBtn').disabled) {
-        btnText.innerHTML = d['analyze_btn'];
+        btnText.textContent = d['analyze_btn'];
     }
 
     // Notify app.js to re-render dynamic content (result card, history)
