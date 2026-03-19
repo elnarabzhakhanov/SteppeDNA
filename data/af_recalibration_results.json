@@ -1,0 +1,249 @@
+{
+  "description": "AF recalibration impact: comparing global vs population-specific gnomAD AF for ACMG BA1/BS1/PM2",
+  "total_variants_analyzed": 18076,
+  "population_summary": {
+    "afr": {
+      "total_changed": 3012,
+      "PM2_gained": 2747,
+      "PM2_lost": 0,
+      "BS1_gained": 234,
+      "BS1_lost": 95,
+      "BA1_gained": 19,
+      "BA1_lost": 15
+    },
+    "amr": {
+      "total_changed": 2901,
+      "PM2_gained": 2788,
+      "PM2_lost": 0,
+      "BS1_gained": 66,
+      "BS1_lost": 107,
+      "BA1_gained": 33,
+      "BA1_lost": 29
+    },
+    "eas": {
+      "total_changed": 3163,
+      "PM2_gained": 2981,
+      "PM2_lost": 0,
+      "BS1_gained": 143,
+      "BS1_lost": 130,
+      "BA1_gained": 31,
+      "BA1_lost": 58
+    },
+    "nfe": {
+      "total_changed": 1843,
+      "PM2_gained": 1753,
+      "PM2_lost": 0,
+      "BS1_gained": 53,
+      "BS1_lost": 84,
+      "BA1_gained": 5,
+      "BA1_lost": 38
+    }
+  },
+  "per_gene": {
+    "BRCA1": {
+      "total": 5285,
+      "reclassifications": {
+        "afr": {
+          "PM2_gained": 674,
+          "PM2_lost": 0,
+          "BS1_gained": 75,
+          "BS1_lost": 30,
+          "BA1_gained": 5,
+          "BA1_lost": 4,
+          "total_changed": 761
+        },
+        "amr": {
+          "PM2_gained": 681,
+          "PM2_lost": 0,
+          "BS1_gained": 16,
+          "BS1_lost": 34,
+          "BA1_gained": 11,
+          "BA1_lost": 8,
+          "total_changed": 711
+        },
+        "eas": {
+          "PM2_gained": 731,
+          "PM2_lost": 0,
+          "BS1_gained": 40,
+          "BS1_lost": 41,
+          "BA1_gained": 10,
+          "BA1_lost": 14,
+          "total_changed": 783
+        },
+        "nfe": {
+          "PM2_gained": 432,
+          "PM2_lost": 0,
+          "BS1_gained": 20,
+          "BS1_lost": 23,
+          "BA1_gained": 1,
+          "BA1_lost": 10,
+          "total_changed": 463
+        }
+      }
+    },
+    "BRCA2": {
+      "total": 9464,
+      "reclassifications": {
+        "afr": {
+          "PM2_gained": 1419,
+          "PM2_lost": 0,
+          "BS1_gained": 150,
+          "BS1_lost": 57,
+          "BA1_gained": 10,
+          "BA1_lost": 7,
+          "total_changed": 1583
+        },
+        "amr": {
+          "PM2_gained": 1444,
+          "PM2_lost": 0,
+          "BS1_gained": 42,
+          "BS1_lost": 65,
+          "BA1_gained": 21,
+          "BA1_lost": 18,
+          "total_changed": 1517
+        },
+        "eas": {
+          "PM2_gained": 1518,
+          "PM2_lost": 0,
+          "BS1_gained": 84,
+          "BS1_lost": 79,
+          "BA1_gained": 18,
+          "BA1_lost": 35,
+          "total_changed": 1624
+        },
+        "nfe": {
+          "PM2_gained": 909,
+          "PM2_lost": 0,
+          "BS1_gained": 32,
+          "BS1_lost": 53,
+          "BA1_gained": 3,
+          "BA1_lost": 25,
+          "total_changed": 962
+        }
+      }
+    },
+    "PALB2": {
+      "total": 2471,
+      "reclassifications": {
+        "afr": {
+          "PM2_gained": 427,
+          "PM2_lost": 0,
+          "BS1_gained": 4,
+          "BS1_lost": 5,
+          "BA1_gained": 2,
+          "BA1_lost": 2,
+          "total_changed": 433
+        },
+        "amr": {
+          "PM2_gained": 422,
+          "PM2_lost": 0,
+          "BS1_gained": 6,
+          "BS1_lost": 6,
+          "BA1_gained": 1,
+          "BA1_lost": 3,
+          "total_changed": 429
+        },
+        "eas": {
+          "PM2_gained": 460,
+          "PM2_lost": 0,
+          "BS1_gained": 16,
+          "BS1_lost": 6,
+          "BA1_gained": 3,
+          "BA1_lost": 7,
+          "total_changed": 481
+        },
+        "nfe": {
+          "PM2_gained": 274,
+          "PM2_lost": 0,
+          "BS1_gained": 0,
+          "BS1_lost": 5,
+          "BA1_gained": 0,
+          "BA1_lost": 3,
+          "total_changed": 278
+        }
+      }
+    },
+    "RAD51C": {
+      "total": 578,
+      "reclassifications": {
+        "afr": {
+          "PM2_gained": 136,
+          "PM2_lost": 0,
+          "BS1_gained": 1,
+          "BS1_lost": 1,
+          "BA1_gained": 0,
+          "BA1_lost": 1,
+          "total_changed": 138
+        },
+        "amr": {
+          "PM2_gained": 134,
+          "PM2_lost": 0,
+          "BS1_gained": 1,
+          "BS1_lost": 1,
+          "BA1_gained": 0,
+          "BA1_lost": 0,
+          "total_changed": 136
+        },
+        "eas": {
+          "PM2_gained": 151,
+          "PM2_lost": 0,
+          "BS1_gained": 1,
+          "BS1_lost": 2,
+          "BA1_gained": 0,
+          "BA1_lost": 1,
+          "total_changed": 152
+        },
+        "nfe": {
+          "PM2_gained": 78,
+          "PM2_lost": 0,
+          "BS1_gained": 0,
+          "BS1_lost": 1,
+          "BA1_gained": 1,
+          "BA1_lost": 0,
+          "total_changed": 79
+        }
+      }
+    },
+    "RAD51D": {
+      "total": 278,
+      "reclassifications": {
+        "afr": {
+          "PM2_gained": 91,
+          "PM2_lost": 0,
+          "BS1_gained": 4,
+          "BS1_lost": 2,
+          "BA1_gained": 2,
+          "BA1_lost": 1,
+          "total_changed": 97
+        },
+        "amr": {
+          "PM2_gained": 107,
+          "PM2_lost": 0,
+          "BS1_gained": 1,
+          "BS1_lost": 1,
+          "BA1_gained": 0,
+          "BA1_lost": 0,
+          "total_changed": 108
+        },
+        "eas": {
+          "PM2_gained": 121,
+          "PM2_lost": 0,
+          "BS1_gained": 2,
+          "BS1_lost": 2,
+          "BA1_gained": 0,
+          "BA1_lost": 1,
+          "total_changed": 123
+        },
+        "nfe": {
+          "PM2_gained": 60,
+          "PM2_lost": 0,
+          "BS1_gained": 1,
+          "BS1_lost": 2,
+          "BA1_gained": 0,
+          "BA1_lost": 0,
+          "total_changed": 61
+        }
+      }
+    }
+  }
+}

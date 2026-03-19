@@ -27,8 +27,10 @@ def main():
     print(f"  {len(feat_cols)} feature columns")
 
     X = df[feat_cols].fillna(0).values
-    labels = df["label"].values  # 1 = pathogenic, 0 = benign
-    genes = df["gene_name"].values if "gene_name" in df.columns else ["Unknown"] * len(df)
+    label_col = "Label" if "Label" in df.columns else "label"
+    gene_col = "Gene" if "Gene" in df.columns else "gene_name"
+    labels = df[label_col].values  # 1 = pathogenic, 0 = benign
+    genes = df[gene_col].values if gene_col in df.columns else ["Unknown"] * len(df)
 
     # Subsample if too large for browser rendering (max ~5000 points)
     MAX_POINTS = 5000

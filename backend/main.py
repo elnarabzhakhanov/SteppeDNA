@@ -75,6 +75,7 @@ from backend.external_api import (
 
 from backend.vcf import (
     _compute_risk_tier,
+    GENE_TRANSCRIPTS,
 )
 
 from backend.feature_engineering import (
@@ -733,12 +734,16 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
                 _founder_info["match_type"] = "position_approximate"
                 break
 
+    _transcript = GENE_TRANSCRIPTS.get(mutation_data.gene_name.upper(), "")
+    _hgvs_c = f"{_transcript}:c.{mutation_data.cDNA_pos}{mutation_data.Mutation}" if _transcript else f"c.{mutation_data.cDNA_pos}{mutation_data.Mutation}"
+
     result = {
         "prediction": label,
         "probability": round(probability, 4),
         "risk_tier": risk,
         "threshold": round(float(threshold), 3),
         "aa_pos": aa_pos,
+        "hgvs_c": _hgvs_c,
         "genomic_pos": gene_data["cdna_to_genomic"].get(mutation_data.cDNA_pos),
         "acmg_evidence": acmg_eval,
         "acmg_classification": acmg_classification,

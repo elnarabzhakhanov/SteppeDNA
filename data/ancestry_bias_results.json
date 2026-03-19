@@ -1,0 +1,70 @@
+{
+  "method": "Proxy analysis: variants assigned to population by highest gnomAD sub-population AF",
+  "caveat": "This is NOT true ancestry-stratified evaluation. ClinVar lacks ancestry metadata.",
+  "overall_xgb_auc": 0.9849,
+  "per_population": {
+    "NFE": {
+      "n": 282,
+      "n_pathogenic": 130,
+      "n_benign": 152,
+      "auc": 0.9889
+    },
+    "EAS": {
+      "n": 85,
+      "n_pathogenic": 35,
+      "n_benign": 50,
+      "auc": 0.9949
+    },
+    "AFR": {
+      "n": 144,
+      "n_pathogenic": 67,
+      "n_benign": 77,
+      "auc": 0.9913
+    },
+    "AMR": {
+      "n": 100,
+      "n_pathogenic": 44,
+      "n_benign": 56,
+      "auc": 0.9744
+    },
+    "NO_DATA": {
+      "n": 3234,
+      "n_pathogenic": 1529,
+      "n_benign": 1705,
+      "auc": 0.9842
+    }
+  },
+  "pm2_disparity": {
+    "AFR": 3684,
+    "AMR": 3713,
+    "EAS": 3753,
+    "NFE": 3508
+  },
+  "per_gene_auc": {
+    "BRCA1": {
+      "n": 1087,
+      "auc": 0.7753
+    },
+    "BRCA2": {
+      "n": 2017,
+      "auc": 0.9967
+    },
+    "PALB2": {
+      "n": 524,
+      "auc": 0.5788
+    },
+    "RAD51C": {
+      "n": 135,
+      "auc": 0.7854
+    },
+    "RAD51D": {
+      "n": 82,
+      "auc": 0.8086
+    }
+  },
+  "nfe_enrichment": {
+    "nfe_variants": 282,
+    "eas_variants": 85,
+    "ratio": 3.32
+  }
+}

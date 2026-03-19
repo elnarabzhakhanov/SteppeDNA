@@ -28,6 +28,15 @@ from backend.database import record_vcf_upload
 
 logger = logging.getLogger("steppedna")
 
+# RefSeq transcript IDs for HGVS c. notation
+GENE_TRANSCRIPTS = {
+    "BRCA1": "NM_007294.4",
+    "BRCA2": "NM_000059.4",
+    "PALB2": "NM_024675.4",
+    "RAD51C": "NM_058216.3",
+    "RAD51D": "NM_002878.4",
+}
+
 router = APIRouter(tags=["VCF"])
 
 # _metrics_lock is needed for updating _metrics in main.py.
@@ -153,10 +162,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                 "aa_ref": "Indel",
                 "aa_alt": "fs",
                 "mutation": "delins",
-                "hgvs_p": "p.fs",
+                "hgvs_p": "p.(fs)",
                 "prediction": "Pathogenic",
                 "probability": 0.9999,
-                "risk_tier": "high (Frameshift Truncation)",
+                "risk_tier": "pathogenic",
+                "risk_detail": "Frameshift Truncation",
                 "genomic_pos": genomic_pos,
                 "variant_type": "frameshift",
                 "classification_method": "rule_based",
@@ -185,10 +195,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                     "aa_ref": "Indel",
                     "aa_alt": f"inframe({aa_change}aa)",
                     "mutation": "delins",
-                    "hgvs_p": f"p.inframe_indel_{aa_pos_approx}",
+                    "hgvs_p": f"p.({aa_pos_approx}delins)",
                     "prediction": "Likely Pathogenic",
                     "probability": 0.80,
-                    "risk_tier": "high (In-Frame Indel in Functional Domain)",
+                    "risk_tier": "likely_pathogenic",
+                    "risk_detail": "In-Frame Indel in Functional Domain",
                     "genomic_pos": genomic_pos,
                     "variant_type": "inframe_indel",
                     "classification_method": "rule_based",
@@ -202,10 +213,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                     "aa_ref": "Indel",
                     "aa_alt": f"inframe({aa_change}aa)",
                     "mutation": "delins",
-                    "hgvs_p": f"p.inframe_indel_{aa_pos_approx}",
+                    "hgvs_p": f"p.({aa_pos_approx}delins)",
                     "prediction": "VUS",
                     "probability": 0.50,
-                    "risk_tier": "uncertain (In-Frame Indel)",
+                    "risk_tier": "uncertain",
+                    "risk_detail": "In-Frame Indel",
                     "genomic_pos": genomic_pos,
                     "variant_type": "inframe_indel",
                     "classification_method": "rule_based",
@@ -226,10 +238,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                 "aa_ref": ref_allele,
                 "aa_alt": alt_allele,
                 "mutation": f"{ref_allele}>{alt_allele}",
-                "hgvs_p": f"splice_site_g.{genomic_pos}",
+                "hgvs_p": f"g.{genomic_pos} (canonical splice)",
                 "prediction": "Likely Pathogenic",
                 "probability": 0.95,
-                "risk_tier": "high (Canonical Splice Site)",
+                "risk_tier": "likely_pathogenic",
+                "risk_detail": "Canonical Splice Site",
                 "genomic_pos": genomic_pos,
                 "variant_type": "splice_canonical",
                 "classification_method": "rule_based",
@@ -243,10 +256,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                 "aa_ref": ref_allele,
                 "aa_alt": alt_allele,
                 "mutation": f"{ref_allele}>{alt_allele}",
-                "hgvs_p": f"near_splice_g.{genomic_pos}",
+                "hgvs_p": f"g.{genomic_pos} (near splice)",
                 "prediction": "VUS (Splice Proximity)",
                 "probability": 0.70,
-                "risk_tier": "moderate (Near Splice Site)",
+                "risk_tier": "uncertain",
+                "risk_detail": "Near Splice Site",
                 "genomic_pos": genomic_pos,
                 "variant_type": "splice_near",
                 "classification_method": "rule_based",
@@ -331,10 +345,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                 "aa_ref": ref_aa,
                 "aa_alt": ref_aa,
                 "mutation": mutation_str,
-                "hgvs_p": f"p.{ref_aa}{aa_pos}= (synonymous)",
+                "hgvs_p": f"p.({ref_aa}{aa_pos}=)",
                 "prediction": "VUS (Synonymous, Near Splice)",
                 "probability": 0.40,
-                "risk_tier": "uncertain (Synonymous Near Splice)",
+                "risk_tier": "uncertain",
+                "risk_detail": "Synonymous Near Splice",
                 "genomic_pos": genomic_pos,
                 "variant_type": "synonymous",
                 "classification_method": "rule_based",
@@ -348,10 +363,11 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
                 "aa_ref": ref_aa,
                 "aa_alt": ref_aa,
                 "mutation": mutation_str,
-                "hgvs_p": f"p.{ref_aa}{aa_pos}= (synonymous)",
+                "hgvs_p": f"p.({ref_aa}{aa_pos}=)",
                 "prediction": "Likely Benign",
                 "probability": 0.05,
-                "risk_tier": "low (Synonymous)",
+                "risk_tier": "likely_benign",
+                "risk_detail": "Synonymous",
                 "genomic_pos": genomic_pos,
                 "variant_type": "synonymous",
                 "classification_method": "rule_based",
@@ -370,9 +386,8 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
             "hgvs_p": f"p.{ref_aa}{aa_pos}{alt_aa}",
             "prediction": "Pathogenic",
             "probability": 0.9999,
-            # NOTE: Tier 1 truncating variants use "high (Truncating)" to distinguish from
-            # Tier 2 missense "high"/"low"/"uncertain". Frontend handles both via .includes("high").
-            "risk_tier": "high (Truncating)",
+            "risk_tier": "pathogenic",
+            "risk_detail": "Truncating",
             "genomic_pos": genomic_pos,
             "variant_type": "nonsense",
             "classification_method": "rule_based",
@@ -436,6 +451,9 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
         if all(v == 0.0 for v in esm2_vals):
             vcf_warnings.append("ESM-2 features are zero (no precomputed embedding)")
 
+    transcript = GENE_TRANSCRIPTS.get(gene_name.upper(), "")
+    hgvs_c = f"{transcript}:c.{cdna_pos}{mutation_str}" if transcript else f"c.{cdna_pos}{mutation_str}"
+
     vcf_result = {
         "cdna_pos": cdna_pos,
         "aa_pos": aa_pos,
@@ -443,6 +461,7 @@ def vcf_variant_to_prediction(chrom, genomic_pos, ref_allele, alt_allele, gene_n
         "aa_alt": alt_aa,
         "mutation": mutation_str,
         "hgvs_p": f"p.{ref_aa}{aa_pos}{alt_aa}",
+        "hgvs_c": hgvs_c,
         "prediction": label,
         "probability": round(probability, 4),
         "risk_tier": risk,
