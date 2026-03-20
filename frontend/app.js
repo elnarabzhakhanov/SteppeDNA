@@ -1127,6 +1127,42 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
             acmgSection.style.display = 'none';
         }
 
+        // ---- Population Comparison ----
+        const popCompDiv = document.getElementById('populationComparison');
+        const popCompContent = document.getElementById('popCompareContent');
+        if (data.acmg_global && data.population_used) {
+            const popCodes = new Set(Object.keys(data.acmg_evidence || {}));
+            const globalCodes = new Set(Object.keys(data.acmg_global || {}));
+            const gained = [...popCodes].filter(c => !globalCodes.has(c));
+            const lost = [...globalCodes].filter(c => !popCodes.has(c));
+            const changed = [...popCodes].filter(c => globalCodes.has(c) && data.acmg_evidence[c] !== data.acmg_global[c]);
+            if (gained.length || lost.length || changed.length) {
+                let html = `<div class="pop-compare-label">${escapeHtml(data.population_used.toUpperCase())} vs Global</div>`;
+                if (gained.length) {
+                    html += `<div class="pop-diff-row"><span class="pop-diff-label" data-i18n="pop_gained">New evidence (population-specific)</span>`;
+                    html += gained.map(c => `<span class="acmg-code ${c.startsWith('P') ? 'pathogenic' : 'benign'} pop-gained">${escapeHtml(c)}</span>`).join(' ');
+                    html += `</div>`;
+                }
+                if (lost.length) {
+                    html += `<div class="pop-diff-row"><span class="pop-diff-label" data-i18n="pop_lost">Removed vs global</span>`;
+                    html += lost.map(c => `<span class="acmg-code ${c.startsWith('P') ? 'pathogenic' : 'benign'} pop-lost">${escapeHtml(c)}</span>`).join(' ');
+                    html += `</div>`;
+                }
+                if (changed.length) {
+                    html += `<div class="pop-diff-row"><span class="pop-diff-label" data-i18n="pop_changed">Changed rationale</span>`;
+                    html += changed.map(c => `<span class="acmg-code pop-changed">${escapeHtml(c)}</span>`).join(' ');
+                    html += `</div>`;
+                }
+                popCompContent.innerHTML = html;
+                popCompDiv.style.display = 'block';
+            } else {
+                popCompContent.innerHTML = `<div class="pop-compare-label">${escapeHtml(data.population_used.toUpperCase())} vs Global</div><div class="pop-no-diff" data-i18n="pop_no_diff">No difference in ACMG evidence</div>`;
+                popCompDiv.style.display = 'block';
+            }
+        } else {
+            popCompDiv.style.display = 'none';
+        }
+
         // ---- SHAP Chart ----
         const shapSection = document.getElementById('shapSection');
         const shapChart = document.getElementById('shapChart');

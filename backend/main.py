@@ -701,6 +701,10 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     }
     acmg_eval = evaluate_acmg_rules(features_dict, probability, gene_name=mutation_data.gene_name, population=mutation_data.population)
     acmg_classification = combine_acmg_evidence(acmg_eval)
+    # When population is set, also compute global ACMG for side-by-side comparison
+    _acmg_global = None
+    if mutation_data.population:
+        _acmg_global = evaluate_acmg_rules(features_dict, probability, gene_name=mutation_data.gene_name, population=None)
 
     # Contrastive Explanation Pairs (Item 43)
     _contrastive = find_contrastive_explanation(
@@ -791,6 +795,8 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         "conformal_prediction": _conformal,
         "calibrator_type": calibrator_type,
         "founder_mutation": _founder_info,
+        "acmg_global": _acmg_global,
+        "population_used": mutation_data.population if mutation_data.population else None,
         "warnings": _warnings if _warnings else None,
     }
     _pred_cache_set(pred_cache_key, result)
