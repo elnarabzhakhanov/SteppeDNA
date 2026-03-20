@@ -198,7 +198,6 @@ _FOUNDER_MUTATIONS = {}
 
 def _load_founder_mutations():
     """Load Kazakh/Central Asian founder mutation data from JSON."""
-    global _FOUNDER_MUTATIONS
     fpath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kazakh_founder_mutations.json")
     if os.path.exists(fpath):
         try:
