@@ -24,7 +24,8 @@ from backend.models import (
 from backend.features import get_gene_data, build_feature_vector
 from backend.explanations import compute_bootstrap_ci
 from backend.constants import CODON_TABLE, COMPLEMENT
-from backend.database import record_vcf_upload
+# Database storage disabled — privacy: no variant data is stored server-side
+# from backend.database import record_vcf_upload
 
 logger = logging.getLogger("steppedna")
 
@@ -614,16 +615,6 @@ async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")): 
     except Exception:
         pass
 
-    try:
-        nPath = len([r for r in results if r.get("prediction") in ("Pathogenic", "Likely Pathogenic")])
-        nBen = len([r for r in results if "Benign" in r.get("prediction", "")])
-        record_vcf_upload(
-            filename=file.filename, gene=gene,
-            total_variants=total_data_lines, missense_found=n_classified,
-            pathogenic_count=nPath, benign_count=nBen, latency_ms=latency_ms
-        )
-    except Exception as e:
-        logger.warning(f"[DB] Failed to record VCF upload: {type(e).__name__}: {e}")
 
     response = {
         "total_variants_in_file": total_data_lines,

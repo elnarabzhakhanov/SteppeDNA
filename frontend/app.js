@@ -114,7 +114,16 @@ function renderHistory() {
             if (cdnaInput) cdnaInput.value = h.cdna_pos;
             if (refInput) refInput.value = h.aa_ref;
             if (altInput) altInput.value = h.aa_alt;
-            // Trigger gene change to update UI
+            // Update the custom dropdown face to match
+            const geneDropdown = document.getElementById('geneDropdown');
+            if (geneDropdown) {
+                const sel = geneDropdown.querySelector('.dropdown-selected');
+                if (sel) sel.textContent = h.gene;
+                geneDropdown.querySelectorAll('.dropdown-option').forEach(o => {
+                    o.classList.toggle('active', o.getAttribute('data-value') === h.gene);
+                });
+            }
+            // Trigger gene change to update cDNA range hint
             if (geneSelect) geneSelect.dispatchEvent(new Event('change'));
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
@@ -231,7 +240,7 @@ const RESULT_TR = {
     "DNA Contact": { ru: "Контакт с ДНК", kk: "ДНҚ контакты", en: "DNA Contact" },
     "Unknown": { ru: "Неизвестно", kk: "Белгісіз", en: "Unknown" },
     "No Data": { ru: "Нет данных", kk: "Деректер жоқ", en: "No Data" },
-    "AlphaMissense": { ru: "AlphaMissense", kk: "AlphaMissense", en: "AlphaMissense" },
+    "EVE Score": { ru: "Оценка EVE", kk: "EVE ұпайы", en: "EVE Score" },
     "MAVE Score": { ru: "Оценка MAVE", kk: "MAVE ұпайы", en: "MAVE Score" },
     "PhyloP (Cons)": { ru: "PhyloP (Конс)", kk: "PhyloP (Конс)", en: "PhyloP (Cons)" },
     "3D Structure": { ru: "3D Структура", kk: "3D құрылымы", en: "3D Structure" },
@@ -265,53 +274,20 @@ function renderConfidenceHtml(ci) {
     if (!ci || !ci.label) return '';
     const ciColor = ci.label === 'High Confidence' ? 'var(--success)' : (ci.label === 'Low Confidence' ? 'var(--danger)' : 'var(--warning)');
 
-    // CI label text: show method if bootstrap
-    const isBootstrap = ci.method === 'bootstrap';
-    const ciPctLabel = isBootstrap ? '90% CI' : '95% CI';
-    const methodTag = isBootstrap
-        ? ' <span style="font-size:0.7rem;color:var(--text-mid);font-style:italic">(bootstrap, ' + escapeHtml(String(ci.n_models || 50)) + ' models)</span>'
-        : '';
-
-    // CI text line
-    const ciLine = (ci.ci_lower != null && ci.ci_upper != null)
-        ? `<div style="font-size:0.8rem;color:var(--text-body);margin-top:4px">${escapeHtml(ciPctLabel)}: ${(ci.ci_lower * 100).toFixed(1)}% – ${(ci.ci_upper * 100).toFixed(1)}%${methodTag}</div>`
-        : '';
-
-    // Visual CI range bar on a 0-100% probability scale
-    let errorBarHtml = '';
-    if (ci.ci_lower != null && ci.ci_upper != null && ci.probability != null) {
-        const lPct = (ci.ci_lower * 100);
-        const uPct = (ci.ci_upper * 100);
-        const widthPct = ci.ci_width != null ? (ci.ci_width * 100).toFixed(1) : (uPct - lPct).toFixed(1);
-        const barColor = parseFloat(widthPct) < 10 ? 'var(--success)' : (parseFloat(widthPct) < 25 ? 'var(--warning)' : 'var(--danger)');
-        const pointLeft = Math.max(ci.probability * 100 - 0.5, 0);
-        errorBarHtml = `
-            <div style="margin-top:8px">
-                <div style="display:flex;justify-content:space-between;font-size:0.65rem;color:var(--text-mid);margin-bottom:2px">
-                    <span>0%</span>
-                    <span style="font-weight:600;color:${barColor}">CI width: ${escapeHtml(widthPct)}%</span>
-                    <span>100%</span>
-                </div>
-                <div style="position:relative;height:10px;background:var(--bg-input);border-radius:5px;overflow:hidden" title="${escapeHtml(String(lPct.toFixed(1)))}% – ${escapeHtml(String(uPct.toFixed(1)))}%">
-                    <div style="position:absolute;left:${lPct}%;width:${Math.max(uPct - lPct, 1)}%;height:100%;background:${barColor};opacity:0.3;border-radius:5px"></div>
-                    <div style="position:absolute;left:${pointLeft}%;width:4px;height:100%;background:${barColor};border-radius:2px"></div>
-                </div>
-            </div>`;
-    }
-
-    return `<span style="display:inline-block;padding:3px 12px;border-radius:12px;font-size:0.82rem;font-weight:600;background:${ciColor}15;color:${ciColor};border:1px solid ${ciColor}40;margin-bottom:6px">${escapeHtml(tr(ci.label))}</span>${ciLine}${errorBarHtml}`;
+    // Just the confidence badge — CI numbers already shown next to the probability
+    return `<span style="display:inline-block;padding:3px 12px;border-radius:12px;font-size:0.82rem;font-weight:600;background:${ciColor}15;color:${ciColor};border:1px solid ${ciColor}40">${escapeHtml(tr(ci.label))}</span>`;
 }
 
 function renderDsGridHtml(ds) {
-    const am = ds.alphamissense || {};
+    const eve = ds.eve || {};
     const mave = ds.mave || {};
     const phy = ds.phylop || {};
     const struct = ds.structure || {};
     return `
         <div class="ds-card">
-            <div class="ds-title">${tr('AlphaMissense')} ${tip('Google DeepMind predictor trained on primate evolution + unsupervised learning. Score 0-1, >0.564 = likely pathogenic.', 'tip_alphamissense')}</div>
-            <div class="ds-val">${fmtScore(am.score)}</div>
-            <div class="ds-badge ${am.label === 'Pathogenic' ? 'pathogenic' : (am.label === 'Benign' ? 'benign' : 'neutral')}">${escapeHtml(tr(am.label || 'No Data'))}</div>
+            <div class="ds-title">${tr('EVE Score')} ${tip('Evolutionary model of Variant Effect. Unsupervised model trained on 140K+ protein sequences. Score 0-1, >0.5 = likely pathogenic.', 'tip_eve')}</div>
+            <div class="ds-val">${fmtScore(eve.score)}</div>
+            <div class="ds-badge ${eve.label === 'Pathogenic' ? 'pathogenic' : (eve.label === 'Benign' ? 'benign' : 'neutral')}">${escapeHtml(tr(eve.label || 'No Data'))}</div>
         </div>
         <div class="ds-card">
             <div class="ds-title">${tr('MAVE Score')} ${tip('Multiplexed Assay of Variant Effect. Wet-lab measurement of protein function. Lower scores = loss of function = likely pathogenic.', 'tip_mave')}</div>
@@ -616,9 +592,9 @@ async function uploadVCF(file) {
         vcfSummary.innerHTML = `
             <div class="vcf-stat"><div class="num">${escapeHtml(String(nTotal))}</div> <span>Total in file</span></div>
             <div class="vcf-stat"><div class="num">${escapeHtml(String(nAnalyzedStat))}</div> <span>Classified</span></div>
-            <div class="vcf-stat" style="background:#FEE2E2; color:#1f2937;"><div class="num" style="color:var(--danger)">${escapeHtml(String(nPath))}</div> <span>Pathogenic</span></div>
-            <div class="vcf-stat" style="background:#FEF3C7; color:#92400e;"><div class="num" style="color:#d97706">${escapeHtml(String(nVUS))}</div> <span>VUS</span></div>
-            <div class="vcf-stat" style="background:#D1FAE5; color:#065f46;"><div class="num" style="color:var(--success)">${escapeHtml(String(nBen))}</div> <span>Benign</span></div>
+            <div class="vcf-stat" style="background:var(--danger-bg); color:var(--text);"><div class="num" style="color:var(--danger)">${escapeHtml(String(nPath))}</div> <span>Pathogenic</span></div>
+            <div class="vcf-stat" style="background:var(--warning-bg); color:var(--text);"><div class="num" style="color:var(--warning)">${escapeHtml(String(nVUS))}</div> <span>VUS</span></div>
+            <div class="vcf-stat" style="background:var(--success-bg); color:var(--text);"><div class="num" style="color:var(--success)">${escapeHtml(String(nBen))}</div> <span>Benign</span></div>
         `;
 
         // ─── Compound Heterozygosity Warning ──────────────────────────────
@@ -809,9 +785,15 @@ fileInput.addEventListener('change', () => {
     }
 });
 
-// dismiss result card
+// dismiss result card + associated sections
 document.getElementById('btnDismissResult')?.addEventListener('click', () => {
     document.getElementById('resultCard').style.display = 'none';
+    const umap = document.getElementById('umapSection');
+    const viewer = document.getElementById('viewer3dSection');
+    const comparison = document.getElementById('comparisonPanel');
+    if (umap) umap.style.display = 'none';
+    if (viewer) viewer.style.display = 'none';
+    if (comparison) comparison.style.display = 'none';
 });
 
 // main form submit handler
@@ -895,7 +877,22 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
             body: JSON.stringify(body),
         }, 30000);
 
-        if (!resp.ok) throw new Error(`Server returned ${resp.status}`);
+        if (!resp.ok) {
+            if (resp.status === 422) {
+                try {
+                    const err = await resp.json();
+                    const detail = err.detail;
+                    const msg = Array.isArray(detail)
+                        ? detail.map(d => d.msg || d.message || JSON.stringify(d)).join('; ')
+                        : (typeof detail === 'string' ? detail : 'Invalid input');
+                    throw new Error(msg);
+                } catch (parseErr) {
+                    if (parseErr.message && !parseErr.message.includes('Invalid input')) throw parseErr;
+                    throw new Error('Invalid input — check your values and try again.');
+                }
+            }
+            throw new Error(`Server returned ${resp.status}`);
+        }
         const data = await resp.json();
 
         if (data.error) {
@@ -920,19 +917,20 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
         badge.textContent = tr(data.prediction);
         badge.className = `badge badge-${tier}`;
 
-        // Classification method chip (ML Ensemble vs Rule-Based)
-        const methodChip = data.classification_method
-            ? `<span style="display:inline-block;margin-left:8px;padding:2px 8px;border-radius:12px;font-size:0.7rem;font-weight:600;background:${data.classification_method === 'rule_based' ? '#FEF3C7' : '#EEF2FF'};color:${data.classification_method === 'rule_based' ? '#92400E' : '#4338CA'}">${data.classification_method === 'rule_based' ? 'Rule-Based' : 'ML Ensemble'}</span>`
-            : '';
-        if (methodChip) {
-            badge.insertAdjacentHTML('afterend', methodChip);
+        // Classification method chip (ML Ensemble vs Rule-Based) — appended inside badge
+        if (data.classification_method) {
+            const isRule = data.classification_method === 'rule_based';
+            badge.innerHTML = escapeHtml(tr(data.prediction)) +
+                ' <span style="margin-left:6px;padding:1px 7px;border-radius:8px;font-size:0.65rem;font-weight:600;opacity:0.85;background:' +
+                (isRule ? 'rgba(245,158,11,0.15);color:#fbbf24' : 'rgba(255,255,255,0.1);color:rgba(255,255,255,0.7)') +
+                '">' + (isRule ? tr('method_rule') : tr('method_ml')) + '</span>';
         }
 
         const conf = document.getElementById('confidence');
         const ciData = data.confidence || {};
         if (ciData.ci_lower != null && ciData.ci_upper != null) {
             conf.innerHTML = escapeHtml((prob * 100).toFixed(1) + '%') +
-                ' <span style="font-size:0.55em;color:var(--text-mid);font-weight:400">' +
+                ' <span style="font-size:0.7rem;color:var(--text-mid);font-weight:400">' +
                 (ciData.method === 'bootstrap' ? '90' : '95') + '% CI: ' +
                 escapeHtml((ciData.ci_lower * 100).toFixed(1)) + '-' +
                 escapeHtml((ciData.ci_upper * 100).toFixed(1)) + '%</span>';
@@ -1118,7 +1116,9 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
                     </div>
                 `;
             }).join('');
-            // Show ACMG combining result if available
+            // Show ACMG combining result if available (remove old one first to prevent accumulation)
+            const oldCombining = acmgSection.querySelector('.acmg-combining-result');
+            if (oldCombining) oldCombining.remove();
             if (data.acmg_classification) {
                 acmgGrid.insertAdjacentHTML('afterend', `<div class="acmg-combining-result" style="margin-top:6px;font-weight:600;font-size:0.85rem;color:var(--text);">ACMG Combining: ${escapeHtml(data.acmg_classification)}</div>`);
             }
@@ -1408,7 +1408,7 @@ function generatePDFReport(data, input) {
     const pred = data.prediction;
     const ci = data.confidence || {};
     const ds = data.data_sources || {};
-    const am = ds.alphamissense || {};
+    const eve = ds.eve || {};
     const mave = ds.mave || {};
     const phy = ds.phylop || {};
     const struct = ds.structure || {};
@@ -1487,7 +1487,7 @@ ${ciText}
 
 <h2>Data Source Scores</h2>
 <table class="info-table">
-    <tr><td>AlphaMissense</td><td>${am.score != null ? am.score + ' (' + (am.label || '-') + ')' : 'No data'}</td></tr>
+    <tr><td>EVE Score</td><td>${eve.score != null ? eve.score + ' (' + (eve.label || '-') + ')' : 'No data'}</td></tr>
     <tr><td>MAVE Functional Assay</td><td>${mave.score != null ? mave.score + ' (' + (mave.label || '-') + ')' : 'No data'}</td></tr>
     <tr><td>PhyloP Conservation</td><td>${phy.score != null ? phy.score + ' (' + (phy.label || '-') + ')' : 'No data'}</td></tr>
     <tr><td>3D Structure Domain</td><td>${escapeHtml(String(struct.domain || 'Unknown'))}</td></tr>
@@ -1512,10 +1512,10 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
 
 <h2>Model Information</h2>
 <table class="info-table">
-    <tr><td>Model</td><td>XGBoost (60%) + MLP (40%) Ensemble</td></tr>
+    <tr><td>Model</td><td>XGBoost + MLP Ensemble (gene-adaptive weights)</td></tr>
     <tr><td>Calibration</td><td>Isotonic regression on held-out data</td></tr>
-    <tr><td>Features</td><td>120 engineered features from 7 databases</td></tr>
-    <tr><td>Training Data</td><td>19,223 variants (BRCA2: 10,048 | BRCA1: 4,219 | PALB2: 2,835 | RAD51C: 1,711 | RAD51D: 410)</td></tr>
+    <tr><td>Features</td><td>120 engineered features from 7 data sources</td></tr>
+    <tr><td>Training Data</td><td>19,223 variants (BRCA2: 10,085 | BRCA1: 5,432 | PALB2: 2,621 | RAD51C: 675 | RAD51D: 410)</td></tr>
     <tr><td>Validation ROC-AUC</td><td>0.985</td></tr>
     ${data.gene_reliability?.auc ? `<tr><td>Gene-Specific AUC (${data.gene_reliability?.gene || input.gene_name})</td><td>${data.gene_reliability.auc}</td></tr>` : ''}
     <tr><td>Validation MCC</td><td>0.881</td></tr>
@@ -1711,7 +1711,7 @@ function renderLollipopPlot(gene, aaPos, prediction) {
     const containerPx = container.clientWidth || 800;
     const fontScale = Math.max(0.7, Math.min(1.0, containerPx / 800));
 
-    const W = 800, pad = 40, scaleMarkerY = 56, trackY = 70, trackH = 14;
+    const W = 800, topPad = 14, pad = 40, scaleMarkerY = 56 + topPad, trackY = 70 + topPad, trackH = 14;
     const scale = (pos) => pad + (pos / gd.len) * (W - 2 * pad);
     const pinX = scale(aaPos);
     const pinColor = prediction === 'Pathogenic' ? '#ef4444' : (prediction === 'Benign' ? '#10b981' : '#f59e0b');
@@ -1790,9 +1790,9 @@ function renderLollipopPlot(gene, aaPos, prediction) {
     }
 
     // Lollipop pin — label above circle with visible gap
-    svg += `<line x1="${pinX}" y1="${trackY - 4}" x2="${pinX}" y2="24" stroke="${pinColor}" stroke-width="2"/>`;
-    svg += `<circle cx="${pinX}" cy="20" r="7" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>`;
-    svg += `<text x="${pinX}" y="6" text-anchor="middle" font-size="${Math.round(9 * fontScale)}" fill="var(--text-dark)" font-weight="600" font-family="system-ui">${gene} p.${aaPos}</text>`;
+    svg += `<line x1="${pinX}" y1="${trackY - 4}" x2="${pinX}" y2="${topPad + 24}" stroke="${pinColor}" stroke-width="2"/>`;
+    svg += `<circle cx="${pinX}" cy="${topPad + 20}" r="7" fill="${pinColor}" stroke="#fff" stroke-width="1.5"/>`;
+    svg += `<text x="${pinX}" y="${topPad + 4}" text-anchor="middle" font-size="${Math.round(9 * fontScale)}" fill="var(--text-dark)" font-weight="600" font-family="system-ui">${gene} p.${aaPos}</text>`;
     // Scale markers — placed just above the track bar
     svg += `<text x="${pad}" y="${scaleMarkerY}" text-anchor="start" font-size="${Math.round(8 * fontScale)}" fill="var(--text-body)" opacity="0.5" font-family="system-ui">1</text>`;
     svg += `<text x="${W - pad}" y="${scaleMarkerY}" text-anchor="end" font-size="${Math.round(8 * fontScale)}" fill="var(--text-body)" opacity="0.5" font-family="system-ui">${gd.len}</text>`;
@@ -1896,6 +1896,16 @@ async function render3DViewer(geneName, aaPos, prediction) {
     errorDiv.style.display = 'none';
     viewport.innerHTML = '';
 
+    // Clean up previous render artifacts (fragNote, spinBtn)
+    const container3d = document.getElementById('viewer3dContainer');
+    container3d.querySelectorAll('.viewer3d-frag-note, .viewer3d-spin-btn').forEach(el => el.remove());
+
+    // Remove previous resize listener
+    if (window._viewer3dResize) {
+        window.removeEventListener('resize', window._viewer3dResize);
+        window._viewer3dResize = null;
+    }
+
     // Dispose previous stage if any
     if (nglStage) {
         nglStage.dispose();
@@ -1914,8 +1924,9 @@ async function render3DViewer(geneName, aaPos, prediction) {
             clipDist: 0,
         });
 
-        // Handle window resize
+        // Handle window resize (store ref for cleanup)
         const handleResize = () => { if (nglStage) nglStage.handleResize(); };
+        window._viewer3dResize = handleResize;
         window.addEventListener('resize', handleResize);
 
         let component = null;
@@ -1980,6 +1991,7 @@ async function render3DViewer(geneName, aaPos, prediction) {
         // Show structure source note
         if (structureNote) {
             const fragNote = document.createElement('div');
+            fragNote.className = 'viewer3d-frag-note';
             fragNote.style.cssText = 'text-align:center;font-size:0.75rem;color:var(--text-mid);margin-top:4px;';
             fragNote.textContent = structureNote;
             viewport.parentNode.insertBefore(fragNote, viewport.nextSibling);
@@ -1993,7 +2005,7 @@ async function render3DViewer(geneName, aaPos, prediction) {
 
         // Pause/Resume spin button
         const spinBtn = document.createElement('button');
-        spinBtn.className = 'shap-toggle-btn';
+        spinBtn.className = 'shap-toggle-btn viewer3d-spin-btn';
         spinBtn.style.cssText = 'margin:6px auto 0;display:block;font-size:0.75rem;padding:4px 14px;';
         spinBtn.textContent = 'Pause Rotation';
         spinBtn.addEventListener('click', () => {
