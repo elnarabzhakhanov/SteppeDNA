@@ -84,7 +84,8 @@ from backend.feature_engineering import (
 )
 from backend.acmg_rules import evaluate_acmg_rules, combine_acmg_evidence
 from backend import __version__ as STEPPEDNA_VERSION
-from backend.database import init_db, record_analysis
+# Database storage disabled — privacy: no variant data is stored server-side
+# from backend.database import init_db, record_analysis
 
 
 # ─── Gene Config Validation ──────────────────────────────────────────────────
@@ -243,10 +244,6 @@ async def lifespan(app):
     _load_founder_mutations()
     _load_conformal_thresholds()
     logger.info("Server ready.")
-    try:
-        init_db()
-    except Exception as e:
-        logger.warning(f"[DB] Database init failed (non-fatal): {e}")
 
     # Background task: periodic rate limiter cleanup every 5 minutes
     async def _periodic_rate_cleanup():
@@ -282,7 +279,7 @@ app = FastAPI(
 )
 
 # ─── CORS ────────────────────────────────────────────────────────────────────
-_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost,http://127.0.0.1,http://localhost:8000,http://127.0.0.1:8000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:3000").split(",")
+_ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost,http://127.0.0.1,http://localhost:8000,http://127.0.0.1:8000,http://localhost:8080,http://127.0.0.1:8080,http://localhost:5500,http://127.0.0.1:5500,http://localhost:3000").split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in _ALLOWED_ORIGINS],
@@ -797,18 +794,6 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         "warnings": _warnings if _warnings else None,
     }
     _pred_cache_set(pred_cache_key, result)
-    # Record to SQLite database (non-blocking, fire-and-forget)
-    try:
-        record_analysis(
-            gene=mutation_data.gene_name, cdna_pos=mutation_data.cDNA_pos,
-            aa_ref=mutation_data.AA_ref, aa_alt=mutation_data.AA_alt,
-            aa_pos=aa_pos, mutation=mutation_data.Mutation,
-            prediction=label, probability=probability,
-            risk_tier=risk, confidence_label=uncertainty_label,
-            ci_lower=ci_lower, ci_upper=ci_upper, latency_ms=latency_ms
-        )
-    except Exception as e:
-        logger.warning(f"[DB] Failed to record analysis: {type(e).__name__}: {e}")
     # Structured audit log (no PII)
     _log_prediction_audit(
         gene=mutation_data.gene_name,

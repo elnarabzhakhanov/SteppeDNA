@@ -26,7 +26,8 @@ from backend.models import (
 )
 from backend.external_api import _api_cache
 from backend.middleware import _rate_counts, _API_KEY
-from backend.database import get_recent_analyses, get_analysis_stats
+# Database storage disabled — privacy: no variant data is stored server-side
+# from backend.database import get_recent_analyses, get_analysis_stats
 
 logger = logging.getLogger("steppedna")
 
@@ -179,23 +180,15 @@ async def cohort_stats():
 # ─── History & Stats ─────────────────────────────────────────────────────────
 
 @router.get("/history", tags=["System"], summary="Recent analysis history",
-            description="Returns recent variant analyses stored in the server-side database.")
+            description="Server-side history disabled for privacy. Use client-side localStorage history.")
 async def analysis_history(limit: int = 50):
-    try:
-        return {"analyses": get_recent_analyses(min(limit, 200))}
-    except Exception as e:
-        logger.error(f"[DB] History query failed: {e}")
-        return JSONResponse(status_code=500, content={"error": "Internal server error"})
+    return {"analyses": [], "note": "Server-side history disabled for privacy."}
 
 
 @router.get("/stats", tags=["System"], summary="Analysis statistics",
-            description="Returns aggregate analysis statistics from the server-side database.")
+            description="Server-side stats disabled for privacy.")
 async def analysis_stats():
-    try:
-        return get_analysis_stats()
-    except Exception as e:
-        logger.error(f"[DB] Stats query failed: {e}")
-        return JSONResponse(status_code=500, content={"error": "Internal server error"})
+    return {"total_analyses": 0, "total_vcf_uploads": 0, "by_gene": {}, "by_prediction": {}, "avg_latency_ms": 0, "note": "Server-side stats disabled for privacy."}
 
 
 # ─── Research Priorities / Active Learning ────────────────────────────────────
