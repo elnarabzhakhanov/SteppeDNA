@@ -1,5 +1,5 @@
 /* SteppeDNA Service Worker — Offline-first caching */
-const CACHE_NAME = 'steppedna-v5.4.1';
+const CACHE_NAME = 'steppedna-v5.4.2';
 const STATIC_ASSETS = [
     '/',
     '/index.html',
