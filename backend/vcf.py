@@ -615,7 +615,6 @@ async def predict_vcf(file: UploadFile = File(...), gene: str = Form("BRCA2")): 
     except Exception:
         pass
 
-
     response = {
         "total_variants_in_file": total_data_lines,
         "brca2_missense_found": n_classified,  # kept identical key for front-end backwards compatibility

@@ -181,6 +181,210 @@
         <p class="pg-footnote" style="margin-top:0.6rem" data-i18n="sota_footnote">* All tools evaluated on SteppeDNA&#8217;s held-out test set (methodological advantage). REVEL/BayesDel/CADD scored 72&ndash;73% of variants. Independent benchmark AUC: 0.719&ndash;0.793.</p>
     </section>
 
+    <!-- ============ ALPHAMISSENSE LEAKAGE DISCOVERY ============ -->
+    <section class="analysis-section am-section" aria-label="AlphaMissense Leakage Discovery">
+        <h3 class="per-gene-title" data-i18n="am_title">AlphaMissense Label Leakage Discovery</h3>
+        <p class="am-explanation" data-i18n="am_explanation">AlphaMissense (Cheng et al. 2023) was partially trained on ClinVar labels, creating indirect label circularity. Ablation testing revealed that removing AlphaMissense features <strong>improved</strong> AUC for 3 of 5 genes. AlphaMissense was removed in v5.4.</p>
+        <div class="am-chart">
+            <div class="am-legend">
+                <span class="am-leg-item"><span class="am-leg-swatch am-with-swatch"></span> <span data-i18n="am_with">With AlphaMissense</span></span>
+                <span class="am-leg-item"><span class="am-leg-swatch am-without-swatch"></span> <span data-i18n="am_without">Without (v5.4)</span></span>
+            </div>
+            <div class="am-row am-improved">
+                <span class="pg-gene">BRCA1</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:76.5%" aria-label="With AM: 0.765"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:78.4%" aria-label="Without AM: 0.784"></div></div>
+                </div>
+                <span class="am-delta am-delta-up">+0.020</span>
+            </div>
+            <div class="am-row am-declined">
+                <span class="pg-gene">BRCA2</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:99.7%" aria-label="With AM: 0.997"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:99.7%" aria-label="Without AM: 0.997"></div></div>
+                </div>
+                <span class="am-delta am-delta-down">&minus;0.000</span>
+            </div>
+            <div class="am-row am-improved">
+                <span class="pg-gene">PALB2</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:57.0%" aria-label="With AM: 0.570"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:58.6%" aria-label="Without AM: 0.586"></div></div>
+                </div>
+                <span class="am-delta am-delta-up">+0.015</span>
+            </div>
+            <div class="am-row am-improved">
+                <span class="pg-gene">RAD51C</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:79.9%" aria-label="With AM: 0.799"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:81.7%" aria-label="Without AM: 0.817"></div></div>
+                </div>
+                <span class="am-delta am-delta-up">+0.018</span>
+            </div>
+            <div class="am-row am-declined">
+                <span class="pg-gene">RAD51D</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:82.1%" aria-label="With AM: 0.821"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:81.5%" aria-label="Without AM: 0.815"></div></div>
+                </div>
+                <span class="am-delta am-delta-down">&minus;0.007</span>
+            </div>
+        </div>
+        <div class="am-callout" data-i18n="am_callout">3 of 5 genes improved after removing AlphaMissense &mdash; confirming indirect ClinVar label leakage. Overall AUC: 0.9846 &rarr; 0.9853 (no loss).</div>
+    </section>
+
+    <!-- ============ POPULATION EQUITY ANALYSIS ============ -->
+    <section class="analysis-section equity-section" aria-label="Population Equity Analysis">
+        <h3 class="per-gene-title" data-i18n="eq_title">Population Equity Analysis</h3>
+
+        <h4 class="eq-subtitle" data-i18n="eq_perf_title">Model Performance by Ancestry</h4>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">EAS</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:99.5%" aria-label="EAS AUC 0.995"></div></div>
+                <span class="pg-val">0.995</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">AFR</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:99.1%" aria-label="AFR AUC 0.991"></div></div>
+                <span class="pg-val">0.991</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">NFE</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:98.9%" aria-label="NFE AUC 0.989"></div></div>
+                <span class="pg-val">0.989</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">AMR</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:97.4%" aria-label="AMR AUC 0.974"></div></div>
+                <span class="pg-val">0.974</span>
+            </div>
+        </div>
+
+        <h4 class="eq-subtitle" data-i18n="eq_vus_title">VUS Resolution Capacity by Gene</h4>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">BRCA2</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-high" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
+                <span class="pg-val eq-val-high">0.994</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51D</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
+                <span class="pg-val eq-val-moderate">0.824</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51C</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
+                <span class="pg-val eq-val-moderate">0.785</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">BRCA1</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-low" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
+                <span class="pg-val eq-val-low">0.747</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">PALB2</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-low" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
+                <span class="pg-val eq-val-low">0.605</span>
+            </div>
+        </div>
+        <div class="eq-tier-legend">
+            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-high"></span> <span data-i18n="eq_high">High confidence</span></span>
+            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-moderate"></span> <span data-i18n="eq_moderate">Moderate</span></span>
+            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-low"></span> <span data-i18n="eq_low">Low &mdash; interpret with caution</span></span>
+        </div>
+
+        <h4 class="eq-subtitle" data-i18n="eq_pm2_title">PM2 Evidence Disparity by Population</h4>
+        <div style="overflow-x:auto">
+            <table class="sota-table eq-table" aria-label="PM2 evidence disparity">
+                <thead>
+                    <tr>
+                        <th data-i18n="eq_col_pop">Population</th>
+                        <th data-i18n="eq_col_pm2">Variants meeting PM2</th>
+                        <th data-i18n="eq_col_diff">Difference vs NFE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>EAS</td><td>3,753</td><td class="eq-diff-up">+245</td></tr>
+                    <tr><td>AMR</td><td>3,713</td><td class="eq-diff-up">+205</td></tr>
+                    <tr><td>AFR</td><td>3,684</td><td class="eq-diff-up">+176</td></tr>
+                    <tr><td>NFE</td><td>3,508</td><td>&mdash;</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="pg-footnote" data-i18n="eq_footnote">PM2 (absent from population databases) is triggered more often for non-European populations due to lower representation in gnomAD. This can inflate pathogenicity evidence for underrepresented groups.</p>
+    </section>
+
+    <!-- ============ FOUNDER MUTATION BENCHMARK ============ -->
+    <section class="analysis-section founder-bench-section" aria-label="Founder Mutation Benchmark">
+        <h3 class="per-gene-title" data-i18n="fb_title">Kazakh Founder Mutations &mdash; Tool Comparison</h3>
+        <div style="overflow-x:auto">
+            <table class="sota-table" aria-label="Founder mutation benchmark comparison">
+                <thead>
+                    <tr>
+                        <th data-i18n="fb_col_variant">Variant</th>
+                        <th data-i18n="fb_col_gene">Gene</th>
+                        <th>SteppeDNA</th>
+                        <th>REVEL</th>
+                        <th>CADD</th>
+                        <th data-i18n="fb_col_freq">Freq (KZ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="sota-win">
+                        <td class="sota-gene">p.Cys61Gly</td>
+                        <td>BRCA1</td>
+                        <td class="sota-score sota-score-ours"><strong>0.991</strong></td>
+                        <td class="sota-score sota-score-ext">0.956</td>
+                        <td class="sota-score sota-score-ext">25.6</td>
+                        <td>0.004</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">p.Met1Thr</td>
+                        <td>BRCA1</td>
+                        <td class="sota-score sota-score-ours"><strong>0.991</strong></td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td>0.006</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">5382insC</td>
+                        <td>BRCA1</td>
+                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
+                        <td>0.035</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.5278-2del</td>
+                        <td>BRCA1</td>
+                        <td colspan="3" class="fb-na" data-i18n="fb_splice">Splice site &mdash; N/A for missense predictors</td>
+                        <td>0.008</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.4035del</td>
+                        <td>BRCA1</td>
+                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
+                        <td>0.005</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.9409dup</td>
+                        <td>BRCA2</td>
+                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
+                        <td>0.012</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.9253del</td>
+                        <td>BRCA2</td>
+                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
+                        <td>0.008</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="pg-footnote" data-i18n="fb_footnote">CADD scores are on PHRED scale (not directly comparable to probability scores). Non-missense founder variants cannot be evaluated by missense-only predictors (REVEL, CADD, BayesDel).</p>
+    </section>
+
     <!-- ============ MAIN 2-COL LAYOUT ============ -->
     <main class="main-container" role="main">
 
@@ -363,6 +567,12 @@
                 <div class="acmg-title" data-i18n="acmg_ev">ACMG Evidence <button class="help-tip" aria-label="What is ACMG?">?<span class="help-text" data-i18n-tooltip="tip_acmg">American College of Medical Genetics classification criteria. PP/PM/PS = evidence for pathogenic. BP/BS/BA = evidence for benign. These are computational approximations.</span></button></div>
                 <div class="acmg-approx-note" style="font-size:0.85rem;color:var(--text);margin-bottom:6px;font-style:italic;background:var(--warning-bg, #fff3cd);padding:4px 8px;border-radius:4px;" data-i18n="acmg_approx_label">Computational approximation &mdash; not validated ACMG classification</div>
                 <div class="acmg-grid" id="acmgGrid"></div>
+            </div>
+
+            <!-- POPULATION COMPARISON -->
+            <div class="pop-compare" id="populationComparison" style="display:none">
+                <div class="pop-compare-title" data-i18n="pop_compare_title">Population Impact on ACMG Evidence</div>
+                <div id="popCompareContent"></div>
             </div>
 
             <!-- SHAP -->
@@ -623,31 +833,6 @@
             </div>
         </div>
     </details>
-
-    <!-- ============ CERTIFICATION ============ -->
-    <div class="certification-section">
-        <div class="cert-badge">
-            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-        </div>
-        <h4 data-i18n="cert_title">Regulatory & Certification Roadmap</h4>
-        <div class="cert-grid">
-            <div class="cert-item planned">
-                <span class="cert-status" data-i18n="cert_planned">Future</span>
-                <span class="cert-label" data-i18n="cert_kz">Kazakhstan Ministry of Health Registration</span>
-            </div>
-            <div class="cert-item planned">
-                <span class="cert-status" data-i18n="cert_planned">Future</span>
-                <span class="cert-label" data-i18n="cert_ce">CE-IVD Marking (EU)</span>
-            </div>
-            <div class="cert-item active">
-                <span class="cert-status" data-i18n="cert_active">Active</span>
-                <span class="cert-label" data-i18n="cert_research">Research Use Only (RUO)</span>
-            </div>
-        </div>
-        <p class="cert-note" data-i18n="cert_note">No regulatory approval has been obtained or is currently in progress. The milestones above are aspirational. Clinical deployment will require certification from the relevant national health authority.</p>
-    </div>
 
     <!-- ============ FOOTER ============ -->
     <footer>

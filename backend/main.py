@@ -52,8 +52,8 @@ _metrics = {"predictions": 0, "vcf_uploads": 0, "total_predict_ms": 0.0}
 from backend.models import (
     DATA_DIR, SUPPORTED_GENES, MAX_CDNA_LENGTHS, GENE_MAX_AA,
     GENE_RELIABILITY, XGB_WEIGHT, NN_WEIGHT,
-    N_EFFECTIVE, VALID_AA_CODES, phylop_scores, mave_by_variant, am_by_variant,
-    genomic_to_cdna, _GENE_CALIBRATORS,
+    N_EFFECTIVE, VALID_AA_CODES,
+    _GENE_CALIBRATORS,
     _load_gene_calibrators, _GENE_ENSEMBLE_WEIGHTS,
     _load_gene_ensemble_weights, _load_bootstrap_models, _load_active_learning_priorities,
     _load_conformal_thresholds, _get_universal_models,
@@ -191,14 +191,12 @@ def _log_prediction_audit(*, gene: str, hgvs_c: str, hgvs_p: str,
     _audit_logger.info(json.dumps(record))
 
 
-
-
 # ─── Kazakh Founder Mutation Data ───────────────────────────────────────────
 _FOUNDER_MUTATIONS = {}
 
+
 def _load_founder_mutations():
     """Load Kazakh/Central Asian founder mutation data from JSON."""
-    global _FOUNDER_MUTATIONS
     fpath = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "data", "kazakh_founder_mutations.json")
     if os.path.exists(fpath):
         try:
@@ -226,7 +224,9 @@ def _load_founder_mutations():
         except Exception as e:
             logger.warning(f"[FOUNDER] Failed to load founder mutations: {e}")
 
+
 # ─── Lifespan & App Creation ─────────────────────────────────────────────────
+
 
 @asynccontextmanager
 async def lifespan(app):
@@ -701,6 +701,10 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     }
     acmg_eval = evaluate_acmg_rules(features_dict, probability, gene_name=mutation_data.gene_name, population=mutation_data.population)
     acmg_classification = combine_acmg_evidence(acmg_eval)
+    # When population is set, also compute global ACMG for side-by-side comparison
+    _acmg_global = None
+    if mutation_data.population:
+        _acmg_global = evaluate_acmg_rules(features_dict, probability, gene_name=mutation_data.gene_name, population=None)
 
     # Contrastive Explanation Pairs (Item 43)
     _contrastive = find_contrastive_explanation(
@@ -771,7 +775,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
             "alphamissense": {"score": round(am_val, 3) if am_val is not None else None,
                               "label": "Pathogenic" if am_val is not None and am_val > 0.564 else ("Benign" if am_val is not None and am_val < 0.340 else ("Ambiguous" if am_val is not None else "No data"))},
             "eve": {"score": round(eve_val, 3) if eve_val is not None else None,
-                     "label": "Pathogenic" if eve_val is not None and eve_val > 0.5 else ("Benign" if eve_val is not None and eve_val <= 0.5 else "No data")},
+                    "label": "Pathogenic" if eve_val is not None and eve_val > 0.5 else ("Benign" if eve_val is not None and eve_val <= 0.5 else "No data")},
             "structure": {
                 "domain": sf.get("domain", "Unknown"),
                 "rsa": round(sf.get("rsa", 0.4), 3) if sf else None,
@@ -791,6 +795,8 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         "conformal_prediction": _conformal,
         "calibrator_type": calibrator_type,
         "founder_mutation": _founder_info,
+        "acmg_global": _acmg_global,
+        "population_used": mutation_data.population if mutation_data.population else None,
         "warnings": _warnings if _warnings else None,
     }
     _pred_cache_set(pred_cache_key, result)

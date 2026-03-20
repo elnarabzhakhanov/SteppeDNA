@@ -394,6 +394,7 @@ def engineer_features(mutation_df, phylop_scores=None, mave_data=None, am_data=N
             if 'ss_helix' in entry:
                 return int(entry['ss_helix'])
             return 1 if entry.get('ss', 'C') in ('H', 'G', 'I') else 0
+
         def _get_ss_sheet(row):
             aa_pos = int(row['AA_pos'])
             entry = structural_data.get(aa_pos, {})
