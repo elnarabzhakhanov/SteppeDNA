@@ -159,7 +159,6 @@ button,
 .live-result-box,
 .model-card-section,
 .history-section,
-.certification-section,
 .viewer3d-section {
     transition: background-color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
         color 0.4s cubic-bezier(0.22, 1, 0.36, 1),
@@ -1818,11 +1817,37 @@ details[open] .model-card-toggle::before {
     font-weight: 400;
     line-height: 1.55;
     width: 250px;
+    max-width: 85vw;
     text-align: left;
     z-index: 100;
     box-shadow: 0 8px 24px rgba(0,0,0,0.35);
     pointer-events: none;
     border: 1px solid rgba(255,255,255,0.08);
+}
+/* Keep tooltips within viewport for edge-positioned stats */
+.hero-stat:last-child .help-tip .help-text,
+.hero-stat:nth-last-child(2) .help-tip .help-text {
+    left: auto;
+    right: -10px;
+    transform: none;
+}
+.hero-stat:last-child .help-tip .help-text::after,
+.hero-stat:nth-last-child(2) .help-tip .help-text::after {
+    left: auto;
+    right: 14px;
+    transform: none;
+}
+.hero-stat:first-child .help-tip .help-text,
+.hero-stat:nth-child(2) .help-tip .help-text {
+    left: -10px;
+    right: auto;
+    transform: none;
+}
+.hero-stat:first-child .help-tip .help-text::after,
+.hero-stat:nth-child(2) .help-tip .help-text::after {
+    left: 14px;
+    right: auto;
+    transform: none;
 }
 [data-theme="dark"] .help-tip .help-text {
     background: #2a2a40;
@@ -2677,77 +2702,6 @@ footer a {
     }
 }
 
-/* ---- CERTIFICATION SECTION ---- */
-.certification-section {
-    max-width: 920px;
-    margin: 0 auto 2rem;
-    padding: 1.2rem;
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    text-align: center;
-}
-.cert-badge {
-    width: 48px;
-    height: 48px;
-    background: var(--secondary);
-    border-radius: 14px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 0.8rem;
-}
-.cert-badge svg {
-    stroke: var(--primary);
-}
-.certification-section h4 {
-    font-size: 0.95rem;
-    color: var(--text-dark);
-    margin-bottom: 1rem;
-}
-.cert-grid {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-}
-.cert-item {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 0.8rem;
-    border: 1px solid var(--border);
-}
-.cert-item.planned {
-    background: rgba(148, 163, 184, 0.08);
-    border-color: rgba(148, 163, 184, 0.3);
-}
-.cert-item.active {
-    background: var(--success-bg);
-    border-color: rgba(16, 185, 129, 0.3);
-}
-.cert-status {
-    font-weight: 700;
-    font-size: 0.72rem;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-.cert-item.planned .cert-status { color: #94a3b8; }
-.cert-item.active .cert-status { color: var(--success); }
-.cert-label {
-    color: var(--text-dark);
-    font-weight: 500;
-}
-.cert-note {
-    font-size: 0.72rem;
-    color: var(--text-body);
-    line-height: 1.5;
-    max-width: 600px;
-    margin: 0 auto;
-}
 
 /* Result card fade-in animation */
 @keyframes fadeIn {
