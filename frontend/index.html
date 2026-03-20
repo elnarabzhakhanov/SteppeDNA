@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SteppeDNA — Multi-Gene HR Variant Classifier</title>
     <meta name="description"
-        content="Universal HR pathway missense variant pathogenicity prediction using XGBoost+MLP ensemble with 120 features from 7 biological databases. Research use only.">
+        content="Universal HR pathway missense variant pathogenicity prediction using XGBoost+MLP ensemble with 120 features from 7 biological data sources. Research use only.">
     <link rel="stylesheet" href="fonts/fonts.css">
     <link rel="stylesheet" href="styles.css?v=5.4.0">
     <link rel="manifest" href="manifest.json">
@@ -40,7 +40,7 @@
             </div>
             <p class="tagline" data-i18n="tagline"
                 style="font-size: 0.85rem; max-width: 620px; margin: 0 auto 1.2rem; line-height: 1.6; opacity: 0.92;">
-                Multi-Gene HR Variant Classifier &bull; 120 Features from 7 Databases &bull; ESM-2 LLM Embeddings &bull;
+                Multi-Gene HR Variant Classifier &bull; 120 Features from 7 Data Sources &bull; ESM-2 Protein LM Embeddings &bull;
                 SHAP Explained</p>
 
             <div class="hero-controls">
@@ -87,7 +87,7 @@
                 </div>
                 <div class="hero-stat">
                     <div class="num">XGB+MLP</div>
-                    <div class="lbl" data-i18n="stat_model">Ensemble <button class="help-tip" aria-label="What is the Ensemble?">?<span class="help-text" data-i18n-tooltip="tip_ensemble">XGBoost (60%) + Multi-Layer Perceptron neural network (40%) with isotonic calibration. Two models vote on each prediction for higher reliability.</span></button></div>
+                    <div class="lbl" data-i18n="stat_model">Ensemble <button class="help-tip" aria-label="What is the Ensemble?">?<span class="help-text" data-i18n-tooltip="tip_ensemble">XGBoost + Multi-Layer Perceptron neural network with gene-adaptive weights and isotonic calibration. Two models vote on each prediction for higher reliability.</span></button></div>
                 </div>
                 <div class="hero-stat">
                     <div class="num">5</div>
@@ -176,14 +176,9 @@
                         <td class="sota-badge sota-badge-loss">REVEL</td>
                     </tr>
                 </tbody>
-                <tr class="sota-caveat-row">
-                    <td colspan="4" style="background:var(--warning-bg, #fff3cd);padding:8px 12px;font-size:0.8rem;color:var(--text);border-top:2px solid var(--warning);">
-                        All scores evaluated on SteppeDNA's own test set, giving SteppeDNA a methodological advantage. Independent benchmark AUC: 0.719–0.793. REVEL, BayesDel, and CADD are general-purpose tools not trained on this distribution.
-                    </td>
-                </tr>
             </table>
         </div>
-        <p class="pg-footnote" style="margin-top:0.6rem" data-i18n="sota_footnote">Evaluated on SteppeDNA&#8217;s held-out test set. Independent benchmark AUC: 0.719&#8211;0.793.</p>
+        <p class="pg-footnote" style="margin-top:0.6rem" data-i18n="sota_footnote">* All tools evaluated on SteppeDNA&#8217;s held-out test set (methodological advantage). REVEL/BayesDel/CADD scored 72&ndash;73% of variants. Independent benchmark AUC: 0.719&ndash;0.793.</p>
     </section>
 
     <!-- ============ MAIN 2-COL LAYOUT ============ -->
@@ -324,11 +319,10 @@
 
         <!-- RESULT (full width) -->
         <div class="result-card card-full" id="resultCard" aria-live="polite" aria-atomic="true">
-            <div class="ruo-inline" style="background:var(--bg-alt);border:1px solid var(--warning);padding:4px 10px;border-radius:4px;font-size:0.75rem;color:var(--text-mid);text-align:center;margin-bottom:8px;">Research Use Only — not for clinical diagnosis | Germline variants only</div>
+            <div class="ruo-inline" style="background:var(--bg-alt);border:1px solid var(--border);padding:4px 10px;border-radius:4px;font-size:0.72rem;color:var(--text-mid);text-align:center;margin-bottom:8px;opacity:0.7;">Research Use Only — not for clinical diagnosis | Germline variants only</div>
             <div class="result-top">
                 <div class="result-label-group">
                     <span class="badge" id="badge">Pathogenic</span>
-                    <span class="result-model-note">XGBoost · Calibrated · SHAP explained</span>
                 </div>
                 <div class="result-top-right">
                     <span class="prob-label" style="font-size:0.7rem;color:var(--text-mid);display:block;margin-bottom:2px;">Pathogenicity Probability</span>
@@ -350,7 +344,7 @@
                 <span id="dataSupport" style="display:none"></span>
             </div>
             <p class="result-subtitle" id="resultNote">
-                Prediction based on AlphaMissense, MAVE, PhyloP, ESM-2, SpliceAI, AlphaFold 3D structure, and 120 engineered features.
+                Prediction based on EVE, MAVE, PhyloP, ESM-2, SpliceAI, AlphaFold 3D structure, gnomAD frequencies, and 120 engineered features.
             </p>
 
             <!-- PROTEIN DOMAIN LOLLIPOP PLOT -->
@@ -427,7 +421,7 @@
                             <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
                             <path d="M2 12h20"></path>
                         </svg>
-                        <span data-i18n="fetch_gnomad">Fetch Live gnomAD</span> <button class="help-tip" aria-label="What is gnomAD?">?<span class="help-text" data-i18n-tooltip="tip_gnomad">Genome Aggregation Database. Shows how often this variant appears in ~1.6 million sequenced individuals across diverse populations.</span></button>
+                        <span data-i18n="fetch_gnomad">Fetch Live gnomAD</span> <button class="help-tip" aria-label="What is gnomAD?">?<span class="help-text" data-i18n-tooltip="tip_gnomad">Genome Aggregation Database. Shows how often this variant appears across ~807K sequenced individuals (~1.6M alleles) from diverse populations.</span></button>
                         <div class="live-spinner" id="spinGnomad"></div>
                     </button>
                     <div class="live-result-box" id="resGnomad"></div>
@@ -568,7 +562,7 @@
                     <path d="M2 12h20" />
                 </svg></div>
             <h4 data-i18n="info2_t">120 Features</h4>
-            <p data-i18n="info2_d">BLOSUM62 substitution scores, ESM-2 protein language model embeddings, PhyloP conservation, MAVE functional assays, AlphaMissense, SpliceAI, AlphaFold 3D structures, and gnomAD population frequencies.</p>
+            <p data-i18n="info2_d">BLOSUM62 substitution scores, ESM-2 protein language model embeddings, PhyloP conservation, MAVE functional assays, EVE evolutionary scores, SpliceAI, AlphaFold 3D structures, and gnomAD population frequencies.</p>
         </div>
         <div class="info-card">
             <div class="info-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
@@ -593,11 +587,11 @@
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_training_data">Training Data</h4>
-                    <p data-i18n="mc_training_data_d">19,223 variants: 18,738 from ClinVar + 485 gnomAD proxy-benign. Per gene: BRCA2 (10,048) | BRCA1 (4,219) | PALB2 (2,835) | RAD51C (1,711) | RAD51D (410). 60/20/20 split with gene &times; label stratification.</p>
+                    <p data-i18n="mc_training_data_d">19,223 variants: 18,738 from ClinVar + 485 gnomAD proxy-benign. Per gene: BRCA2 (10,085) | BRCA1 (5,432) | PALB2 (2,621) | RAD51C (675) | RAD51D (410). 60/20/20 split with gene &times; label stratification.</p>
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_architecture">Architecture</h4>
-                    <p data-i18n="mc_architecture_d">XGBoost (60%) + Multi-Layer Perceptron (40%) blended ensemble with isotonic calibration trained on a held-out calibration set. 120 engineered features from 7 databases.</p>
+                    <p data-i18n="mc_architecture_d">XGBoost + Multi-Layer Perceptron blended ensemble with gene-adaptive weights and isotonic calibration trained on a held-out calibration set. 120 engineered features from 7 data sources.</p>
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_performance">Performance</h4>
