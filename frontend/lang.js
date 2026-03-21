@@ -682,9 +682,13 @@ function setLang(lang) {
     const d = i18n[lang];
     // Crossfade animation wrapper
     const elementsToUpdate = document.querySelectorAll('[data-i18n]');
+    const htmlElements = document.querySelectorAll('[data-i18n-html]');
 
     // Fade out
     elementsToUpdate.forEach(el => {
+        el.style.opacity = '0';
+    });
+    htmlElements.forEach(el => {
         el.style.opacity = '0';
     });
 
@@ -717,6 +721,15 @@ function setLang(lang) {
             btnText.textContent = d['analyze_btn'];
             btnText.style.opacity = '1';
         }
+
+        // Translate elements that contain HTML markup (data-i18n-html)
+        document.querySelectorAll('[data-i18n-html]').forEach(htmlEl => {
+            const htmlKey = htmlEl.getAttribute('data-i18n-html');
+            if (d[htmlKey]) {
+                htmlEl.innerHTML = d[htmlKey];
+            }
+            htmlEl.style.opacity = '1';
+        });
 
         // Translate tooltip text spans (data-i18n-tooltip)
         document.querySelectorAll('[data-i18n-tooltip]').forEach(tipEl => {

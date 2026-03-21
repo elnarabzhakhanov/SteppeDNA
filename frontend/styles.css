@@ -428,13 +428,13 @@ body {
 }
 .am-leg-item { display: flex; align-items: center; gap: 5px; }
 .am-leg-swatch { width: 14px; height: 10px; border-radius: 2px; }
-.am-with-swatch { background: var(--text-mid); opacity: 0.4; }
+.am-with-swatch { background: var(--text-mid); opacity: 0.55; }
 .am-without-swatch { background: var(--primary); }
 .am-chart { display: flex; flex-direction: column; gap: 8px; }
 .am-row { display: flex; align-items: center; gap: 8px; }
 .am-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; }
 .am-bars .pg-bar-track { height: 12px; }
-.am-bar-with { background: var(--text-mid) !important; opacity: 0.35; }
+.am-bar-with { background: var(--text-mid) !important; opacity: 0.55; }
 .am-bar-without { background: var(--primary) !important; }
 .am-delta {
     width: 50px;
