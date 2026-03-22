@@ -1,0 +1,278 @@
+{
+  "metadata": {
+    "benchmark": "Gold-Standard Independent (ProteinGym DMS + ClinVar Expert Panel)",
+    "n_total": 2234,
+    "n_pathogenic": 1479,
+    "n_benign": 755,
+    "fair_comparison": true,
+    "note": "All tools evaluated on identical variant set \u2014 no training distribution advantage"
+  },
+  "SteppeDNA": {
+    "n_scored": 2234,
+    "n_pos": 1479,
+    "n_neg": 755,
+    "roc_auc": 0.3977,
+    "pr_auc": 0.5714
+  },
+  "REVEL": {
+    "n_scored": 2185,
+    "n_pos": 1437,
+    "n_neg": 748,
+    "roc_auc": 0.4312,
+    "pr_auc": 0.5766
+  },
+  "BayesDel": {
+    "n_scored": 2187,
+    "n_pos": 1439,
+    "n_neg": 748,
+    "roc_auc": 0.4458,
+    "pr_auc": 0.5791
+  },
+  "CADD": {
+    "n_scored": 2185,
+    "n_pos": 1437,
+    "n_neg": 748,
+    "roc_auc": 0.4602,
+    "pr_auc": 0.6111
+  },
+  "expert_panel_only": {
+    "SteppeDNA": {
+      "n_scored": 397,
+      "n_pos": 116,
+      "n_neg": 281,
+      "roc_auc": 0.6989,
+      "pr_auc": 0.5274
+    },
+    "REVEL": {
+      "n_scored": 388,
+      "n_pos": 108,
+      "n_neg": 280,
+      "roc_auc": 0.9453,
+      "pr_auc": 0.8718
+    },
+    "BayesDel": {
+      "n_scored": 388,
+      "n_pos": 108,
+      "n_neg": 280,
+      "roc_auc": 0.974,
+      "pr_auc": 0.9357
+    },
+    "CADD": {
+      "n_scored": 388,
+      "n_pos": 108,
+      "n_neg": 280,
+      "roc_auc": 0.8925,
+      "pr_auc": 0.6583
+    }
+  },
+  "dms_only": {
+    "SteppeDNA": {
+      "n_scored": 1837,
+      "n_pos": 1363,
+      "n_neg": 474,
+      "roc_auc": 0.25,
+      "pr_auc": 0.5903
+    },
+    "REVEL": {
+      "n_scored": 1797,
+      "n_pos": 1329,
+      "n_neg": 468,
+      "roc_auc": 0.167,
+      "pr_auc": 0.5656
+    },
+    "BayesDel": {
+      "n_scored": 1799,
+      "n_pos": 1331,
+      "n_neg": 468,
+      "roc_auc": 0.1509,
+      "pr_auc": 0.5611
+    },
+    "CADD": {
+      "n_scored": 1797,
+      "n_pos": 1329,
+      "n_neg": 468,
+      "roc_auc": 0.2798,
+      "pr_auc": 0.6196
+    }
+  },
+  "per_gene": {
+    "BRCA1": {
+      "SteppeDNA": {
+        "n_scored": 2051,
+        "n_pos": 1437,
+        "n_neg": 614,
+        "roc_auc": 0.2718,
+        "pr_auc": 0.5674
+      },
+      "REVEL": {
+        "n_scored": 2004,
+        "n_pos": 1397,
+        "n_neg": 607,
+        "roc_auc": 0.3073,
+        "pr_auc": 0.5674
+      },
+      "BayesDel": {
+        "n_scored": 2006,
+        "n_pos": 1399,
+        "n_neg": 607,
+        "roc_auc": 0.3194,
+        "pr_auc": 0.5694
+      },
+      "CADD": {
+        "n_scored": 2004,
+        "n_pos": 1397,
+        "n_neg": 607,
+        "roc_auc": 0.3899,
+        "pr_auc": 0.6204
+      }
+    },
+    "BRCA2": {
+      "SteppeDNA": {
+        "n_scored": 177,
+        "n_pos": 41,
+        "n_neg": 136,
+        "roc_auc": 0.9109,
+        "pr_auc": 0.8281
+      },
+      "REVEL": {
+        "n_scored": 175,
+        "n_pos": 39,
+        "n_neg": 136,
+        "roc_auc": 0.9676,
+        "pr_auc": 0.8759
+      },
+      "BayesDel": {
+        "n_scored": 175,
+        "n_pos": 39,
+        "n_neg": 136,
+        "roc_auc": 0.9876,
+        "pr_auc": 0.9516
+      },
+      "CADD": {
+        "n_scored": 175,
+        "n_pos": 39,
+        "n_neg": 136,
+        "roc_auc": 0.9079,
+        "pr_auc": 0.5751
+      }
+    },
+    "PALB2": {
+      "SteppeDNA": {
+        "n_scored": 6,
+        "roc_auc": null,
+        "pr_auc": null,
+        "note": "insufficient_data"
+      },
+      "REVEL": {
+        "n_scored": 6,
+        "roc_auc": null,
+        "pr_auc": null,
+        "note": "insufficient_data"
+      },
+      "BayesDel": {
+        "n_scored": 6,
+        "roc_auc": null,
+        "pr_auc": null,
+        "note": "insufficient_data"
+      },
+      "CADD": {
+        "n_scored": 6,
+        "roc_auc": null,
+        "pr_auc": null,
+        "note": "insufficient_data"
+      }
+    }
+  },
+  "per_source": {
+    "ClinVar_ExpertPanel": {
+      "SteppeDNA": {
+        "n_scored": 397,
+        "n_pos": 116,
+        "n_neg": 281,
+        "roc_auc": 0.6989,
+        "pr_auc": 0.5274
+      },
+      "REVEL": {
+        "n_scored": 388,
+        "n_pos": 108,
+        "n_neg": 280,
+        "roc_auc": 0.9453,
+        "pr_auc": 0.8718
+      },
+      "BayesDel": {
+        "n_scored": 388,
+        "n_pos": 108,
+        "n_neg": 280,
+        "roc_auc": 0.974,
+        "pr_auc": 0.9357
+      },
+      "CADD": {
+        "n_scored": 388,
+        "n_pos": 108,
+        "n_neg": 280,
+        "roc_auc": 0.8925,
+        "pr_auc": 0.6583
+      }
+    },
+    "ProteinGym_DMS": {
+      "SteppeDNA": {
+        "n_scored": 1837,
+        "n_pos": 1363,
+        "n_neg": 474,
+        "roc_auc": 0.25,
+        "pr_auc": 0.5903
+      },
+      "REVEL": {
+        "n_scored": 1797,
+        "n_pos": 1329,
+        "n_neg": 468,
+        "roc_auc": 0.167,
+        "pr_auc": 0.5656
+      },
+      "BayesDel": {
+        "n_scored": 1799,
+        "n_pos": 1331,
+        "n_neg": 468,
+        "roc_auc": 0.1509,
+        "pr_auc": 0.5611
+      },
+      "CADD": {
+        "n_scored": 1797,
+        "n_pos": 1329,
+        "n_neg": 468,
+        "roc_auc": 0.2798,
+        "pr_auc": 0.6196
+      }
+    }
+  },
+  "novel_only": {
+    "SteppeDNA": {
+      "n_scored": 66,
+      "n_pos": 51,
+      "n_neg": 15,
+      "roc_auc": 0.3359,
+      "pr_auc": 0.7385
+    },
+    "REVEL": {
+      "n_scored": 56,
+      "n_pos": 42,
+      "n_neg": 14,
+      "roc_auc": 0.4124,
+      "pr_auc": 0.7092
+    },
+    "BayesDel": {
+      "n_scored": 56,
+      "n_pos": 42,
+      "n_neg": 14,
+      "roc_auc": 0.3554,
+      "pr_auc": 0.6644
+    },
+    "CADD": {
+      "n_scored": 56,
+      "n_pos": 42,
+      "n_neg": 14,
+      "roc_auc": 0.4065,
+      "pr_auc": 0.6855
+    }
+  }
+}

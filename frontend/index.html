@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SteppeDNA — Multi-Gene HR Variant Classifier</title>
     <meta name="description"
-        content="Universal HR pathway missense variant pathogenicity prediction using XGBoost+MLP ensemble with 120 features from 7 biological data sources. Research use only.">
+        content="Universal HR pathway missense variant pathogenicity prediction using XGBoost+MLP ensemble with 120 features from 8 biological data sources. Research use only.">
     <link rel="stylesheet" href="fonts/fonts.css">
     <link rel="stylesheet" href="styles.css?v=5.4.0">
     <link rel="manifest" href="manifest.json">
@@ -40,7 +40,7 @@
             </div>
             <p class="tagline" data-i18n="tagline"
                 style="font-size: 0.85rem; max-width: 620px; margin: 0 auto 1.2rem; line-height: 1.6; opacity: 0.92;">
-                Multi-Gene HR Variant Classifier &bull; 120 Features from 7 Data Sources &bull; ESM-2 Protein LM Embeddings &bull;
+                Multi-Gene HR Variant Classifier &bull; 120 Features from 8 Data Sources &bull; ESM-2 Protein LM Embeddings &bull;
                 SHAP Explained</p>
 
             <div class="hero-controls">
@@ -131,300 +131,8 @@
         <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes.</p>
     </section>
 
-    <!-- ============ SOTA COMPARISON ============ -->
-    <section class="sota-section" aria-label="Per-Gene SOTA Comparison">
-        <h3 class="per-gene-title" data-i18n="sota_comparison_title">Per-Gene SOTA Comparison</h3>
-        <div style="overflow-x:auto">
-            <table class="sota-table" aria-label="Per-gene SOTA comparison table">
-                <thead>
-                    <tr>
-                        <th data-i18n="sota_col_gene">Gene</th>
-                        <th data-i18n="sota_col_steppdna">SteppeDNA</th>
-                        <th data-i18n="sota_col_best_sota">Best SOTA</th>
-                        <th data-i18n="sota_col_winner">Winner</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="sota-win">
-                        <td class="sota-gene">BRCA2</td>
-                        <td class="sota-score sota-score-ours"><strong>0.994</strong></td>
-                        <td class="sota-score sota-score-ext">0.949 <span class="sota-tool">(BayesDel)</span></td>
-                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
-                    </tr>
-                    <tr class="sota-win">
-                        <td class="sota-gene">RAD51D</td>
-                        <td class="sota-score sota-score-ours"><strong>0.824</strong></td>
-                        <td class="sota-score sota-score-ext">0.461 <span class="sota-tool">(REVEL)</span></td>
-                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
-                    </tr>
-                    <tr class="sota-win">
-                        <td class="sota-gene">RAD51C</td>
-                        <td class="sota-score sota-score-ours"><strong>0.785</strong></td>
-                        <td class="sota-score sota-score-ext">0.703 <span class="sota-tool">(CADD)</span></td>
-                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
-                    </tr>
-                    <tr class="sota-win">
-                        <td class="sota-gene">BRCA1</td>
-                        <td class="sota-score sota-score-ours"><strong>0.747</strong></td>
-                        <td class="sota-score sota-score-ext">0.646 <span class="sota-tool">(BayesDel)</span></td>
-                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
-                    </tr>
-                    <tr class="sota-loss">
-                        <td class="sota-gene">PALB2</td>
-                        <td class="sota-score sota-score-ours">0.605</td>
-                        <td class="sota-score sota-score-ext"><strong>0.732</strong> <span class="sota-tool">(REVEL)</span></td>
-                        <td class="sota-badge sota-badge-loss">REVEL</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p class="pg-footnote" style="margin-top:0.6rem" data-i18n="sota_footnote">* All tools evaluated on SteppeDNA&#8217;s held-out test set (methodological advantage). REVEL/BayesDel/CADD scored 72&ndash;73% of variants. Independent benchmark AUC: 0.719&ndash;0.793.</p>
-    </section>
-
-    <!-- ============ ALPHAMISSENSE LEAKAGE DISCOVERY ============ -->
-    <section class="analysis-section am-section" aria-label="AlphaMissense Leakage Discovery">
-        <h3 class="per-gene-title" data-i18n="am_title">AlphaMissense Label Leakage Discovery</h3>
-        <p class="am-explanation" data-i18n="am_explanation">AlphaMissense (Cheng et al. 2023) was partially trained on ClinVar labels, creating indirect label circularity. Ablation testing revealed that removing AlphaMissense features <strong>improved</strong> AUC for 3 of 5 genes. AlphaMissense was removed in v5.4.</p>
-        <div class="am-chart">
-            <div class="am-legend">
-                <span class="am-leg-item"><span class="am-leg-swatch am-with-swatch"></span> <span data-i18n="am_with">With AlphaMissense</span></span>
-                <span class="am-leg-item"><span class="am-leg-swatch am-without-swatch"></span> <span data-i18n="am_without">Without (v5.4)</span></span>
-            </div>
-            <div class="am-row am-improved">
-                <span class="pg-gene">BRCA1</span>
-                <div class="am-bars">
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:76.5%" aria-label="With AM: 0.765"></div></div>
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:78.4%" aria-label="Without AM: 0.784"></div></div>
-                </div>
-                <span class="am-delta am-delta-up">+0.020</span>
-            </div>
-            <div class="am-row am-declined">
-                <span class="pg-gene">BRCA2</span>
-                <div class="am-bars">
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:99.7%" aria-label="With AM: 0.997"></div></div>
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:99.7%" aria-label="Without AM: 0.997"></div></div>
-                </div>
-                <span class="am-delta am-delta-down">&minus;0.000</span>
-            </div>
-            <div class="am-row am-improved">
-                <span class="pg-gene">PALB2</span>
-                <div class="am-bars">
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:57.0%" aria-label="With AM: 0.570"></div></div>
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:58.6%" aria-label="Without AM: 0.586"></div></div>
-                </div>
-                <span class="am-delta am-delta-up">+0.015</span>
-            </div>
-            <div class="am-row am-improved">
-                <span class="pg-gene">RAD51C</span>
-                <div class="am-bars">
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:79.9%" aria-label="With AM: 0.799"></div></div>
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:81.7%" aria-label="Without AM: 0.817"></div></div>
-                </div>
-                <span class="am-delta am-delta-up">+0.018</span>
-            </div>
-            <div class="am-row am-declined">
-                <span class="pg-gene">RAD51D</span>
-                <div class="am-bars">
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:82.1%" aria-label="With AM: 0.821"></div></div>
-                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:81.5%" aria-label="Without AM: 0.815"></div></div>
-                </div>
-                <span class="am-delta am-delta-down">&minus;0.007</span>
-            </div>
-        </div>
-        <div class="am-callout" data-i18n="am_callout">3 of 5 genes improved after removing AlphaMissense &mdash; confirming indirect ClinVar label leakage. Overall AUC: 0.9846 &rarr; 0.9853 (no loss).</div>
-    </section>
-
-    <!-- ============ POPULATION EQUITY ANALYSIS ============ -->
-    <section class="analysis-section equity-section" aria-label="Population Equity Analysis">
-        <h3 class="per-gene-title" data-i18n="eq_title">Population Equity Analysis</h3>
-
-        <h4 class="eq-subtitle" data-i18n="eq_perf_title">Model Performance by Ancestry</h4>
-        <div class="per-gene-chart">
-            <div class="pg-row">
-                <span class="pg-gene">EAS</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:99.5%" aria-label="EAS AUC 0.995"></div></div>
-                <span class="pg-val">0.995</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">AFR</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:99.1%" aria-label="AFR AUC 0.991"></div></div>
-                <span class="pg-val">0.991</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">NFE</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:98.9%" aria-label="NFE AUC 0.989"></div></div>
-                <span class="pg-val">0.989</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">AMR</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:97.4%" aria-label="AMR AUC 0.974"></div></div>
-                <span class="pg-val">0.974</span>
-            </div>
-        </div>
-
-        <h4 class="eq-subtitle" data-i18n="eq_vus_title">VUS Resolution Capacity by Gene</h4>
-        <div class="per-gene-chart">
-            <div class="pg-row">
-                <span class="pg-gene">BRCA2</span>
-                <div class="pg-bar-track"><div class="pg-bar eq-tier-high" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
-                <span class="pg-val eq-val-high">0.994</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">RAD51D</span>
-                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
-                <span class="pg-val eq-val-moderate">0.824</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">RAD51C</span>
-                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
-                <span class="pg-val eq-val-moderate">0.785</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">BRCA1</span>
-                <div class="pg-bar-track"><div class="pg-bar eq-tier-low" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
-                <span class="pg-val eq-val-low">0.747</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">PALB2</span>
-                <div class="pg-bar-track"><div class="pg-bar eq-tier-low" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
-                <span class="pg-val eq-val-low">0.605</span>
-            </div>
-        </div>
-        <div class="eq-tier-legend">
-            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-high"></span> <span data-i18n="eq_high">High confidence</span></span>
-            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-moderate"></span> <span data-i18n="eq_moderate">Moderate</span></span>
-            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-low"></span> <span data-i18n="eq_low">Low &mdash; interpret with caution</span></span>
-        </div>
-
-        <h4 class="eq-subtitle" data-i18n="eq_pm2_title">PM2 Evidence Disparity by Population</h4>
-        <div style="overflow-x:auto">
-            <table class="sota-table eq-table" aria-label="PM2 evidence disparity">
-                <thead>
-                    <tr>
-                        <th data-i18n="eq_col_pop">Population</th>
-                        <th data-i18n="eq_col_pm2">Variants meeting PM2</th>
-                        <th data-i18n="eq_col_diff">Difference vs NFE</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>EAS</td><td>3,753</td><td class="eq-diff-up">+245</td></tr>
-                    <tr><td>AMR</td><td>3,713</td><td class="eq-diff-up">+205</td></tr>
-                    <tr><td>AFR</td><td>3,684</td><td class="eq-diff-up">+176</td></tr>
-                    <tr><td>NFE</td><td>3,508</td><td>&mdash;</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <p class="pg-footnote" data-i18n="eq_footnote">PM2 (absent from population databases) is triggered more often for non-European populations due to lower representation in gnomAD. This can inflate pathogenicity evidence for underrepresented groups.</p>
-    </section>
-
-    <!-- ============ FOUNDER MUTATION BENCHMARK ============ -->
-    <section class="analysis-section founder-bench-section" aria-label="Founder Mutation Benchmark">
-        <h3 class="per-gene-title" data-i18n="fb_title">Kazakh Founder Mutations &mdash; Tool Comparison</h3>
-        <div style="overflow-x:auto">
-            <table class="sota-table" aria-label="Founder mutation benchmark comparison">
-                <thead>
-                    <tr>
-                        <th data-i18n="fb_col_variant">Variant</th>
-                        <th data-i18n="fb_col_gene">Gene</th>
-                        <th>SteppeDNA</th>
-                        <th>REVEL</th>
-                        <th>CADD</th>
-                        <th data-i18n="fb_col_freq">Freq (KZ)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="sota-win">
-                        <td class="sota-gene">p.Cys61Gly</td>
-                        <td>BRCA1</td>
-                        <td class="sota-score sota-score-ours"><strong>0.991</strong></td>
-                        <td class="sota-score sota-score-ext">0.956</td>
-                        <td class="sota-score sota-score-ext">25.6</td>
-                        <td>0.004</td>
-                    </tr>
-                    <tr class="sota-win">
-                        <td class="sota-gene">p.Met1Thr</td>
-                        <td>BRCA1</td>
-                        <td class="sota-score sota-score-ours"><strong>0.991</strong></td>
-                        <td class="sota-score sota-score-ext">&mdash;</td>
-                        <td class="sota-score sota-score-ext">&mdash;</td>
-                        <td>0.006</td>
-                    </tr>
-                    <tr class="fb-nonsense">
-                        <td class="sota-gene">5382insC</td>
-                        <td>BRCA1</td>
-                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
-                        <td>0.035</td>
-                    </tr>
-                    <tr class="fb-nonsense">
-                        <td class="sota-gene">c.5278-2del</td>
-                        <td>BRCA1</td>
-                        <td colspan="3" class="fb-na" data-i18n="fb_splice">Splice site &mdash; N/A for missense predictors</td>
-                        <td>0.008</td>
-                    </tr>
-                    <tr class="fb-nonsense">
-                        <td class="sota-gene">c.4035del</td>
-                        <td>BRCA1</td>
-                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
-                        <td>0.005</td>
-                    </tr>
-                    <tr class="fb-nonsense">
-                        <td class="sota-gene">c.9409dup</td>
-                        <td>BRCA2</td>
-                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
-                        <td>0.012</td>
-                    </tr>
-                    <tr class="fb-nonsense">
-                        <td class="sota-gene">c.9253del</td>
-                        <td>BRCA2</td>
-                        <td colspan="3" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A for missense predictors</td>
-                        <td>0.008</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p class="pg-footnote" data-i18n="fb_footnote">CADD scores are on PHRED scale (not directly comparable to probability scores). Non-missense founder variants cannot be evaluated by missense-only predictors (REVEL, CADD, BayesDel).</p>
-    </section>
-
-    <!-- ============ MAIN 2-COL LAYOUT ============ -->
-    <main class="main-container" role="main">
-
-        <!-- LEFT: Upload -->
-        <div class="card">
-            <div class="card-title"><span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
-                        <polyline points="14 2 14 8 20 8" />
-                    </svg></span> <span data-i18n="upload_title">Upload VCF</span></div>
-
-            <div class="form-group custom-dropdown-container" style="margin-bottom: 1.2rem;">
-                <label data-i18n="tgt_gene_ctx">Target Gene Context</label>
-                <div class="custom-dropdown" id="vcfGeneDropdown" tabindex="0">
-                    <div class="dropdown-selected" id="vcfGeneSelected">BRCA2</div>
-                    <div class="dropdown-options">
-                        <div class="dropdown-option" data-value="BRCA1">BRCA1</div>
-                        <div class="dropdown-option active" data-value="BRCA2">BRCA2</div>
-                        <div class="dropdown-option" data-value="PALB2">PALB2</div>
-                        <div class="dropdown-option" data-value="RAD51C">RAD51C</div>
-                        <div class="dropdown-option" data-value="RAD51D">RAD51D</div>
-                    </div>
-                </div>
-                <!-- Preserved mapped ID for JS lookups -->
-                <input type="hidden" id="vcfGeneSelect" value="BRCA2">
-            </div>
-
-            <div class="upload-zone" id="dropZone" role="button" aria-label="Upload VCF file" tabindex="0">
-                <div class="dna-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
-                        <path d="M2 15c6.667-6 13.333 0 20-6" stroke-linecap="round" />
-                        <path d="M9 22c1.798-1.998 2.573-3.995 2.572-5.993" stroke-linecap="round" />
-                        <path d="M15 2c-1.798 1.998-2.573 3.995-2.572 5.993" stroke-linecap="round" />
-                        <path d="M2 9c6.667 6 13.333 0 20 6" stroke-linecap="round" />
-                    </svg></div>
-                <h3 data-i18n="drop_vcf">Drop your VCF file here</h3>
-                <p data-i18n="or_click">or click to browse · .vcf format</p>
-                <input type="file" id="fileInput" hidden accept=".vcf">
-            </div>
-        </div>
-
-        <!-- RIGHT: Manual Input -->
+    <!-- ============ MANUAL ENTRY ============ -->
+    <section class="manual-entry-section" role="main">
         <div class="card">
             <div class="card-title"><span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
                         <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z" />
@@ -507,6 +215,55 @@
             </form>
         </div>
 
+        <!-- VCF Upload -->
+        <div class="card">
+            <div class="card-title"><span class="ct-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg></span> <span data-i18n="upload_title">Upload VCF</span></div>
+
+            <div class="form-group custom-dropdown-container" style="margin-bottom: 1.2rem;">
+                <label data-i18n="tgt_gene_ctx">Target Gene Context</label>
+                <div class="custom-dropdown" id="vcfGeneDropdown" tabindex="0">
+                    <div class="dropdown-selected" id="vcfGeneSelected">BRCA2</div>
+                    <div class="dropdown-options">
+                        <div class="dropdown-option" data-value="BRCA1">BRCA1</div>
+                        <div class="dropdown-option active" data-value="BRCA2">BRCA2</div>
+                        <div class="dropdown-option" data-value="PALB2">PALB2</div>
+                        <div class="dropdown-option" data-value="RAD51C">RAD51C</div>
+                        <div class="dropdown-option" data-value="RAD51D">RAD51D</div>
+                    </div>
+                </div>
+                <!-- Preserved mapped ID for JS lookups -->
+                <input type="hidden" id="vcfGeneSelect" value="BRCA2">
+            </div>
+
+            <div class="upload-zone" id="dropZone" role="button" aria-label="Upload VCF file" tabindex="0">
+                <div class="dna-icon" aria-hidden="true"><svg viewBox="0 0 24 24">
+                        <path d="M2 15c6.667-6 13.333 0 20-6" stroke-linecap="round" />
+                        <path d="M9 22c1.798-1.998 2.573-3.995 2.572-5.993" stroke-linecap="round" />
+                        <path d="M15 2c-1.798 1.998-2.573 3.995-2.572 5.993" stroke-linecap="round" />
+                        <path d="M2 9c6.667 6 13.333 0 20 6" stroke-linecap="round" />
+                    </svg></div>
+                <h3 data-i18n="drop_vcf">Drop your VCF file here</h3>
+                <p data-i18n="or_click">or click to browse · .vcf format</p>
+                <input type="file" id="fileInput" hidden accept=".vcf">
+            </div>
+        </div>
+    </section>
+
+    <!-- ============ ANALYSIS HISTORY ============ -->
+    <div class="history-section" id="historyPanel" style="display:none">
+        <div class="history-header">
+            <h3 data-i18n="history_title">Recent Analyses</h3>
+            <button class="history-clear-btn" id="clearHistoryBtn" data-i18n="history_clear">Clear</button>
+        </div>
+        <div class="history-list" id="historyList"></div>
+    </div>
+
+    <!-- ============ RESULT AREA ============ -->
+    <div class="result-area">
+
         <!-- LOADING SKELETON -->
         <div class="skeleton-card" id="skeletonCard" style="display:none" aria-hidden="true">
             <div class="skeleton-row skeleton-shimmer" style="width:40%;height:28px;margin-bottom:12px"></div>
@@ -521,8 +278,8 @@
             </div>
         </div>
 
-        <!-- RESULT (full width) -->
-        <div class="result-card card-full" id="resultCard" aria-live="polite" aria-atomic="true">
+        <!-- RESULT -->
+        <div class="result-card" id="resultCard" aria-live="polite" aria-atomic="true">
             <div class="ruo-inline" style="background:var(--bg-alt);border:1px solid var(--border);padding:4px 10px;border-radius:4px;font-size:0.72rem;color:var(--text-mid);text-align:center;margin-bottom:8px;opacity:0.7;">Research Use Only — not for clinical diagnosis | Germline variants only</div>
             <div class="result-top">
                 <div class="result-label-group">
@@ -640,7 +397,7 @@
 
         </div>
 
-    </main>
+    </div>
 
     <!-- ============ UMAP VARIANT LANDSCAPE ============ -->
     <div class="umap-section" id="umapSection" style="display:none">
@@ -674,6 +431,273 @@
 
     <!-- ============ VARIANT COMPARISON ============ -->
     <div class="comparison-panel" id="comparisonPanel" style="display:none"></div>
+
+    <!-- ============ MODEL ANALYSIS ============ -->
+    <div class="analysis-grid" aria-label="Model Analysis">
+
+    <!-- ============ SOTA COMPARISON ============ -->
+    <section class="sota-section" aria-label="Per-Gene SOTA Comparison">
+        <h3 class="per-gene-title" data-i18n="sota_comparison_title">Per-Gene SOTA Comparison</h3>
+        <div style="overflow-x:auto">
+            <table class="sota-table" aria-label="Per-gene SOTA comparison table">
+                <thead>
+                    <tr>
+                        <th data-i18n="sota_col_gene">Gene</th>
+                        <th data-i18n="sota_col_steppdna">SteppeDNA</th>
+                        <th data-i18n="sota_col_best_sota">Best SOTA</th>
+                        <th data-i18n="sota_col_winner">Winner</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="sota-win">
+                        <td class="sota-gene">BRCA2</td>
+                        <td class="sota-score sota-score-ours"><strong>0.994</strong></td>
+                        <td class="sota-score sota-score-ext">0.949 <span class="sota-tool">(BayesDel)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">RAD51D</td>
+                        <td class="sota-score sota-score-ours"><strong>0.824</strong></td>
+                        <td class="sota-score sota-score-ext">0.461 <span class="sota-tool">(REVEL)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">RAD51C</td>
+                        <td class="sota-score sota-score-ours"><strong>0.785</strong></td>
+                        <td class="sota-score sota-score-ext">0.703 <span class="sota-tool">(CADD)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">BRCA1</td>
+                        <td class="sota-score sota-score-ours"><strong>0.747</strong></td>
+                        <td class="sota-score sota-score-ext">0.646 <span class="sota-tool">(BayesDel)</span></td>
+                        <td class="sota-badge sota-badge-win">SteppeDNA</td>
+                    </tr>
+                    <tr class="sota-loss">
+                        <td class="sota-gene">PALB2</td>
+                        <td class="sota-score sota-score-ours">0.605</td>
+                        <td class="sota-score sota-score-ext"><strong>0.732</strong> <span class="sota-tool">(REVEL)</span></td>
+                        <td class="sota-badge sota-badge-loss">REVEL</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="pg-footnote" style="margin-top:0.6rem" data-i18n="sota_footnote">* All tools evaluated on SteppeDNA&#8217;s held-out test set (methodological advantage). REVEL/BayesDel/CADD scored 72&ndash;73% of variants. Independent benchmark AUC: 0.750&ndash;0.801 (no training overlap).</p>
+        <p class="pg-footnote" data-i18n="sota_pergene_note" style="font-style:italic;font-size:0.75rem;color:var(--text-mid)">Per-gene SOTA AUCs evaluated on SteppeDNA v5.4 test set. Scores sourced from dbNSFP; tools that could not score a variant were excluded from that gene's comparison.</p>
+    </section>
+
+    <!-- ============ ALPHAMISSENSE LEAKAGE DISCOVERY ============ -->
+    <section class="analysis-section am-section" aria-label="AlphaMissense Leakage Discovery">
+        <h3 class="per-gene-title" data-i18n="am_title">AlphaMissense Label Leakage Discovery</h3>
+        <p class="am-explanation" data-i18n="am_explanation">AlphaMissense (Cheng et al. 2023) was partially trained on ClinVar labels, creating indirect label circularity. Ablation testing revealed that removing AlphaMissense features <strong>improved</strong> AUC for 3 of 5 genes. AlphaMissense was removed in v5.4.</p>
+        <div class="am-chart">
+            <div class="am-legend">
+                <span class="am-leg-item"><span class="am-leg-swatch am-with-swatch"></span> <span data-i18n="am_with">With AlphaMissense</span></span>
+                <span class="am-leg-item"><span class="am-leg-swatch am-without-swatch"></span> <span data-i18n="am_without">Without (v5.4)</span></span>
+            </div>
+            <div class="am-row am-improved">
+                <span class="pg-gene">BRCA1</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:76.5%" aria-label="With AM: 0.765"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:78.4%" aria-label="Without AM: 0.784"></div></div>
+                </div>
+                <span class="am-delta am-delta-up">+0.020</span>
+            </div>
+            <div class="am-row am-declined">
+                <span class="pg-gene">BRCA2</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:99.7%" aria-label="With AM: 0.997"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:99.7%" aria-label="Without AM: 0.997"></div></div>
+                </div>
+                <span class="am-delta am-delta-down">&minus;0.000</span>
+            </div>
+            <div class="am-row am-improved">
+                <span class="pg-gene">PALB2</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:57.0%" aria-label="With AM: 0.570"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:58.6%" aria-label="Without AM: 0.586"></div></div>
+                </div>
+                <span class="am-delta am-delta-up">+0.015</span>
+            </div>
+            <div class="am-row am-improved">
+                <span class="pg-gene">RAD51C</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:79.9%" aria-label="With AM: 0.799"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:81.7%" aria-label="Without AM: 0.817"></div></div>
+                </div>
+                <span class="am-delta am-delta-up">+0.018</span>
+            </div>
+            <div class="am-row am-declined">
+                <span class="pg-gene">RAD51D</span>
+                <div class="am-bars">
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-with" style="width:82.1%" aria-label="With AM: 0.821"></div></div>
+                    <div class="pg-bar-track"><div class="pg-bar am-bar-without" style="width:81.5%" aria-label="Without AM: 0.815"></div></div>
+                </div>
+                <span class="am-delta am-delta-down">&minus;0.007</span>
+            </div>
+        </div>
+        <div class="am-callout" data-i18n="am_callout">3 of 5 genes improved after removing AlphaMissense &mdash; confirming indirect ClinVar label leakage. Overall AUC: 0.9846 &rarr; 0.9853 (no loss).</div>
+        <p class="pg-footnote" data-i18n="am_footnote" style="margin-top:0.5rem;font-style:italic;font-size:0.78rem;color:var(--text-mid)">Ablation study conducted with XGBoost-only on the pre-v5.4 model configuration. Per-gene AUC values differ from the final v5.4 XGBoost+MLP ensemble.</p>
+    </section>
+
+    <!-- ============ POPULATION EQUITY ANALYSIS ============ -->
+    <section class="analysis-section equity-section" aria-label="Population Equity Analysis">
+        <h3 class="per-gene-title" data-i18n="eq_title">Population Equity Analysis</h3>
+
+        <h4 class="eq-subtitle" data-i18n="eq_perf_title">Model Performance by Ancestry</h4>
+        <p class="pg-footnote" data-i18n="eq_ancestry_caveat" style="margin-bottom:0.7rem;font-style:italic;color:var(--text-mid);font-size:0.78rem">Proxy assignment by highest gnomAD sub-population AF — not self-reported ancestry. 84% of variants had no assignable population. Small sample sizes limit interpretation.</p>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">EAS <small style="opacity:0.55">(n=85)</small></span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:99.5%" aria-label="EAS AUC 0.995"></div></div>
+                <span class="pg-val">0.995</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">AFR <small style="opacity:0.55">(n=144)</small></span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:99.1%" aria-label="AFR AUC 0.991"></div></div>
+                <span class="pg-val">0.991</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">NFE <small style="opacity:0.55">(n=282)</small></span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:98.9%" aria-label="NFE AUC 0.989"></div></div>
+                <span class="pg-val">0.989</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">AMR <small style="opacity:0.55">(n=100)</small></span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:97.4%" aria-label="AMR AUC 0.974"></div></div>
+                <span class="pg-val">0.974</span>
+            </div>
+        </div>
+
+        <h4 class="eq-subtitle" data-i18n="eq_vus_title">VUS Resolution Capacity by Gene</h4>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">BRCA2</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-high" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
+                <span class="pg-val eq-val-high">0.994</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51D</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
+                <span class="pg-val eq-val-moderate">0.824</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51C</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
+                <span class="pg-val eq-val-moderate">0.785</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">BRCA1</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-moderate" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
+                <span class="pg-val eq-val-moderate">0.747</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">PALB2</span>
+                <div class="pg-bar-track"><div class="pg-bar eq-tier-low" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
+                <span class="pg-val eq-val-low">0.605</span>
+            </div>
+        </div>
+        <div class="eq-tier-legend">
+            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-high"></span> <span data-i18n="eq_high">High confidence</span></span>
+            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-moderate"></span> <span data-i18n="eq_moderate">Moderate</span></span>
+            <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-low"></span> <span data-i18n="eq_low">Low &mdash; interpret with caution</span></span>
+        </div>
+
+        <h4 class="eq-subtitle" data-i18n="eq_pm2_title">PM2 Evidence Disparity by Population</h4>
+        <div style="overflow-x:auto">
+            <table class="sota-table eq-table" aria-label="PM2 evidence disparity">
+                <thead>
+                    <tr>
+                        <th data-i18n="eq_col_pop">Population</th>
+                        <th data-i18n="eq_col_pm2">Variants meeting PM2</th>
+                        <th data-i18n="eq_col_diff">Difference vs NFE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>EAS</td><td>3,753</td><td class="eq-diff-up">+245</td></tr>
+                    <tr><td>AMR</td><td>3,713</td><td class="eq-diff-up">+205</td></tr>
+                    <tr><td>AFR</td><td>3,684</td><td class="eq-diff-up">+176</td></tr>
+                    <tr><td>NFE</td><td>3,508</td><td>&mdash;</td></tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="pg-footnote" data-i18n="eq_footnote">PM2 (absent from population databases) is triggered more often for non-European populations due to lower representation in gnomAD. This can inflate pathogenicity evidence for underrepresented groups.</p>
+    </section>
+
+    <!-- ============ FOUNDER MUTATION BENCHMARK ============ -->
+    <section class="analysis-section founder-bench-section" aria-label="Founder Mutation Benchmark">
+        <h3 class="per-gene-title" data-i18n="fb_title">Kazakh Founder Mutations &mdash; Tool Comparison</h3>
+        <div style="overflow-x:auto">
+            <table class="sota-table" aria-label="Founder mutation benchmark comparison">
+                <thead>
+                    <tr>
+                        <th data-i18n="fb_col_variant">Variant</th>
+                        <th data-i18n="fb_col_gene">Gene</th>
+                        <th>SteppeDNA</th>
+                        <th>REVEL</th>
+                        <th>CADD</th>
+                        <th data-i18n="fb_col_freq">Freq (KZ)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="sota-win">
+                        <td class="sota-gene">p.Cys61Gly</td>
+                        <td>BRCA1</td>
+                        <td class="sota-score sota-score-ours"><strong>0.991</strong></td>
+                        <td class="sota-score sota-score-ext">0.948</td>
+                        <td class="sota-score sota-score-ext">24.5</td>
+                        <td>0.004</td>
+                    </tr>
+                    <tr class="sota-win">
+                        <td class="sota-gene">p.Met1Thr</td>
+                        <td>BRCA1</td>
+                        <td class="sota-score sota-score-ours"><strong>0.991</strong></td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td class="sota-score sota-score-ext">25.0</td>
+                        <td>0.006</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">5382insC</td>
+                        <td>BRCA1</td>
+                        <td colspan="2" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A</td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td>0.035</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.5278-2del</td>
+                        <td>BRCA1</td>
+                        <td colspan="2" class="fb-na" data-i18n="fb_splice">Splice site &mdash; N/A</td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td>0.008</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.4035del</td>
+                        <td>BRCA1</td>
+                        <td colspan="2" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A</td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td>0.005</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.9409dup</td>
+                        <td>BRCA2</td>
+                        <td colspan="2" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A</td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td>0.012</td>
+                    </tr>
+                    <tr class="fb-nonsense">
+                        <td class="sota-gene">c.9253del</td>
+                        <td>BRCA2</td>
+                        <td colspan="2" class="fb-na" data-i18n="fb_frameshift">Frameshift &mdash; N/A</td>
+                        <td class="sota-score sota-score-ext">&mdash;</td>
+                        <td>0.008</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="pg-footnote" data-i18n="fb_footnote">CADD scores are on PHRED scale (not directly comparable to probability scores). REVEL and BayesDel evaluate missense variants only; SteppeDNA requires amino acid input and cannot score frameshifts or splice variants. CADD can score all variant types but scores for indel/splice founders were not retrieved.</p>
+    </section>
+
+    </div>
 
     <!-- ============ VCF RESULTS (full width) ============ -->
     <div class="result-card card-full vcf-results" id="vcfResults" aria-live="polite">
@@ -709,15 +733,6 @@
             <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
             <span data-i18n="download_csv">Download CSV</span>
         </button>
-    </div>
-
-    <!-- ============ ANALYSIS HISTORY ============ -->
-    <div class="history-section" id="historyPanel" style="display:none">
-        <div class="history-header">
-            <h3 data-i18n="history_title">Recent Analyses</h3>
-            <button class="history-clear-btn" id="clearHistoryBtn" data-i18n="history_clear">Clear</button>
-        </div>
-        <div class="history-list" id="historyList"></div>
     </div>
 
     <!-- ============ RESEARCH PRIORITIES (Active Learning) ============ -->
@@ -801,11 +816,11 @@
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_architecture">Architecture</h4>
-                    <p data-i18n="mc_architecture_d">XGBoost + Multi-Layer Perceptron blended ensemble with gene-adaptive weights and isotonic calibration trained on a held-out calibration set. 120 engineered features from 7 data sources.</p>
+                    <p data-i18n="mc_architecture_d">XGBoost + Multi-Layer Perceptron blended ensemble with gene-adaptive weights and isotonic calibration trained on a held-out calibration set. 120 engineered features from 8 data sources.</p>
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_performance">Performance</h4>
-                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.881 &middot; Balanced Accuracy: 94.1%. 10-fold CV: 0.9797 &plusmn; 0.0031. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
+                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.881 &middot; Balanced Accuracy: 94.1%. 10-fold CV: 0.9858 &plusmn; 0.0022. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
                     <p class="mc-sota-note" data-i18n="mc_perf_caveat" style="font-size:0.78rem;color:var(--text-mid);margin-top:4px;font-style:italic">* Evaluated on SteppeDNA test set. General-purpose tools not trained on same distribution.</p>
                 </div>
                 <div class="mc-block">
@@ -814,7 +829,7 @@
                         <li data-i18n="mc_lim1">Non-BRCA2 genes have smaller training sets and lower per-gene AUC (PALB2: 0.605, RAD51C: 0.785)</li>
                         <li data-i18n="mc_lim2">Copy number variants (CNVs) are not classified. Splice-site, in-frame indel, and synonymous variants use rule-based classification (not the ML model). Truncating variants (nonsense, frameshift) use Tier 1 protocol</li>
                         <li data-i18n="mc_lim3">Model may underperform on novel variants with no population frequency data</li>
-                        <li data-i18n="mc_lim4">Probabilities are clipped to [0.5%, 99.5%] &mdash; the model never claims absolute certainty</li>
+                        <li data-i18n="mc_lim4">Probabilities are clipped to [1%, 99%] &mdash; the model never claims absolute certainty</li>
                         <li data-i18n="mc_lim5">Compound heterozygosity warning is provided in VCF batch analysis, but does not perform phasing; variants require segregation study to determine cis/trans configuration</li>
                         <li data-i18n="mc_lim6">Training data predominantly from populations of European descent (ClinVar submission bias); predictions for underrepresented ancestries may be less reliable</li>
                         <li data-i18n="mc_lim7">ClinVar classifications evolve over time; training labels may not reflect the latest expert consensus</li>

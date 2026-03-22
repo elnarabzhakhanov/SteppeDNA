@@ -33,11 +33,11 @@
 **The evidence:**
 | Gene   | Training variants | AUC   |
 |--------|------------------|-------|
-| BRCA2  | 10,048           | 0.994 |
-| BRCA1  | 6,128            | 0.747 |
-| PALB2  | 1,892            | 0.605 |
-| RAD51C | 745              | 0.785 |
-| RAD51D | 410              | 0.824 |
+| BRCA2  | ~10,085          | 0.994 |
+| BRCA1  | ~5,432           | 0.747 |
+| PALB2  | ~2,621           | 0.605 |
+| RAD51C | ~675             | 0.785 |
+| RAD51D | ~410             | 0.824 |
 
 **Why it matters:** 70% of genomic databases represent European populations. Patients from underrepresented populations (including Central Asian/Kazakh) face 2-3x more VUS results. This is not a model problem — it is a data problem that affects all variant classifiers.
 
@@ -63,7 +63,7 @@
 
 - 38 pathogenic variants identified across 13 genes in Kazakh women
 - 12 recurrent variants suggest founder effects specific to Central Asian populations
-- These are integrated into SteppeDNA's founder mutation detection module
+- 7 of these are integrated into SteppeDNA's founder mutation detection module (`data/kazakh_founder_mutations.json`)
 
 ### Key Literature
 1. Oncotarget 2023 — "Genetic predisposition to early breast cancer in Kazakh women" (38 variants, 224 patients)
@@ -73,7 +73,7 @@
 
 ### Slide Talking Points
 - "Kazakhstan has identified founder mutations, but no computational tools are calibrated for this population"
-- "SteppeDNA integrates 12 known Kazakh founder mutations and flags them during prediction"
+- "SteppeDNA integrates 7 known Kazakh founder mutations and flags them during prediction"
 - "A Kazakh patient today receives 2-3x more VUS results than a European patient for the same genes"
 
 ---
@@ -108,6 +108,6 @@ SteppeDNA addresses the diagnostic bottleneck in hereditary breast cancer geneti
 
 **Our Contribution:** SteppeDNA tackles this in three ways. First, we built a multi-gene classifier that works across 5 HR genes, not just BRCA1/2 — covering the rarer genes where data scarcity hits hardest. Second, we implemented population-aware ACMG thresholds that adjust pathogenicity criteria based on which population the patient belongs to, rather than using one-size-fits-all global cutoffs. Third, we integrated 12 known Kazakh founder mutations into the prediction pipeline, so these population-specific variants are flagged immediately rather than being treated as novel unknowns.
 
-**The Evidence:** Our disparity analysis shows that East Asian/Central Asian patients receive 1,260 more PM2 flags (variant absent from controls) than European patients across our 5-gene dataset — a 97% vs 88% rate. This is not a model problem. It is a data problem. And it affects every variant classifier in existence, not just ours.
+**The Evidence:** Our disparity analysis shows that East Asian/Central Asian patients receive significantly more PM2 flags (variant absent from controls) than European patients across our 5-gene dataset — a 97.6% vs 91.2% rate. This is not a model problem. It is a data problem. And it affects every variant classifier in existence, not just ours.
 
 **Call to Action:** More diverse ClinVar submissions are urgently needed. Until Central Asian populations are represented in genomic databases, computational tools will systematically disadvantage these patients. SteppeDNA demonstrates both the problem and a pathway toward equitable variant classification.

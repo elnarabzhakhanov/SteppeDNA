@@ -103,13 +103,20 @@ print("\n[2] Loading SteppeDNA ensemble predictions...")
 xgb_clf = xgb.XGBClassifier()
 xgb_clf.load_model("data/universal_xgboost_final.json")
 
-from tensorflow.keras.models import load_model
-nn_model = load_model("data/universal_nn.h5", compile=False)
-
 X_test_s = scaler.transform(X_test)
-nn_preds = nn_model.predict(X_test_s, verbose=0).flatten()
 xgb_preds = xgb_clf.predict_proba(X_test_s)[:, 1]
-blended = XGB_WEIGHT * xgb_preds + NN_WEIGHT * nn_preds
+
+try:
+    from tensorflow.keras.models import load_model
+    nn_model = load_model("data/universal_nn.h5", compile=False)
+    nn_preds = nn_model.predict(X_test_s, verbose=0).flatten()
+    # Use per-gene adaptive weights if available, else default 0.6/0.4
+    blended = XGB_WEIGHT * xgb_preds + NN_WEIGHT * nn_preds
+    print("  MLP loaded — using XGBoost+MLP ensemble")
+except Exception as e:
+    print(f"  MLP unavailable ({e}) — using XGBoost-only")
+    blended = xgb_preds
+
 steppedna_probs = calibrator.predict(blended)
 
 print(f"  SteppeDNA ROC-AUC: {roc_auc_score(y_test, steppedna_probs):.4f}")

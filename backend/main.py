@@ -6,6 +6,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, field_validator
 import numpy as np
 import sys
@@ -17,12 +18,9 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import json
 import logging
-import logging.handlers
 import time
-import uuid
 import hashlib
 import asyncio
-import csv
 import threading
 import xgboost as xgb
 from scipy.stats import beta as beta_dist
@@ -153,44 +151,6 @@ def _verify_model_checksums():
             logger.info(f"[CHECKSUM] {filename} OK")
 
 
-# ─── Prediction Audit Logger ─────────────────────────────────────────────────
-_audit_logger = logging.getLogger("steppedna.audit")
-_audit_logger.setLevel(logging.INFO)
-_audit_logger.propagate = False  # Don't duplicate to root logger
-_LOGS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "logs")
-os.makedirs(_LOGS_DIR, exist_ok=True)
-_audit_handler = logging.handlers.RotatingFileHandler(
-    os.path.join(_LOGS_DIR, "predictions.jsonl"),
-    maxBytes=10 * 1024 * 1024,  # 10 MB
-    backupCount=5,
-    encoding="utf-8",
-)
-_audit_handler.setFormatter(logging.Formatter("%(message)s"))
-_audit_logger.addHandler(_audit_handler)
-# Also log to stderr so Render/cloud log drains capture audit records
-_audit_stderr = logging.StreamHandler()
-_audit_stderr.setFormatter(logging.Formatter("%(message)s"))
-_audit_logger.addHandler(_audit_stderr)
-
-
-def _log_prediction_audit(*, gene: str, hgvs_c: str, hgvs_p: str,
-                          probability: float, risk_tier: str,
-                          request_id: str, response_time_ms: float):
-    """Write a structured JSON audit record for a prediction."""
-    import datetime
-    record = {
-        "timestamp": datetime.datetime.utcnow().isoformat() + "Z",
-        "gene": gene,
-        "hgvs_c": hgvs_c,
-        "hgvs_p": hgvs_p,
-        "probability": round(probability, 4),
-        "risk_tier": risk_tier,
-        "request_id": request_id,
-        "response_time_ms": round(response_time_ms, 1),
-    }
-    _audit_logger.info(json.dumps(record))
-
-
 # ─── Kazakh Founder Mutation Data ───────────────────────────────────────────
 _FOUNDER_MUTATIONS = {}
 
@@ -220,9 +180,9 @@ def _load_founder_mutations():
                         "pathogenicity": entry.get("pathogenicity", ""),
                         "hgvs_p": entry.get("hgvs_p", ""),
                     }
-            logger.info(f"[FOUNDER] Loaded {sum(len(v) for v in _FOUNDER_MUTATIONS.values())} founder mutations across {len(_FOUNDER_MUTATIONS)} genes")
+            logger.info("Loaded founder mutation reference data")
         except Exception as e:
-            logger.warning(f"[FOUNDER] Failed to load founder mutations: {e}")
+            logger.warning(f"Failed to load founder mutations: {e}")
 
 
 # ─── Lifespan & App Creation ─────────────────────────────────────────────────
@@ -292,9 +252,7 @@ app.add_middleware(
 from backend.middleware import register_middleware, _rate_lock, _rate_counts, RATE_WINDOW
 register_middleware(app)
 
-# Separate locks for non-rate-limiting concerns
 _metrics_lock = threading.Lock()
-_file_lock = threading.Lock()
 
 # ─── Include Routers from refactored modules ────────────────────────────────
 from backend.external_api import router as external_api_router
@@ -369,7 +327,6 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     pred_cache_key = f"pred_{mutation_data.gene_name}_{mutation_data.cDNA_pos}_{mutation_data.AA_ref}_{mutation_data.AA_alt}_{mutation_data.Mutation}"
     cached_pred = _pred_cache_get(pred_cache_key)
     if cached_pred is not None:
-        logger.info(f"[PREDICT-CACHE] Cache hit for {pred_cache_key}")
         return cached_pred
 
     aa_pos = mutation_data.AA_pos if mutation_data.AA_pos > 0 else (mutation_data.cDNA_pos - 1) // 3 + 1
@@ -388,17 +345,22 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         mutation_data.AA_alt in ["Ter", "*", "Fs"] or
         any(x in mutation_data.Mutation.lower() for x in ["fs", "del", "ins", "dup"])
     )
+    is_start_loss = (
+        aa_pos == 1
+        and mutation_data.AA_ref in ("Met", "M")
+        and mutation_data.AA_alt not in ("Met", "M")
+    )
 
-    if is_truncating:
+    if is_truncating or is_start_loss:
         label = "Pathogenic"
-        probability = 0.9999
+        probability = 0.99
         # NOTE: Tier 1 truncating variants use "high (Truncating)" to distinguish from
         # Tier 2 missense "high"/"low"/"uncertain". Frontend handles both via .includes("high").
         risk = "high (Truncating)"
-        acmg_eval = {"PVS1": "Pathogenic truncating null variant (Nonsense/Frameshift) in a recognized tumor suppressor."}
-
-        latency_ms = (time.perf_counter() - t_start) * 1000
-        logger.info(f"[PREDICT-TIER1] {mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt} (cDNA:{mutation_data.cDNA_pos}) -> {label} (Tier 1 Rule) ({latency_ms:.0f}ms)")
+        if is_start_loss:
+            acmg_eval = {"PVS1": "Start-loss variant (p.Met1?) \u2014 loss of initiator methionine abolishes translation initiation."}
+        else:
+            acmg_eval = {"PVS1": "Pathogenic truncating null variant (Nonsense/Frameshift) in a recognized tumor suppressor."}
 
         return {
             "prediction": label,
@@ -421,6 +383,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
             },
             "features_used": {
                 "is_nonsense": "Ter" in mutation_data.AA_alt or "*" in mutation_data.AA_alt,
+                "is_start_loss": is_start_loss,
                 "aa_position": aa_pos,
             },
             "data_sources": {},
@@ -529,7 +492,7 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         pass  # OOD check is non-critical
 
     # Clip to [0.5%, 99.5%] -- no model should claim absolute certainty
-    probability = float(np.clip(probability, 0.005, 0.995))
+    probability = float(np.clip(probability, 0.01, 0.99))
 
     # Confidence estimation: prefer bootstrap CI (empirical) over Beta approximation
     if bootstrap_ci is not None:
@@ -562,46 +525,6 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     # Use the production threshold
     label = "Pathogenic" if probability >= threshold else "Benign"
     risk = _compute_risk_tier(probability)
-
-    # Log variants that may need wet-lab follow-up
-    if label == "Pathogenic" or uncertainty_label == "Low Confidence":
-        triage_file = os.path.join(DATA_DIR, "needs_wetlab_assay.csv")
-        os.makedirs(os.path.dirname(triage_file) or ".", exist_ok=True)
-        # Skip write if triage file exceeds 5 MB to prevent unbounded growth
-        if os.path.exists(triage_file) and os.path.getsize(triage_file) > 5 * 1024 * 1024:
-            logger.warning("[TRIAGE] needs_wetlab_assay.csv exceeds 5 MB — skipping write")
-        else:
-            reason = "Low Confidence" if uncertainty_label == "Low Confidence" else "Predicted Pathogenic"
-            mutation_key = f"{mutation_data.gene_name}_{mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt}"
-            _TRIAGE_HEADER = ["Gene", "cDNA_pos", "Mutation", "Probability", "CI_Lower", "CI_Upper", "Confidence", "Triage_Reason"]
-            with _file_lock:
-                # Deduplicate: check if this variant is already in the file
-                existing_keys = set()
-                if os.path.exists(triage_file):
-                    try:
-                        with open(triage_file, "r", encoding="utf-8") as rf:
-                            reader = csv.reader(rf)
-                            next(reader, None)
-                            for row in reader:
-                                if len(row) >= 3:
-                                    existing_keys.add(f"{row[0]}_{row[2]}")
-                    except Exception:
-                        pass  # If file is corrupted, proceed with write anyway
-                if mutation_key not in existing_keys:
-                    with open(triage_file, "a", encoding="utf-8", newline="") as f:
-                        writer = csv.writer(f)
-                        if f.tell() == 0:
-                            writer.writerow(_TRIAGE_HEADER)
-                        writer.writerow([
-                            mutation_data.gene_name,
-                            mutation_data.cDNA_pos,
-                            f"{mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt}",
-                            f"{probability:.4f}",
-                            f"{ci_lower:.4f}",
-                            f"{ci_upper:.4f}",
-                            uncertainty_label,
-                            reason
-                        ])
 
     booster = gene_data.get("booster")
     if booster:
@@ -716,7 +639,6 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     _conformal = compute_conformal_set(probability, mutation_data.gene_name)
 
     latency_ms = (time.perf_counter() - t_start) * 1000
-    logger.info(f"[PREDICT] {mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt} (cDNA:{mutation_data.cDNA_pos}) -> {label} p={probability:.4f} ({latency_ms:.0f}ms)")
 
     # Kazakh/Central Asian founder mutation check
     _founder_info = None
@@ -725,7 +647,6 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
     if hgvs_c in gene_founders:
         _founder_info = gene_founders[hgvs_c]
         _founder_info["is_founder"] = True
-        logger.info(f"[FOUNDER] Matched founder mutation: {mutation_data.gene_name} {hgvs_c}")
     elif not _founder_info:
         # Try matching by cDNA position alone (some notations may differ)
         for fhgvs, finfo in gene_founders.items():
@@ -800,16 +721,6 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
         "warnings": _warnings if _warnings else None,
     }
     _pred_cache_set(pred_cache_key, result)
-    # Structured audit log (no PII)
-    _log_prediction_audit(
-        gene=mutation_data.gene_name,
-        hgvs_c=f"c.{mutation_data.cDNA_pos}{mutation_data.Mutation}",
-        hgvs_p=f"p.{mutation_data.AA_ref}{aa_pos}{mutation_data.AA_alt}",
-        probability=probability,
-        risk_tier=risk,
-        request_id=getattr(request.state, "request_id", str(uuid.uuid4())[:8]),
-        response_time_ms=latency_ms,
-    )
     with _metrics_lock:
         _metrics["predictions"] += 1
         _metrics["total_predict_ms"] += latency_ms
@@ -822,6 +733,9 @@ async def predict(mutation_data: MutationInput, request: Request):  # noqa: C901
 
 @app.get("/")
 async def root():
+    _frontend_index = os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html")
+    if os.path.isfile(_frontend_index):
+        return FileResponse(_frontend_index)
     uni = _get_universal_models()
     per_gene_aucs = [0.994, 0.824, 0.785, 0.747, 0.605]
     return {
@@ -904,6 +818,24 @@ async def brca2_fragment(fragment: int):
                         f"AF-P51587-F{fragment}-model_v6.pdb")
     return _safe_file_response(path, media_type="chemical/x-pdb",
                                filename=f"AF-P51587-F{fragment}-model_v6.pdb")
+
+
+@app.get("/structure/{gene}", tags=["System"], summary="Serve AlphaFold PDB for any gene")
+async def gene_structure(gene: str):
+    """Serve local AlphaFold PDB files for non-BRCA2 genes."""
+    gene_lower = gene.lower()
+    allowed = {"brca1", "palb2", "rad51c", "rad51d"}
+    if gene_lower not in allowed:
+        return JSONResponse(status_code=404, content={"error": f"No structure for {gene}"})
+    path = os.path.join(os.path.dirname(__file__), "..", "data", "archived_raw_pdb",
+                        f"alphafold_{gene_lower}.pdb")
+    return _safe_file_response(path, media_type="chemical/x-pdb",
+                               filename=f"alphafold_{gene_lower}.pdb")
+
+
+_FRONTEND_DIR = os.path.join(os.path.dirname(__file__), "..", "frontend")
+if os.path.isdir(_FRONTEND_DIR):
+    app.mount("/", StaticFiles(directory=_FRONTEND_DIR, html=True), name="frontend")
 
 
 if __name__ == "__main__":

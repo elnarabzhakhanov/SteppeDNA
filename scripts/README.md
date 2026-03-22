@@ -15,6 +15,9 @@
 | `temporal_validation.py` | Date-stratified temporal validation (pre/post-2024) |
 | `vus_reclassification_multigene.py` | Multi-gene VUS reclassification (all 5 HR genes) |
 | `run_metrics.py` | Compute model evaluation metrics |
+| `delong_test.py` | DeLong test for statistical significance vs REVEL/CADD/BayesDel |
+| `fair_sota_benchmark.py` | Fair SOTA benchmark with deduplication |
+| `kz_population_summary.py` | Kazakhstan population frequency summary |
 
 ## Legacy Scripts (Historical Reference)
 

@@ -305,7 +305,7 @@ body {
 /* ---- PER-GENE PERFORMANCE ---- */
 .per-gene-section {
     max-width: 620px;
-    margin: -2rem auto 2.5rem;
+    margin: -2rem auto 1.5rem;
     padding: 1.2rem 1.6rem;
     background: var(--card-bg);
     border-radius: 14px;
@@ -322,10 +322,31 @@ body {
 .per-gene-chart { display: flex; flex-direction: column; gap: 6px; }
 .pg-row { display: flex; align-items: center; gap: 8px; }
 .pg-gene { width: 60px; font-size: 0.78rem; font-weight: 600; color: var(--text); text-align: right; }
-.pg-bar-track { flex: 1; height: 18px; background: var(--bg); border-radius: 4px; overflow: hidden; }
+.pg-bar-track { flex: 1; height: 18px; background: var(--track-bg); border-radius: 4px; overflow: hidden; }
 .pg-bar { height: 100%; border-radius: 4px; transition: width 0.6s ease-out; background: var(--primary); }
 .pg-val { width: 42px; font-size: 0.78rem; font-weight: 700; color: var(--text-mid); text-align: left; }
 .pg-footnote { font-size: 0.75rem; color: var(--text-mid); margin: 0.7rem 0 0; font-style: italic; line-height: 1.5; }
+
+/* ---- MANUAL ENTRY (promoted) ---- */
+.manual-entry-section {
+    max-width: 920px;
+    margin: 0 auto 1.5rem;
+    padding: 0 1rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    position: relative;
+    z-index: 2;
+}
+
+/* ---- RESULT AREA ---- */
+.result-area {
+    max-width: 920px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+}
 
 /* ---- SOTA COMPARISON ---- */
 .sota-section {
@@ -397,6 +418,12 @@ body {
 [data-theme="dark"] .sota-badge-win { color: #6ee7b7; }
 [data-theme="dark"] .sota-badge-loss { color: #fde68a; }
 
+/* Push table content down for visual balance (title stays put) */
+.sota-section .sota-table,
+.founder-bench-section .sota-table {
+    margin-top: 2.0rem;
+}
+
 /* ---- ANALYSIS SECTIONS (AM, Equity, Founder Bench) ---- */
 .analysis-section {
     max-width: 620px;
@@ -428,13 +455,14 @@ body {
 }
 .am-leg-item { display: flex; align-items: center; gap: 5px; }
 .am-leg-swatch { width: 14px; height: 10px; border-radius: 2px; }
-.am-with-swatch { background: var(--text-mid); opacity: 0.4; }
+.am-with-swatch { background: var(--text-mid); opacity: 0.55; }
 .am-without-swatch { background: var(--primary); }
 .am-chart { display: flex; flex-direction: column; gap: 8px; }
 .am-row { display: flex; align-items: center; gap: 8px; }
-.am-bars { flex: 1; display: flex; flex-direction: column; gap: 3px; }
-.am-bars .pg-bar-track { height: 12px; }
-.am-bar-with { background: var(--text-mid) !important; opacity: 0.35; }
+.am-bars { flex: 1; display: block; }
+.am-bars .pg-bar-track { height: 12px; margin-bottom: 3px; }
+.am-bars .pg-bar-track:last-child { margin-bottom: 0; }
+.am-bar-with { background: var(--text-mid) !important; opacity: 0.55; }
 .am-bar-without { background: var(--primary) !important; }
 .am-delta {
     width: 50px;
@@ -1859,6 +1887,22 @@ details[open] .model-card-toggle::before {
     .mc-grid { grid-template-columns: 1fr; }
 }
 
+/* ---- ANALYSIS GRID (2-col) ---- */
+.analysis-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    padding: 0 1rem;
+}
+.analysis-grid .sota-section,
+.analysis-grid .analysis-section {
+    max-width: none;
+    margin: 0;
+    z-index: auto;
+}
+
 /* ---- INFO CARDS (bottom row) ---- */
 .info-grid {
     display: grid;
@@ -2129,6 +2173,14 @@ footer a {
     .info-grid {
         grid-template-columns: 1fr 1fr;
     }
+
+    .analysis-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .manual-entry-section {
+        grid-template-columns: 1fr;
+    }
 }
 
 /* Mobile */
@@ -2142,6 +2194,16 @@ footer a {
         grid-template-columns: 1fr;
     }
 
+    .analysis-grid {
+        grid-template-columns: 1fr;
+    }
+    .manual-entry-section {
+        grid-template-columns: 1fr;
+        padding: 0 0.75rem;
+    }
+    .result-area {
+        padding: 0 0.75rem;
+    }
     .features-grid {
         grid-template-columns: 1fr 1fr;
     }
@@ -2360,6 +2422,14 @@ footer a {
 
     .per-gene-section,
     .sota-section {
+        padding: 0.8rem 0.75rem;
+    }
+
+    .analysis-grid {
+        gap: 0.8rem;
+    }
+    .analysis-grid .analysis-section,
+    .analysis-grid .sota-section {
         padding: 0.8rem 0.75rem;
     }
 

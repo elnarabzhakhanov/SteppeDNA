@@ -87,7 +87,7 @@ This starts the FastAPI backend on port 8000 and an nginx frontend on port 3000.
 
 ## Known Limitations
 
-SteppeDNA has 19 documented limitations — see [VALIDATION_REPORT.md](VALIDATION_REPORT.md#9-known-limitations) for full details. Key caveats:
+SteppeDNA has 20 documented limitations — see [VALIDATION_REPORT.md](VALIDATION_REPORT.md#9-known-limitations) for full details. Key caveats:
 
 - **Population bias:** Training data predominantly European ancestry (ClinVar submission bias)
 - **BRCA2 dominance:** Headline AUC 0.985 is sample-weighted; macro-averaged across genes: 0.791
@@ -101,8 +101,17 @@ SteppeDNA has 19 documented limitations — see [VALIDATION_REPORT.md](VALIDATIO
 SteppeDNA/
 +-- backend/
 |   +-- main.py                 # FastAPI server + prediction endpoints
-|   +-- feature_engineering.py  # 120-feature pipeline
+|   +-- middleware.py            # Rate limiter, API key, security headers, CSP
 |   +-- models.py               # Model loading and weight management
+|   +-- features.py             # Gene cache, build_feature_vector, NICE_NAMES
+|   +-- feature_engineering.py  # Training-time 120-feature pipeline
+|   +-- explanations.py         # Data scarcity, contrastive, bootstrap CI, conformal
+|   +-- acmg_rules.py           # ACMG rule engine (13 criteria, gene-specific thresholds)
+|   +-- vcf.py                  # VCF parsing, batch prediction endpoint
+|   +-- external_api.py         # ClinVar/gnomAD lookups, caching
+|   +-- cohort.py               # UMAP, metrics, cohort, history, research priorities
+|   +-- database.py             # SQLite persistence
+|   +-- constants.py            # CODON_TABLE, COMPLEMENT
 +-- frontend/
 |   +-- index.html              # Main UI
 |   +-- app.js                  # Application logic
@@ -120,6 +129,9 @@ SteppeDNA/
 |   +-- sota_comparison.py           # SOTA comparison pipeline
 |   +-- evaluate_benchmark.py        # Gold-standard evaluation
 |   +-- mave_ablation.py             # MAVE leakage assessment
+|   +-- delong_test.py               # DeLong statistical significance test
+|   +-- fair_sota_benchmark.py       # Fair SOTA benchmark pipeline
+|   +-- kz_population_summary.py     # Kazakhstan population analysis
 +-- data_pipelines/
 |   +-- fetch_gnomad_proxy_benign.py # gnomAD v4 GraphQL fetcher
 |   +-- fetch_dbnsfp_scores.py       # REVEL/CADD/BayesDel via myvariant.info
@@ -128,7 +140,7 @@ SteppeDNA/
 |   +-- esm2_lora_finetuning.ipynb   # ESM-2 LoRA fine-tuning (GPU)
 |   +-- esm2_650m_embeddings.ipynb   # ESM-2 650M upgrade (GPU)
 |   +-- gnn_alphafold_structure.ipynb # GNN on AlphaFold 3D (GPU)
-+-- tests/                           # Pytest test suite
++-- tests/                           # 200 tests (pytest)
 +-- Dockerfile
 +-- docker-compose.yml
 +-- render.yaml                      # Render.com deployment

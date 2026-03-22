@@ -1,8 +1,8 @@
 # SteppeDNA v5.4 -- Full Context Handoff
 
 > **Purpose:** Everything the next chat session needs to continue work on SteppeDNA.
-> **Last updated:** 2026-03-18
-> **Current branch:** v5.3-refactor
+> **Last updated:** 2026-03-22
+> **Current branch:** main
 > **Main branch:** main
 
 ---
@@ -79,7 +79,7 @@ Beats SOTA on 4/5 genes; REVEL beats SteppeDNA on PALB2 only.
 
 ---
 
-## 6. Tests (94 passing as of 2026-03-18)
+## 6. Tests (200 collected as of 2026-03-22)
 
 | Test File                        | Count | Notes                                              |
 |----------------------------------|-------|----------------------------------------------------|
@@ -89,7 +89,10 @@ Beats SOTA on 4/5 genes; REVEL beats SteppeDNA on PALB2 only.
 | `test_acmg_rules.py`            | ~10   | ACMG rule unit tests                               |
 | `test_exon_boundaries.py`       | ~5    | Exon boundary variant tests                        |
 | `test_clinical_correctness.py`   | ~20   | Known variants per gene (REQUIRES Colab/TF compat) |
-| `test_mutations.py`             | ~5    | Mutation type tests                                |
+| `test_feature_engineering.py`    | ~10   | Feature engineering pipeline tests                 |
+| `test_negative_cases.py`        | ~10   | Negative/edge case testing                         |
+| `test_shap_stability.py`        | ~5    | SHAP explanation stability tests                   |
+| `manual_test_mutations.py`      | ~5    | Mutation type tests (manual, not in CI)            |
 
 **conftest.py:** Sets `RATE_LIMIT=9999` to prevent 429 errors in tests.
 
@@ -233,23 +236,25 @@ Beats SOTA on 4/5 genes; REVEL beats SteppeDNA on PALB2 only.
 
 ---
 
-## 11. ACMG Criteria Implemented (11 of 28)
+## 11. ACMG Criteria Implemented (13 of 28)
 
 | Criterion | Description |
 |-----------|-------------|
 | PVS1 | Null variant (nonsense, frameshift, canonical splice) |
+| PVS1_moderate | PVS1 with last-exon attenuation |
+| PS1 | Same amino acid change as established pathogenic variant |
 | PP3 | Computational evidence: pathogenic |
+| PP3_splice | Splice prediction evidence |
 | BP4 | Computational evidence: benign |
+| BP7 | Synonymous with no splice impact |
 | BA1 | Allele frequency standalone benign (gene-specific thresholds) |
 | BS1 | Allele frequency strong benign (gene-specific thresholds) |
 | PM1 | Located in critical functional domain |
 | PM2 | Absent from controls (gnomAD) |
 | PM4 | Protein length change (in-frame indel) |
 | PM5 | Novel missense at known pathogenic position |
-| BP7 | Synonymous with no splice impact |
-| PP3_splice | Splice prediction evidence |
 
-The remaining 17 criteria require clinical data that cannot be computed (family segregation, de novo, functional assays, etc.).
+The remaining 15 criteria require clinical data that cannot be computed (family segregation, de novo, functional assays, etc.).
 
 ---
 
@@ -341,11 +346,11 @@ The ROADMAP is about transforming from "engineering project" to "science project
 
 ## 18. Git State at Handoff
 
-- **Current branch:** `v5.3-refactor`
+- **Current branch:** `main`
 - **Main branch:** `main`
-- **Uncommitted changes:** Many modified and untracked files (see git status in session)
-- **Key untracked directories:** `.hypothesis/`, `archive/`, `data_pipelines/`, `notebooks/`, `poster/`, `scripts/archive/`
-- **Recent commits:** Header styling, flake8 fixes, logo optimization
+- **Uncommitted changes:** Modified files in backend, frontend, data, scripts (see git status)
+- **Key untracked directories:** `.hypothesis/`, `archive/`, `data/archived_raw_pdb/`, `data/benchmark/`, `poster/`, `scripts/archive/`
+- **Recent commits:** Infomatrix evaluation framework, flake8 fixes, frontend feature additions
 
 ---
 

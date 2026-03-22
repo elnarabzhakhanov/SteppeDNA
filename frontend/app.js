@@ -1550,7 +1550,7 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
 <table class="info-table">
     <tr><td>Model</td><td>XGBoost + MLP Ensemble (gene-adaptive weights)</td></tr>
     <tr><td>Calibration</td><td>Isotonic regression on held-out data</td></tr>
-    <tr><td>Features</td><td>120 engineered features from 7 data sources</td></tr>
+    <tr><td>Features</td><td>120 engineered features from 8 data sources</td></tr>
     <tr><td>Training Data</td><td>19,223 variants (BRCA2: 10,085 | BRCA1: 5,432 | PALB2: 2,621 | RAD51C: 675 | RAD51D: 410)</td></tr>
     <tr><td>Validation ROC-AUC</td><td>0.985</td></tr>
     ${data.gene_reliability?.auc ? `<tr><td>Gene-Specific AUC (${data.gene_reliability?.gene || input.gene_name})</td><td>${data.gene_reliability.auc}</td></tr>` : ''}
@@ -1975,21 +1975,10 @@ async function render3DViewer(geneName, aaPos, prediction) {
             if (!component) throw new Error('BRCA2 fragment unavailable');
             structureNote = `AlphaFold fragment F${brca2Frag.frag} (residues ${brca2Frag.start}–${brca2Frag.end})`;
         } else {
-            // Non-BRCA2: Load from AlphaFold (v4 → v3 → v2)
-            // Note: "v6" is the AlphaFold *database* version, not the model version.
-            // Model versions go v1–v4 (v4 is latest as of 2025).
-            const baseUrl = `https://alphafold.ebi.ac.uk/files/AF-${uniprotId}-F1`;
-            const versionFallback = ['v4', 'v3', 'v2'];
-            for (const ver of versionFallback) {
-                const pdbUrl = `${baseUrl}-model_${ver}.pdb`;
-                try {
-                    component = await nglStage.loadFile(pdbUrl, { ext: 'pdb' });
-                    break;
-                } catch (e) {
-                    console.warn(`[SteppeDNA] AlphaFold model_${ver} failed for ${uniprotId}, trying next...`);
-                }
-            }
-            if (!component) throw new Error(`AlphaFold structure unavailable for ${uniprotId}`);
+            // Non-BRCA2: Load from local backend (PDB files served from data/archived_raw_pdb/)
+            const structUrl = `${API_BASE}/structure/${geneName}`;
+            component = await nglStage.loadFile(structUrl, { ext: 'pdb' });
+            if (!component) throw new Error(`Structure unavailable for ${geneName}`);
         }
 
         // Hide loading indicator
@@ -2096,13 +2085,18 @@ function renderResearchPriorities(data) {
     const priorities = data.priorities || {};
     const genes = Object.keys(priorities).sort();
 
-    // Gene filter buttons
+    // Gene filter buttons (use event listeners instead of inline onclick for CSP compliance)
     filterDiv.innerHTML = genes.map(g => {
         const count = priorities[g] ? priorities[g].length : 0;
         const active = _researchActiveGene === g ? ' active' : '';
-        return '<button class="rp-gene-btn' + active + '" onclick="filterResearchGene(\'' + escapeHtml(g) + '\')">' +
+        return '<button class="rp-gene-btn' + active + '" data-gene="' + escapeHtml(g) + '">' +
             escapeHtml(g) + ' (' + count + ')</button>';
     }).join('');
+    filterDiv.querySelectorAll('.rp-gene-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            filterResearchGene(this.getAttribute('data-gene'));
+        });
+    });
 
     // Determine which gene to show
     const activeGene = _researchActiveGene || genes[0];
