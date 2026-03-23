@@ -4,8 +4,9 @@
   "buildCommand": "",
   "outputDirectory": "frontend",
   "rewrites": [
-    { "source": "/predict/:path*", "destination": "https://steppedna-api.onrender.com/predict/:path*" },
-    { "source": "/lookup/:path*", "destination": "https://steppedna-api.onrender.com/lookup/:path*" },
+    { "source": "/predict", "destination": "https://steppedna-api.onrender.com/predict" },
+    { "source": "/predict/:path+", "destination": "https://steppedna-api.onrender.com/predict/:path+" },
+    { "source": "/lookup/:path+", "destination": "https://steppedna-api.onrender.com/lookup/:path+" },
     { "source": "/health", "destination": "https://steppedna-api.onrender.com/health" },
     { "source": "/model_metrics", "destination": "https://steppedna-api.onrender.com/model_metrics" },
     { "source": "/umap", "destination": "https://steppedna-api.onrender.com/umap" },
