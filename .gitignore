@@ -54,8 +54,8 @@ data/bootstrap_models/
 data/master_training_dataset*.csv
 
 # Model files - TRACKED (needed for deployment)
-# data/*.pkl — selectively tracked below
-# data/*.h5 — selectively tracked below
+# data/*.pkl ï¿½ selectively tracked below
+# data/*.h5 ï¿½ selectively tracked below
 !data/universal_scaler_ensemble.pkl
 !data/universal_calibrator_ensemble.pkl
 !data/universal_threshold_ensemble.pkl
@@ -152,3 +152,41 @@ test_api_locally.py
 test_fonts.py
 tmp_*.py
 data/gnn_model_weights.pt
+
+# ============================================
+# Untracked local files (poster, walls, misc)
+# ============================================
+.hypothesis/
+archive/
+data/archived_raw_pdb/
+data/benchmark/fair_sota_cache.json
+data/brca1_dms_scores.pkl
+data/cdna_to_genomic.pkl
+data/feature_names.pkl
+data/gnomad_frequencies.pkl
+data/mave_scores.pkl
+data/pathogenic_positions_clinvar.json
+data/pathogenic_positions_meta.json
+data/structural_features.pkl
+frontend_logic_issues.md
+gen_pdf.py
+gen_posters.py
+plumbum.md
+poster_content.json
+poster_styles.css
+scripts/_pm5.b64
+scripts/_pm5_partial.b64
+scripts/archive/
+scripts/delong_test.py
+scripts/kz_population_summary.py
+
+# Poster build artifacts
+poster/*.py
+poster/*.html
+poster/*.pdf
+wall_back.html
+wall_back.pdf
+wall_left.html
+wall_left.pdf
+wall_right.html
+wall_right.pdf

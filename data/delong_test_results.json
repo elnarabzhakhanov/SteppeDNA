@@ -1,0 +1,76 @@
+{
+  "REVEL": {
+    "n": 2733,
+    "steppedna_auc": 0.9941,
+    "sota_auc": 0.7171,
+    "delta_auc": 0.277,
+    "z_statistic": 24.134,
+    "p_value": 1.1e-128,
+    "significant": true
+  },
+  "CADD": {
+    "n": 2735,
+    "steppedna_auc": 0.9942,
+    "sota_auc": 0.5375,
+    "delta_auc": 0.4567,
+    "z_statistic": 38.6734,
+    "p_value": 0.0,
+    "significant": true
+  },
+  "BayesDel": {
+    "n": 2754,
+    "steppedna_auc": 0.9939,
+    "sota_auc": 0.7128,
+    "delta_auc": 0.2811,
+    "z_statistic": 24.9959,
+    "p_value": 6.78e-138,
+    "significant": true
+  },
+  "per_gene_vs_revel": {
+    "BRCA1": {
+      "n": 697,
+      "steppedna_auc": 0.8033,
+      "revel_auc": 0.5744,
+      "delta_auc": 0.2289,
+      "z_statistic": 3.3249,
+      "p_value": 0.000884,
+      "significant": true
+    },
+    "BRCA2": {
+      "n": 1794,
+      "steppedna_auc": 0.9843,
+      "revel_auc": 0.705,
+      "delta_auc": 0.2793,
+      "z_statistic": 6.8589,
+      "p_value": 6.94e-12,
+      "significant": true
+    },
+    "PALB2": {
+      "n": 122,
+      "steppedna_auc": 0.8685,
+      "revel_auc": 0.7328,
+      "delta_auc": 0.1358,
+      "z_statistic": 1.0008,
+      "p_value": 0.317,
+      "significant": false
+    },
+    "RAD51C": {
+      "n": 83,
+      "steppedna_auc": 0.7557,
+      "revel_auc": 0.6056,
+      "delta_auc": 0.1501,
+      "z_statistic": 1.7793,
+      "p_value": 0.0752,
+      "significant": false
+    },
+    "RAD51D": {
+      "n": 37,
+      "steppedna_auc": 0.7412,
+      "revel_auc": 0.4883,
+      "delta_auc": 0.2529,
+      "z_statistic": 2.4622,
+      "p_value": 0.0138,
+      "significant": true
+    }
+  }
+}

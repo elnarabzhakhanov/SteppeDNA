@@ -1,0 +1,11 @@
+{
+  "founder_mutations_in_database": 7,
+  "founder_missense_accuracy": "2/2",
+  "total_vus_across_5_genes": 3845,
+  "eas_pm2_excess_over_nfe": 1260,
+  "avg_eas_pm2_rate": "97.4%",
+  "avg_nfe_pm2_rate": "87.7%",
+  "disparity_ratio": 1.11,
+  "brca2_vus_resolution_auc": 0.9938,
+  "narrative": "East Asian patients have a 1.1x higher rate of variants flagged as 'absent from controls' compared to European patients. This means more uncertainty, more VUS results, and less actionable genetic testing. SteppeDNA integrates 7 known Kazakh founder mutations and correctly identifies 2/2 testable founder variants as pathogenic."
+}
