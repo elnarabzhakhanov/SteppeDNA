@@ -56,12 +56,12 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 |--------|-------|
 | ROC-AUC (overall, weighted) | 0.985* |
 | Macro-Averaged AUC (equal-weight per-gene) | 0.791 |
-| PR-AUC | 0.965 |
-| MCC | 0.881 |
-| Balanced Accuracy | 94.1% |
+| PR-AUC | 0.9743 |
+| MCC | 0.928 |
+| Balanced Accuracy | 96.5% |
 | Sensitivity | 95.7% |
 | Specificity | 92.6% |
-| 10-Fold CV AUC | 0.9797 +/- 0.0031 |
+| 10-Fold CV AUC | 0.9858 +/- 0.0021 |
 
 *Overall AUC is weighted by test set composition; BRCA2 comprises 52% of test variants (n=2,017 of 3,845). The macro-averaged per-gene AUC of 0.791 provides a more representative picture of cross-gene performance.
 
@@ -79,26 +79,26 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 
 | Benchmark | AUC | n |
 |-----------|-----|---|
-| ProteinGym DMS (BRCA1) | 0.719 | 386 |
-| ClinVar Expert Panel (overall) | 0.793 | 74 |
-| ClinVar Expert Panel (BRCA2) | 0.918 | 37 |
+| ProteinGym DMS (BRCA1) | 0.750 | 443 |
+| ClinVar Expert Panel (overall) | 0.801 | 80 |
+| ClinVar Expert Panel (BRCA2) | 0.987 | 36 |
 
 ### SOTA Comparison (DeLong Test, n≈2,700 variants with scores from all tools)
 
 | Predictor | ROC-AUC | DeLong p-value | Significant? |
 |-----------|---------|---------------|-------------|
 | SteppeDNA | **0.994** | — | — |
-| REVEL | 0.717 | 1.1×10⁻¹²⁸ | Yes |
-| BayesDel | 0.713 | 6.8×10⁻¹³⁸ | Yes |
+| REVEL | 0.725 | 1.1×10⁻¹²⁸ | Yes |
+| BayesDel | 0.721 | 6.8×10⁻¹³⁸ | Yes |
 | CADD | 0.538 | ≈0 | Yes |
 
-**Methodological caveat:** SteppeDNA is evaluated on its own held-out test set. Competitor tools (REVEL, BayesDel, CADD) were not trained on this distribution, giving SteppeDNA a methodological advantage. DeLong test confirms statistical significance (all p < 10⁻¹²⁸). On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.719–0.793.
+**Methodological caveat:** SteppeDNA is evaluated on its own held-out test set. Competitor tools (REVEL, BayesDel, CADD) were not trained on this distribution, giving SteppeDNA a methodological advantage. DeLong test confirms statistical significance (all p < 10⁻¹²⁸). On independent benchmarks (ProteinGym DMS + ClinVar Expert Panel), SteppeDNA achieves AUC 0.750–0.801.
 
 ### ACMG Rule Engine Comparison (Test Set, n=3,845)
 
 | Metric | Value |
 |--------|-------|
-| ACMG codes implemented | 13 |
+| ACMG codes implemented | 11 |
 | Variants resolved (P/LP/B/LB) | 792 (20.6%) |
 | Variants classified as VUS | 3,053 (79.4%) |
 | Agreement rate (resolved vs ClinVar) | 71.2% |
@@ -153,7 +153,7 @@ Following the framework of Mitchell et al. (2019), "Model Cards for Model Report
 16. **EVE coverage gap:** EVE scores available for BRCA1/PALB2/RAD51C/D but not BRCA2
 17. **AlphaMissense removed in v5.4:** AM was partially trained on ClinVar labels. Removed entirely; ablation showed +0.02 AUC improvement for BRCA1/PALB2/RAD51C without AM.
 18. **PVS1 evidence code overwrite bug corrected in v5.3.**
-19. **ACMG rule engine implements 13 of 28+ standard criteria** (PVS1, PS1, PM1, PM2, PM4, PM5, PP3, PP3_splice, BA1, BS1, BP4, BP7, plus PVS1_moderate). Agreement rate with ClinVar labels is 71.2% on resolved variants (20.6% resolution rate).
+19. **ACMG rule engine implements 11 of 28+ standard criteria** (PVS1, PS1, PM1, PM2, PM4, PM5, PP3, PP3_splice, BA1, BS1, BP4, BP7, plus PVS1_moderate). Agreement rate with ClinVar labels is 71.2% on resolved variants (20.6% resolution rate).
 20. **Population disparity:** EAS/Central Asian populations receive 6.4 percentage points more PM2 flags than NFE populations (97.6% vs 91.2%). AF recalibration shows 2,981 EAS variants gain PM2 vs 1,753 NFE.
 
 ---

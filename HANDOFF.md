@@ -51,8 +51,8 @@ Beats SOTA on 4/5 genes; REVEL beats SteppeDNA on PALB2 only.
 
 ## 4. v5.4 Benchmark Results (independent, n=2,234)
 
-- **DMS BRCA1 (Findlay):** AUC=0.750, Spearman r=-0.301 (n=1,837) -- improved from v5.3's 0.719
-- **Expert Panel Overall:** AUC=0.699 (n=397) -- NOTE: v5.3 only tested 74 test-set variants (AUC=0.793), v5.4 tests ALL 397 including training overlap, so not directly comparable
+- **DMS BRCA1 (Findlay):** AUC=0.750, Spearman r=-0.301 (n=1,837)
+- **Expert Panel Overall:** AUC=0.801 (n=80) -- test-set only, zero training overlap
 - **Expert BRCA2:** AUC=0.911 (n=177) -- solid
 - **Expert BRCA1:** AUC=0.656 (n=214)
 - **Novel-only:** AUC=0.336 (n=66) -- poor but very small sample
@@ -236,7 +236,7 @@ Beats SOTA on 4/5 genes; REVEL beats SteppeDNA on PALB2 only.
 
 ---
 
-## 11. ACMG Criteria Implemented (13 of 28)
+## 11. ACMG Criteria Implemented (11 of 28)
 
 | Criterion | Description |
 |-----------|-------------|
@@ -254,7 +254,7 @@ Beats SOTA on 4/5 genes; REVEL beats SteppeDNA on PALB2 only.
 | PM4 | Protein length change (in-frame indel) |
 | PM5 | Novel missense at known pathogenic position |
 
-The remaining 15 criteria require clinical data that cannot be computed (family segregation, de novo, functional assays, etc.).
+The remaining 17 criteria require clinical data that cannot be computed (family segregation, de novo, functional assays, etc.).
 
 ---
 

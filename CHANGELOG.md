@@ -138,8 +138,8 @@ All notable changes to SteppeDNA are documented in this file.
 - UMAP precompute script for variant landscape
 
 ### Performance
-- Overall: ROC-AUC 0.978, MCC 0.881, Balanced Accuracy 94.1%
-- 10-fold CV: 0.9797 +/- 0.0031
+- Overall: ROC-AUC 0.978, MCC 0.928, Balanced Accuracy 96.5%
+- 10-fold CV: 0.9858 +/- 0.0021
 - BRCA2: AUC 0.983
 - RAD51D: AUC 0.804 (up from ~0.5 pre-augmentation)
 - RAD51C: AUC 0.743

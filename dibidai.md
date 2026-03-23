@@ -99,7 +99,7 @@ These items have been verified as resolved in the current codebase:
 | 51 | BRCA2 dominance disclosed | VALIDATION_REPORT.md + frontend footnote |
 | 52 | Per-gene AUC bars displayed | Frontend per-gene bars |
 | 53 | BRCA1 class imbalance acknowledged | VALIDATION_REPORT.md |
-| 54 | Internal vs external AUC gap disclosed | Footnote: "Independent benchmark AUC: 0.719-0.793" |
+| 54 | Internal vs external AUC gap disclosed | Footnote: "Independent benchmark AUC: 0.750-0.801" |
 | 55 | European ancestry bias documented | VALIDATION_REPORT.md Section 13 (full equity analysis) |
 | 56 | Temporal bias documented | VALIDATION_REPORT.md Section 10 + temporal_validation.py |
 | 57 | MAVE coverage acknowledged | VALIDATION_REPORT.md |
@@ -585,7 +585,7 @@ Headline AUC 0.978 is sample-weighted (BRCA2 = 52% of data). Macro-averaged AUC 
 **Effort:** Low
 
 **Problem:**
-Internal 0.978 vs independent benchmark 0.719 (ProteinGym DMS BRCA1), 0.793 (ClinVar Expert Panel). Gap will be questioned by judges.
+Internal 0.978 vs independent benchmark 0.750 (ProteinGym DMS BRCA1), 0.801 (ClinVar Expert Panel). Gap will be questioned by judges.
 
 **Solution:**
 Prepare clear explanation for competition:
@@ -1679,7 +1679,7 @@ training data quality and feature coverage."
 
 - **E4.1** "19,223 variants" headline obscures that 14,200+ are BRCA2 alone
 - **E4.2** Hero stats show 0.978 AUC without macro-averaged 0.775 visible anywhere in UI
-- **E4.3** Independent benchmark results (AUC 0.719-0.793) are buried
+- **E4.3** Independent benchmark results (AUC 0.750-0.801) are buried
 - **E4.4** Kazakh translations not expert-verified for medical terminology
 - **E4.5** RUO disclaimer undermined by clinical-grade appearance (ACMG codes, PDF reports, confidence intervals)
 - **E4.6** README leads with "outperforms REVEL/BayesDel/CADD" despite unfair comparison methodology

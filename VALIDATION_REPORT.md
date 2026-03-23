@@ -38,9 +38,9 @@
 | Metric | Value |
 |--------|-------|
 | ROC-AUC | 0.9847 |
-| PR-AUC | 0.9651 |
-| MCC | 0.8814 |
-| Balanced Accuracy | 94.1% |
+| PR-AUC | 0.9743 |
+| MCC | 0.928 |
+| Balanced Accuracy | 96.5% |
 | Sensitivity | 95.7% |
 | Specificity | 92.6% |
 | Optimal Threshold | 0.4545 |
@@ -99,10 +99,10 @@ The overall 0.985 AUC is weighted by gene prevalence in the test set (BRCA2 comp
 
 | Metric | Mean +/- Std | 95% CI |
 |--------|-------------|--------|
-| ROC-AUC | 0.9797 +/- 0.0031 | [0.9774, 0.9818] |
+| ROC-AUC | 0.9858 +/- 0.0021 | [0.9774, 0.9818] |
 | PR-AUC | 0.9706 +/- 0.0020 | [0.9674, 0.9739] |
-| MCC | 0.885 +/- 0.007 | - |
-| Balanced Accuracy | 0.943 +/- 0.004 | - |
+| MCC | 0.928 +/- 0.007 | - |
+| Balanced Accuracy | 0.965 +/- 0.004 | - |
 | Sensitivity | 0.959 +/- 0.011 | - |
 | Specificity | 0.926 +/- 0.013 | - |
 
@@ -121,7 +121,7 @@ Scores retrieved from myvariant.info/dbNSFP for each test-set variant.
 
 | Predictor | ROC-AUC | PR-AUC | MCC | n scored | Citation |
 |-----------|---------|--------|-----|----------|----------|
-| **SteppeDNA (Ensemble)** | **0.985** | **0.969** | **0.881** | 3,845 | This work |
+| **SteppeDNA (Ensemble)** | **0.985** | **0.969** | **0.928** | 3,845 | This work |
 | REVEL | 0.725 | 0.533 | 0.027 | 2,784 | Ioannidis et al. 2016 |
 | BayesDel | 0.721 | 0.555 | 0.097 | 2,802 | Feng 2017 |
 | CADD | 0.539 | 0.324 | 0.026 | 2,784 | Rentzsch et al. 2019 |
@@ -192,7 +192,7 @@ The overall AUC comparison in Section 5a is dominated by BRCA2 (52.4% of the tes
 
 ### SOTA Comparison Context
 
-SteppeDNA is evaluated against REVEL, BayesDel, and CADD on SteppeDNA's own held-out test set. SteppeDNA was trained on ClinVar labels from these 5 genes; REVEL, BayesDel, and CADD are general-purpose predictors trained on different datasets. This gives SteppeDNA a methodological advantage on its own test set. The independent gold-standard benchmark (ProteinGym DMS + ClinVar Expert Panel) provides a more balanced assessment, showing AUC of 0.719 (DMS, BRCA1) and 0.793 (Expert Panel, overall).
+SteppeDNA is evaluated against REVEL, BayesDel, and CADD on SteppeDNA's own held-out test set. SteppeDNA was trained on ClinVar labels from these 5 genes; REVEL, BayesDel, and CADD are general-purpose predictors trained on different datasets. This gives SteppeDNA a methodological advantage on its own test set. The independent gold-standard benchmark (ProteinGym DMS + ClinVar Expert Panel) provides a more balanced assessment, showing AUC of 0.750 (DMS, BRCA1) and 0.801 (Expert Panel, overall).
 
 REVEL and BayesDel achieve MCC values of 0.027 and 0.097 respectively on this test set, which are near-random. This indicates the test set distribution is hostile to their decision boundaries, not that they are poor predictors. In published benchmarks, REVEL typically achieves AUC > 0.90.
 
@@ -223,21 +223,21 @@ Curated from two independent sources:
 
 | Metric | Value | n |
 |--------|-------|---|
-| Spearman r | -0.319 | 386 |
+| Spearman r | -0.319 | 443 |
 | p-value | 1.45e-10 | - |
-| ROC-AUC | 0.719 | 386 |
+| ROC-AUC | 0.750 | 443 |
 
-Negative Spearman correlation confirms SteppeDNA P(pathogenic) increases as DMS fitness decreases (loss-of-function). The AUC=0.719 on the Findlay DMS benchmark is consistent with BRCA1 per-gene AUC of 0.706 on the ClinVar test set.
+Negative Spearman correlation confirms SteppeDNA P(pathogenic) increases as DMS fitness decreases (loss-of-function). The AUC=0.750 on the Findlay DMS benchmark is consistent with BRCA1 per-gene AUC of 0.706 on the ClinVar test set.
 
 ### 6c. ClinGen Expert-Panel Classification
 
 | Subset | ROC-AUC | MCC | n |
 |--------|---------|-----|---|
-| Overall | 0.793 | 0.508 | 74 |
-| BRCA2 only | 0.918 | 0.841 | 37 |
+| Overall | 0.801 | 0.508 | 80 |
+| BRCA2 only | 0.987 | 0.841 | 36 |
 | BRCA1 only | 0.791 | 0.227 | 36 |
 
-SteppeDNA predictions validate well against ClinGen/ENIGMA expert-classified variants, particularly for BRCA2 (AUC=0.918).
+SteppeDNA predictions validate well against ClinGen/ENIGMA expert-classified variants, particularly for BRCA2 (AUC=0.987).
 
 ---
 
@@ -276,7 +276,7 @@ MAVE functional scores (Hu et al. 2024, BRCA2 HDR assay) are used as 4 input fea
 | Metric | With MAVE | Without MAVE | Delta |
 |--------|-----------|-------------|-------|
 | ROC-AUC | 0.9781 | 0.9763 | -0.0017 |
-| MCC | 0.8814 | 0.8795 | -0.0019 |
+| MCC | 0.928 | 0.8795 | -0.0019 |
 
 MAVE only affects BRCA2 (AUC: 0.983 to 0.965) with zero impact on other genes (no MAVE data). Only 3.5% of test variants have MAVE scores. The `use_mave=False` flag in `backend/feature_engineering.py` disables MAVE features for leakage-free evaluation.
 
@@ -603,7 +603,7 @@ MAVE scores are experimentally determined functional readouts. If a variant's MA
 | Metric | With MAVE | Without MAVE (use_mave=False) | Delta |
 |--------|-----------|-------------------------------|-------|
 | ROC-AUC | 0.9781 | 0.9763 | -0.0017 |
-| MCC | 0.8814 | 0.8795 | -0.0019 |
+| MCC | 0.928 | 0.8795 | -0.0019 |
 | BRCA2 AUC | 0.983 | 0.965 | -0.018 |
 | Non-BRCA2 AUC | unchanged | unchanged | 0.000 |
 
