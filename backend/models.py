@@ -238,6 +238,7 @@ esm_model = None
 esm_batch_converter = None
 DEVICE = "cpu"
 
+
 # ─── Pure-Numpy MLP (replaces TensorFlow for inference) ─────────────────────
 class NumpyMLP:
     """Drop-in replacement for Keras model.predict() using extracted weights.
