@@ -195,14 +195,20 @@ async def lifespan(app):
     _get_universal_models()
     _validate_gene_configs()
     _verify_model_checksums()
-    _build_training_index()
-    _build_contrastive_index()
     _load_gene_calibrators()
     _load_gene_ensemble_weights()
-    _load_bootstrap_models()
-    _load_active_learning_priorities()
-    _load_founder_mutations()
     _load_conformal_thresholds()
+    _load_founder_mutations()
+
+    # Heavy startup tasks: skip on low-memory (Render starter = 512MB)
+    _low_mem = os.getenv("LOW_MEMORY", "").lower() in ("1", "true")
+    if _low_mem:
+        logger.info("LOW_MEMORY=1: skipping training index, contrastive index, bootstrap models")
+    else:
+        _build_training_index()
+        _build_contrastive_index()
+        _load_bootstrap_models()
+        _load_active_learning_priorities()
     logger.info("Server ready.")
 
     # Background task: periodic rate limiter cleanup every 5 minutes

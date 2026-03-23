@@ -18,5 +18,7 @@ services:
         value: "60"
       - key: RATE_WINDOW
         value: "60"
+      - key: LOW_MEMORY
+        value: "1"
     healthCheckPath: /health
     plan: starter
