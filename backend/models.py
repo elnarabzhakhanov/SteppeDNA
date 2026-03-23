@@ -238,6 +238,47 @@ esm_model = None
 esm_batch_converter = None
 DEVICE = "cpu"
 
+# ─── Pure-Numpy MLP (replaces TensorFlow for inference) ─────────────────────
+class NumpyMLP:
+    """Drop-in replacement for Keras model.predict() using extracted weights.
+
+    Architecture: Dense(128) → BN → ReLU → Dense(64) → BN → ReLU → Dense(32) → ReLU → Dense(1) → Sigmoid
+    """
+
+    def __init__(self, weights_path):
+        import pickle as _pkl
+        with open(weights_path, "rb") as f:
+            self.w = _pkl.load(f)
+
+    def predict(self, x, verbose=0):  # noqa: ARG002
+        import numpy as _np
+        w = self.w
+        eps = 1e-5
+        h = _np.asarray(x, dtype=_np.float32)
+
+        # Layer 0: Dense(128) + BatchNorm + ReLU
+        h = h @ w["dense_0_kernel"] + w["dense_0_bias"]
+        h = (h - w["bn_0_moving_mean"]) / _np.sqrt(w["bn_0_moving_variance"] + eps)
+        h = h * w["bn_0_gamma"] + w["bn_0_beta"]
+        h = _np.maximum(h, 0)  # ReLU
+
+        # Layer 1: Dense(64) + BatchNorm + ReLU
+        h = h @ w["dense_1_kernel"] + w["dense_1_bias"]
+        h = (h - w["bn_1_moving_mean"]) / _np.sqrt(w["bn_1_moving_variance"] + eps)
+        h = h * w["bn_1_gamma"] + w["bn_1_beta"]
+        h = _np.maximum(h, 0)
+
+        # Layer 2: Dense(32) + ReLU
+        h = h @ w["dense_2_kernel"] + w["dense_2_bias"]
+        h = _np.maximum(h, 0)
+
+        # Layer 3: Dense(1) + Sigmoid
+        h = h @ w["dense_3_kernel"] + w["dense_3_bias"]
+        h = 1.0 / (1.0 + _np.exp(-h))
+
+        return h
+
+
 # Global Universal ML Model Architecture cache
 _UNIVERSAL_MODELS = None
 
@@ -256,13 +297,24 @@ def _get_universal_models():
     _UNIVERSAL_MODELS["feature_names"] = _load_pickle("universal_feature_names.pkl")
     _UNIVERSAL_MODELS["threshold"] = _load_pickle("universal_threshold_ensemble.pkl") or 0.5
 
-    # Try loading MLP; gracefully fall back to XGBoost-only if TF missing or version mismatch
-    try:
-        from tensorflow.keras.models import load_model
-        _UNIVERSAL_MODELS["ensemble_model"] = load_model(f"{DATA_DIR}/universal_nn.h5") if os.path.exists(f"{DATA_DIR}/universal_nn.h5") else None
-    except Exception as e:
-        logger.warning(f"[WARN] Could not load MLP model: {e}. Using XGBoost-only mode.")
-        _UNIVERSAL_MODELS["ensemble_model"] = None
+    # Load MLP: try pure-numpy weights first (no TF dependency), fall back to TF, then XGB-only
+    _UNIVERSAL_MODELS["ensemble_model"] = None
+    numpy_weights_path = os.path.join(DATA_DIR, "mlp_weights_numpy.pkl")
+    if os.path.exists(numpy_weights_path):
+        try:
+            _UNIVERSAL_MODELS["ensemble_model"] = NumpyMLP(numpy_weights_path)
+            logger.info("[MLP] Loaded pure-numpy MLP (no TensorFlow required)")
+        except Exception as e:
+            logger.warning(f"[WARN] Numpy MLP failed: {e}. Trying TensorFlow...")
+    if _UNIVERSAL_MODELS["ensemble_model"] is None:
+        try:
+            from tensorflow.keras.models import load_model
+            h5_path = os.path.join(DATA_DIR, "universal_nn.h5")
+            _UNIVERSAL_MODELS["ensemble_model"] = load_model(h5_path) if os.path.exists(h5_path) else None
+            if _UNIVERSAL_MODELS["ensemble_model"]:
+                logger.info("[MLP] Loaded TensorFlow MLP")
+        except Exception as e:
+            logger.warning(f"[WARN] Could not load MLP model: {e}. Using XGBoost-only mode.")
 
     xgb_path = f"{DATA_DIR}/universal_xgboost_final.json"
     if os.path.exists(xgb_path):
