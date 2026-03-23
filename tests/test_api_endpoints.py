@@ -18,12 +18,16 @@ import pytest
 # ─── Health & Status ────────────────────────────────────────────────────────
 
 def test_root_returns_200(client):
-    """GET / should return 200 with API status."""
+    """GET / should return 200 (HTML frontend or JSON API status)."""
     resp = client.get("/")
     assert resp.status_code == 200
-    data = resp.json()
-    assert "status" in data
-    assert "SteppeDNA" in data["status"]
+    ct = resp.headers.get("content-type", "")
+    if "json" in ct:
+        data = resp.json()
+        assert "status" in data
+        assert "SteppeDNA" in data["status"]
+    else:
+        assert "SteppeDNA" in resp.text
 
 
 def test_health_returns_200(client):
