@@ -2281,6 +2281,28 @@ footer a {
         letter-spacing: 0.5px;
     }
 
+    /* Fix tooltips clipping off-screen on mobile:
+       Position tooltip relative to .hero-stats (full-width container)
+       instead of the individual .help-tip button */
+    .hero-stat .help-tip {
+        position: static;
+    }
+    .hero-stats {
+        position: relative;
+    }
+    .hero-stat .help-tip .help-text {
+        position: absolute !important;
+        bottom: 100% !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: min(260px, calc(100vw - 2rem));
+        margin-bottom: 8px;
+    }
+    .hero-stat .help-tip .help-text::after {
+        display: none;
+    }
+
     /* Per-gene & SOTA cards — breathe on mobile */
     .per-gene-section,
     .sota-section {
@@ -2370,6 +2392,34 @@ footer a {
 
     .result-card {
         padding: 1rem;
+    }
+
+    /* Stack result card vertically on mobile */
+    .result-top {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 0.5rem;
+    }
+
+    .result-top-right {
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .result-label-group {
+        align-items: center;
+    }
+
+    .confidence {
+        font-size: 2rem;
+    }
+
+    /* CI on its own line on mobile */
+    .ci-label {
+        display: block;
+        margin-top: 2px;
     }
 
     .result-subtitle {
@@ -2463,6 +2513,10 @@ footer a {
 
     .result-card {
         padding: 0.8rem;
+    }
+
+    .confidence {
+        font-size: 1.8rem;
     }
 
     .info-card {
@@ -2894,25 +2948,6 @@ footer a {
     text-align: center;
     padding: 1rem;
     max-width: 80%;
-}
-.viewer3d-legend {
-    display: flex;
-    justify-content: center;
-    gap: 1.2rem;
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-body);
-}
-.viewer3d-leg-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-.viewer3d-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
 }
 @media (max-width: 700px) {
     .viewer3d-container {

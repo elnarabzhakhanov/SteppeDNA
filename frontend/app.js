@@ -930,7 +930,7 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
         const ciData = data.confidence || {};
         if (ciData.ci_lower != null && ciData.ci_upper != null) {
             conf.innerHTML = escapeHtml((prob * 100).toFixed(1) + '%') +
-                ' <span style="font-size:0.7rem;color:var(--text-mid);font-weight:400">' +
+                ' <span class="ci-label" style="font-size:0.7rem;color:var(--text-mid);font-weight:400">' +
                 (ciData.method === 'bootstrap' ? '90' : '95') + '% CI: ' +
                 escapeHtml((ciData.ci_lower * 100).toFixed(1)) + '-' +
                 escapeHtml((ciData.ci_upper * 100).toFixed(1)) + '%</span>';
