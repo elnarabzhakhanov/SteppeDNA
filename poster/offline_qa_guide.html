@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SteppeDNA - Complete Offline Q&A Bible | 300+ Questions</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@page { size: A4; margin: 1.5cm 1.8cm; }
+@media print { .page-break { page-break-before: always; } }
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; color: #1a1a2e; line-height: 1.55; background: #fff; padding: 1.5cm; font-size: 9.5pt; }
+h1 { font-size: 24pt; font-weight: 900; color: #6260FF; margin-bottom: 4px; }
+h2 { font-size: 15pt; font-weight: 800; color: #1a1a2e; margin: 22px 0 10px; border-bottom: 3px solid #6260FF; padding-bottom: 5px; }
+h3 { font-size: 11pt; font-weight: 700; color: #6260FF; margin: 14px 0 6px; }
+h4 { font-size: 10pt; font-weight: 700; color: #2a2855; margin: 10px 0 4px; }
+p { margin-bottom: 6px; }
+ul, ol { margin: 4px 0 8px 18px; }
+li { margin-bottom: 3px; }
+strong { color: #1a1a2e; }
+em { color: #6260FF; font-style: normal; font-weight: 600; }
+
+.subtitle { font-size: 11pt; color: #555; margin-bottom: 6px; }
+.meta { font-size: 8pt; color: #999; margin-bottom: 20px; }
+
+.qa { margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #f0f0f0; }
+.q { font-weight: 700; color: #1a1a2e; margin-bottom: 3px; padding-left: 0; }
+.q::before { content: "Q: "; color: #6260FF; font-weight: 800; }
+.a { color: #333; padding-left: 14px; border-left: 2px solid #e0e0f0; margin-left: 2px; }
+.a::before { content: "A: "; color: #10B981; font-weight: 700; }
+.who { display: inline-block; font-size: 7.5pt; font-weight: 700; padding: 1px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+.who.elnar { background: #f0f0ff; color: #6260FF; }
+.who.inkar { background: #f0fdf4; color: #10B981; }
+.who.both { background: #fff7ed; color: #f59e0b; }
+
+.section-count { font-size: 8pt; color: #999; font-weight: 400; }
+
+.tip { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; margin: 10px 0; font-size: 9pt; }
+.tip strong { color: #b45309; }
+
+.warn { background: #fef2f2; border-left: 3px solid #ef4444; padding: 8px 12px; margin: 10px 0; font-size: 9pt; }
+.warn strong { color: #dc2626; }
+
+.offline-box { background: #f0f0ff; border: 2px solid #6260FF; border-radius: 8px; padding: 12px 16px; margin: 12px 0; }
+
+.num { display: inline-block; background: #6260FF; color: #fff; font-size: 7pt; font-weight: 800; width: 18px; height: 18px; text-align: center; line-height: 18px; border-radius: 50%; margin-right: 4px; }
+
+.toc { columns: 2; column-gap: 24px; font-size: 9pt; margin: 12px 0; }
+.toc p { margin-bottom: 3px; }
+
+table { width: 100%; border-collapse: collapse; font-size: 8.5pt; margin: 8px 0; }
+th { background: #f0f0ff; padding: 5px 8px; text-align: left; font-weight: 700; border-bottom: 2px solid #6260FF; }
+td { padding: 4px 8px; border-bottom: 1px solid #eee; }
+</style>
+</head>
+<body>
+
+<h1>SteppeDNA: Complete Offline Bible</h1>
+<p class="subtitle">Every question. Every answer. Every number. Simple language.</p>
+<p class="meta">Infomatrix Asia 2026 | Elnar Abzhakhanov &amp; Inkar Saule Abzhakhanova | K. Satpayev Binom-School</p>
+
+<!-- ==================== OFFLINE PREP ==================== -->
+<h2>PART 0: Offline Preparation Checklist</h2>
+
+<div class="offline-box">
+<h3>If You Have NO Laptop and NO Internet</h3>
+<ol>
+<li><strong>Print screenshots</strong> of 3 demo predictions (see below) on color paper and laminate if possible</li>
+<li><strong>Print this entire PDF</strong> and keep it in a folder behind your poster for quick reference</li>
+<li><strong>Memorize the 5 key numbers:</strong> 0.985 (overall AUC), 0.791 (macro AUC), 19,223 (variants), 120 (features), 4/5 (genes we beat SOTA on)</li>
+<li><strong>Have the poster itself</strong> as your visual aid - point at charts instead of showing a screen</li>
+<li><strong>Prepare a physical "backup demo":</strong> Print a full prediction output (see Part 1 below) and walk judges through it step by step as if it were live</li>
+</ol>
+</div>
+
+<div class="offline-box">
+<h3>If You Have Phone WITH Internet</h3>
+<ol>
+<li>Open <strong>steppedna.com</strong> before judges arrive and keep it loaded</li>
+<li>Pre-type <strong>BRCA2 c.8167G>C</strong> (known pathogenic, high confidence)</li>
+<li>Have second query ready: <strong>RAD51C c.404G>A</strong> (different gene, shows multi-gene)</li>
+<li>Third query: <strong>BRCA1 c.5096G>A</strong> (shows data scarcity warning for BRCA1)</li>
+<li>Phone brightness maximum, font size large</li>
+<li>If wifi dies mid-demo, switch to screenshots (save prediction outputs as photos beforehand)</li>
+</ol>
+</div>
+
+<div class="offline-box">
+<h3>If You Have Phone WITHOUT Internet</h3>
+<ol>
+<li><strong>Take screenshots NOW</strong> of these 3 predictions from steppedna.com and save to phone:
+  <ul>
+    <li>BRCA2 c.8167G>C - full output including probability, ACMG codes, SHAP chart</li>
+    <li>RAD51C c.404G>A - shows different gene working</li>
+    <li>A VCF batch upload result (if possible)</li>
+  </ul>
+</li>
+<li>Also screenshot: the homepage (shows the UI), the SHAP explanation chart, the PDF report export</li>
+<li>Walk judges through screenshots exactly as you would a live demo</li>
+<li>Say: "We have a live deployment at steppedna.com, but wifi here is unreliable - let me walk you through a real prediction we ran earlier"</li>
+</ol>
+</div>
+
+<h3>What to Print for the "Paper Demo"</h3>
+<p>For each demo prediction, print a page showing:</p>
+<ul>
+<li>The input: gene name, cDNA notation, what amino acid changes</li>
+<li>The output probability (e.g., P(pathogenic) = 0.94)</li>
+<li>The confidence interval (e.g., 95% CI: [0.89, 0.97])</li>
+<li>The ACMG codes triggered (e.g., PM1, PP3, PM2)</li>
+<li>The SHAP waterfall chart (most judges love this visual)</li>
+<li>The ClinVar cross-reference result</li>
+<li>The classification: "Likely Pathogenic"</li>
+</ul>
+
+<!-- ==================== CHEAT SHEET ==================== -->
+<div class="page-break"></div>
+<h2>PART 1: Numbers Cheat Sheet (Memorize This Page)</h2>
+
+<h3>Core Numbers</h3>
+<table>
+<tr><th>What</th><th>Number</th><th>Simple Explanation</th></tr>
+<tr><td>Total variants trained on</td><td><strong>19,223</strong></td><td>How many DNA mutations we used to teach the model</td></tr>
+<tr><td>Number of genes</td><td><strong>5</strong></td><td>BRCA1, BRCA2, PALB2, RAD51C, RAD51D</td></tr>
+<tr><td>Number of features</td><td><strong>120</strong></td><td>Different measurements we calculate for each mutation</td></tr>
+<tr><td>Overall AUC</td><td><strong>0.985</strong></td><td>How well the model separates dangerous from safe (1.0 = perfect)</td></tr>
+<tr><td>Macro AUC</td><td><strong>0.791</strong></td><td>Average performance across all 5 genes equally weighted</td></tr>
+<tr><td>MCC</td><td><strong>0.881</strong></td><td>Balanced quality score accounting for all error types</td></tr>
+<tr><td>Balanced Accuracy</td><td><strong>94.1%</strong></td><td>Average of sensitivity and specificity</td></tr>
+<tr><td>Sensitivity</td><td><strong>95.7%</strong></td><td>Catches 95.7% of truly dangerous mutations</td></tr>
+<tr><td>Specificity</td><td><strong>92.6%</strong></td><td>Correctly clears 92.6% of safe mutations</td></tr>
+<tr><td>10-Fold CV AUC</td><td><strong>0.9858 +/- 0.0021</strong></td><td>Stability check: nearly identical across 10 random splits</td></tr>
+<tr><td>Test set size</td><td><strong>3,845 variants</strong></td><td>20% held out, never seen during training</td></tr>
+<tr><td>Data split</td><td><strong>60/20/20</strong></td><td>60% train, 20% calibrate, 20% test</td></tr>
+<tr><td>Tests in codebase</td><td><strong>198</strong></td><td>Automated checks that verify correctness</td></tr>
+<tr><td>ACMG rules implemented</td><td><strong>15</strong></td><td>Out of 28+ total ACMG evidence codes</td></tr>
+<tr><td>Genes we beat SOTA on</td><td><strong>4 out of 5</strong></td><td>All except PALB2 (REVEL wins there)</td></tr>
+<tr><td>Threshold</td><td><strong>0.2998</strong></td><td>Above this = pathogenic, below = benign</td></tr>
+</table>
+
+<h3>Per-Gene Numbers</h3>
+<table>
+<tr><th>Gene</th><th>Total Variants</th><th>% of Data</th><th>Test n</th><th>AUC</th><th>MCC</th><th>Bal. Acc</th><th>Reliability</th></tr>
+<tr><td>BRCA2</td><td>~10,000</td><td>52%</td><td>2,017</td><td><strong>0.994</strong></td><td>0.891</td><td>96.9%</td><td>High</td></tr>
+<tr><td>RAD51D</td><td>~410</td><td>2.1%</td><td>82</td><td>0.824</td><td>0.437</td><td>72.0%</td><td>Moderate</td></tr>
+<tr><td>RAD51C</td><td>~670</td><td>3.5%</td><td>135</td><td>0.785</td><td>0.403</td><td>70.6%</td><td>Moderate</td></tr>
+<tr><td>BRCA1</td><td>~5,400</td><td>28%</td><td>1,087</td><td>0.747</td><td>0.312</td><td>66.0%</td><td>Moderate</td></tr>
+<tr><td>PALB2</td><td>~2,600</td><td>14%</td><td>524</td><td>0.605</td><td>0.346</td><td>65.1%</td><td>Low</td></tr>
+</table>
+
+<h3>SOTA Comparison Numbers</h3>
+<table>
+<tr><th>Gene</th><th>SteppeDNA</th><th>REVEL</th><th>BayesDel</th><th>CADD</th><th>Winner</th></tr>
+<tr><td>BRCA2</td><td><strong>0.994</strong></td><td>0.891</td><td>0.949</td><td>0.908</td><td>Us</td></tr>
+<tr><td>RAD51D</td><td><strong>0.824</strong></td><td>0.461</td><td>0.448</td><td>0.457</td><td>Us</td></tr>
+<tr><td>RAD51C</td><td><strong>0.785</strong></td><td>0.651</td><td>0.634</td><td>0.703</td><td>Us</td></tr>
+<tr><td>BRCA1</td><td><strong>0.747</strong></td><td>0.595</td><td>0.646</td><td>0.527</td><td>Us</td></tr>
+<tr><td>PALB2</td><td>0.605</td><td><strong>0.732</strong></td><td>0.432</td><td>0.564</td><td>REVEL</td></tr>
+</table>
+
+<h3>External Benchmark Numbers</h3>
+<table>
+<tr><th>Benchmark</th><th>AUC</th><th>n</th><th>What It Is</th></tr>
+<tr><td>ProteinGym DMS (BRCA1)</td><td>0.719</td><td>386</td><td>Lab-measured functional scores for BRCA1</td></tr>
+<tr><td>ClinVar Expert Panel (all)</td><td>0.793</td><td>74</td><td>Variants classified by genetics experts</td></tr>
+<tr><td>ClinVar Expert Panel (BRCA2)</td><td>0.918</td><td>37</td><td>Just BRCA2 expert-classified variants</td></tr>
+</table>
+
+<h3>DeLong Test Numbers</h3>
+<table>
+<tr><th>Comparison</th><th>n</th><th>Delta AUC</th><th>p-value</th></tr>
+<tr><td>vs REVEL</td><td>2,733</td><td>+0.277</td><td>1.1 x 10^-128</td></tr>
+<tr><td>vs BayesDel</td><td>2,754</td><td>+0.281</td><td>6.8 x 10^-138</td></tr>
+<tr><td>vs CADD</td><td>2,735</td><td>+0.457</td><td>~0</td></tr>
+</table>
+
+<h3>Confusion Matrix (Test Set, n=3,845)</h3>
+<table>
+<tr><th></th><th>Predicted Benign</th><th>Predicted Pathogenic</th></tr>
+<tr><td>Actually Benign</td><td>TN = 1,888</td><td>FP = 152</td></tr>
+<tr><td>Actually Pathogenic</td><td>FN = 77</td><td>TP = 1,728</td></tr>
+</table>
+<p>FP = false alarms (said dangerous but it was safe). FN = missed dangers (said safe but it was dangerous). We have more FPs than FNs, which is the safer direction for a medical tool.</p>
+
+<h3>Version History Numbers</h3>
+<table>
+<tr><th>Gene</th><th>v5.3 AUC</th><th>v5.4 AUC</th><th>Change</th></tr>
+<tr><td>BRCA2</td><td>0.983</td><td>0.994</td><td>+0.011</td></tr>
+<tr><td>BRCA1</td><td>0.706</td><td>0.747</td><td>+0.041</td></tr>
+<tr><td>RAD51D</td><td>0.804</td><td>0.824</td><td>+0.020</td></tr>
+<tr><td>RAD51C</td><td>0.743</td><td>0.785</td><td>+0.042</td></tr>
+<tr><td>PALB2</td><td>0.641</td><td>0.605</td><td>-0.036</td></tr>
+<tr><td>Macro avg</td><td>0.775</td><td>0.791</td><td>+0.016</td></tr>
+</table>
+
+<h3>Ensemble Weights Per Gene</h3>
+<table>
+<tr><th>Gene</th><th>XGBoost Weight</th><th>MLP Weight</th><th>Why</th></tr>
+<tr><td>BRCA1</td><td>0%</td><td>100%</td><td>XGBoost overfits on BRCA1's extreme class imbalance</td></tr>
+<tr><td>BRCA2</td><td>60%</td><td>40%</td><td>Standard blend, enough data for both</td></tr>
+<tr><td>PALB2</td><td>0%</td><td>100%</td><td>MLP handles small dataset better here</td></tr>
+<tr><td>RAD51C</td><td>80%</td><td>20%</td><td>XGBoost's tabular strength helps with sparse features</td></tr>
+<tr><td>RAD51D</td><td>55%</td><td>45%</td><td>Near-equal blend optimal</td></tr>
+</table>
+
+<!-- ==================== PART 2: QUESTIONS START ==================== -->
+<div class="page-break"></div>
+<h2>PART 2: Complete Question Bank</h2>
+
+<p>Total: <strong>310 questions</strong> across 15 categories. Every answer is written in simple language. <span class="who elnar">ELNAR</span> = you answer. <span class="who inkar">INKAR</span> = she answers. <span class="who both">BOTH</span> = either can answer.</p>
+
+<!-- ========== CATEGORY A: THE BIG PICTURE ========== -->
+<h3>A. The Big Picture - What Is This Project? <span class="section-count">(20 questions)</span></h3>
+
+<div class="qa"><div class="q">What is SteppeDNA? <span class="who both">BOTH</span></div>
+<div class="a">SteppeDNA is a machine learning tool that predicts whether a DNA mutation in a cancer-related gene is dangerous (pathogenic) or harmless (benign). It covers 5 genes in the homologous recombination DNA repair pathway: BRCA1, BRCA2, PALB2, RAD51C, and RAD51D. It's a web application - you type in a mutation and get a probability, confidence interval, explanation of why, and clinical evidence codes.</div></div>
+
+<div class="qa"><div class="q">What problem does it solve? <span class="who inkar">INKAR</span></div>
+<div class="a">When people get genetic tests for cancer risk, many results come back as "Variant of Uncertain Significance" (VUS) - meaning the lab can't tell if the mutation is dangerous or harmless. Over 50% of missense variants in these genes are VUS. This leaves patients and doctors stuck - they can't make treatment decisions. SteppeDNA helps resolve these uncertain variants by giving a probability score with evidence.</div></div>
+
+<div class="qa"><div class="q">Why does this matter? <span class="who inkar">INKAR</span></div>
+<div class="a">These 5 genes protect against cancer by repairing broken DNA. When they're broken, the risk of breast, ovarian, prostate, and pancreatic cancer goes up dramatically. BRCA1/2 mutations increase breast cancer risk to 60-80%. If a mutation is classified as pathogenic, the patient can get preventive surgery, PARP inhibitor drugs, or enhanced screening. If it's a VUS, none of those options are clearly justified.</div></div>
+
+<div class="qa"><div class="q">Who would use this tool? <span class="who inkar">INKAR</span></div>
+<div class="a">Genetics researchers, bioinformaticians, and genetic counseling students. It's labeled Research Use Only - it's a decision support tool, not a diagnostic device. A geneticist could use it as one piece of evidence alongside other data when evaluating a patient's variant.</div></div>
+
+<div class="qa"><div class="q">What makes it different from existing tools? <span class="who elnar">ELNAR</span></div>
+<div class="a">Three things: (1) It's specifically built for HR repair genes with per-gene calibration - tools like REVEL and CADD are generic, pan-genome tools. (2) It provides calibrated probabilities with confidence intervals, not just a raw score. (3) Every prediction comes with SHAP explanations showing WHY the model made its decision, plus ACMG evidence codes that clinicians understand.</div></div>
+
+<div class="qa"><div class="q">How well does it work? <span class="who elnar">ELNAR</span></div>
+<div class="a">Overall AUC of 0.985 on held-out test data, which means it correctly ranks dangerous variants above safe ones 98.5% of the time. More importantly, it beats REVEL, BayesDel, and CADD - the three most widely used existing tools - on 4 out of 5 genes. Only on PALB2 does REVEL beat us.</div></div>
+
+<div class="qa"><div class="q">Is it deployed somewhere I can try? <span class="who both">BOTH</span></div>
+<div class="a">Yes, it's live at steppedna.com. You can type in any missense variant in the 5 supported genes and get a prediction in seconds. You can also upload VCF files for batch analysis and export PDF clinical reports.</div></div>
+
+<div class="qa"><div class="q">How long did this take to build? <span class="who elnar">ELNAR</span></div>
+<div class="a">Several months of development across multiple versions. The current version, v5.4, represents a major update with new data sources - AlphaFold structural features for all 5 genes, real population frequency data from gnomAD, EVE evolutionary scores, and the removal of AlphaMissense due to label leakage we discovered.</div></div>
+
+<div class="qa"><div class="q">What's the name "SteppeDNA" about? <span class="who inkar">INKAR</span></div>
+<div class="a">The steppe is the vast grassland of Central Asia, including Kazakhstan where we're from. The name connects our identity and origin to DNA science. It represents bringing genomic tools to underrepresented populations.</div></div>
+
+<div class="qa"><div class="q">Is this published anywhere? <span class="who elnar">ELNAR</span></div>
+<div class="a">It's not published in a journal yet - it's a competition project. But we follow academic standards: we wrote a Model Card following Mitchell et al. (2019) framework, a full Validation Report, and the code is open-source under MIT license with model artifacts under Research Use Only license.</div></div>
+
+<div class="qa"><div class="q">What's the most impressive thing about this project? <span class="who both">BOTH</span></div>
+<div class="a">That it outperforms tools developed by large research teams at major institutions on 4 out of 5 genes. Also that we caught and removed a popular feature (AlphaMissense from DeepMind) because we discovered it was leaking training labels - and our accuracy actually went UP after removing it. That shows real scientific rigor.</div></div>
+
+<div class="qa"><div class="q">What's the weakest part? <span class="who both">BOTH</span></div>
+<div class="a">PALB2 performance. REVEL beats us there (0.732 vs our 0.605). Also, our overall AUC of 0.985 is heavily weighted by BRCA2 which is 52% of the data. The macro-averaged AUC across all genes equally is 0.791, which is more honest. We always report both numbers.</div></div>
+
+<div class="qa"><div class="q">Is this a real tool or just a school project? <span class="who elnar">ELNAR</span></div>
+<div class="a">It's a real, deployed web application with 200 automated tests, production-grade security, and performance that beats established tools. But we're transparent that it's Research Use Only - it hasn't gone through clinical validation or expert review, which is what separates a research tool from a clinical diagnostic.</div></div>
+
+<div class="qa"><div class="q">How is the work split between you two? <span class="who both">BOTH</span></div>
+<div class="a">Elnar leads the technical development - the ML architecture, feature engineering, backend code, and validation. Inkar focuses on the biological context - understanding the genes, the clinical problem, ACMG classification, and the population equity angle. We both work on the presentation and communicate the full picture together.</div></div>
+
+<div class="qa"><div class="q">What's the competition category? <span class="who both">BOTH</span></div>
+<div class="a">Applied Science at Infomatrix Asia 2026. It fits because we're applying computer science and machine learning to a real-world scientific problem - genetic variant classification for cancer risk assessment.</div></div>
+
+<div class="qa"><div class="q">Can you summarize it in one sentence? <span class="who both">BOTH</span></div>
+<div class="a">"SteppeDNA is a machine learning system that predicts whether DNA mutations in cancer repair genes are dangerous, outperforming existing tools on 4 out of 5 genes while providing transparent explanations and uncertainty estimates."</div></div>
+
+<div class="qa"><div class="q">What's the one thing you want me to remember? <span class="who both">BOTH</span></div>
+<div class="a">That two high school students from Kazakhstan built a deployed system that beats REVEL, BayesDel, and CADD on 4 out of 5 genes - and we're honest about where it doesn't.</div></div>
+
+<div class="qa"><div class="q">What's your end goal with this? <span class="who inkar">INKAR</span></div>
+<div class="a">To help reduce the number of patients who get inconclusive VUS results, especially in underrepresented populations like ours in Central Asia. Long-term, we want clinical validation and population-specific calibration so the tool works equally well for everyone, not just European-ancestry patients.</div></div>
+
+<div class="qa"><div class="q">What's v5.4? How many versions were there? <span class="who elnar">ELNAR</span></div>
+<div class="a">v5.4 is the current version. We've iterated through multiple versions, each adding improvements: gnomAD proxy-benign data for class balance, gene-identity feature removal, per-gene ensemble weights, EVE scores, AlphaFold structural features for all genes, and the AlphaMissense removal. Each version was driven by specific validation findings.</div></div>
+
+<div class="qa"><div class="q">What's the "Multi-Gene HR" subtitle mean? <span class="who inkar">INKAR</span></div>
+<div class="a">HR stands for Homologous Recombination - it's a DNA repair mechanism. Our 5 genes all participate in this same pathway. "Multi-Gene" means one model handles all 5 genes simultaneously, rather than building separate models for each gene. This lets the model share knowledge between genes.</div></div>
+
+<!-- ========== CATEGORY B: BIOLOGY ========== -->
+<div class="page-break"></div>
+<h3>B. Biology &amp; Genetics <span class="section-count">(35 questions)</span></h3>
+
+<div class="qa"><div class="q">What is homologous recombination? <span class="who inkar">INKAR</span></div>
+<div class="a">It's a DNA repair mechanism. When both strands of DNA break (a double-strand break), the cell uses a matching copy of the DNA as a template to fix it accurately. The 5 genes in our system - BRCA1, BRCA2, PALB2, RAD51C, RAD51D - are all essential parts of this repair machinery. When any of them is broken, the cell can't fix DNA breaks properly, leading to mutations accumulating and eventually cancer.</div></div>
+
+<div class="qa"><div class="q">What does BRCA1 do? <span class="who inkar">INKAR</span></div>
+<div class="a">BRCA1 is a tumor suppressor that helps repair double-strand DNA breaks. It acts early in the HR pathway, recruiting other repair proteins to the damage site. Pathogenic mutations increase lifetime breast cancer risk to 55-72% and ovarian cancer to 39-44%. It's on chromosome 17 and is transcribed on the negative strand.</div></div>
+
+<div class="qa"><div class="q">What does BRCA2 do? <span class="who inkar">INKAR</span></div>
+<div class="a">BRCA2 directly loads RAD51 protein onto single-stranded DNA at break sites, which is the critical step in homologous recombination repair. Pathogenic mutations increase breast cancer risk to 45-69% and ovarian cancer to 11-17%. It's on chromosome 13, positive strand. BRCA2 is our best-performing gene because it has the most training data (~10,000 variants).</div></div>
+
+<div class="qa"><div class="q">What does PALB2 do? <span class="who inkar">INKAR</span></div>
+<div class="a">PALB2 stands for "Partner and Localizer of BRCA2." It bridges BRCA1 and BRCA2, helping BRCA2 get to the right place for DNA repair. Pathogenic PALB2 mutations increase breast cancer risk 3-5 fold. It's our worst-performing gene (AUC 0.605) because the data is heavily imbalanced - 93% of ClinVar variants for PALB2 are classified as pathogenic.</div></div>
+
+<div class="qa"><div class="q">What do RAD51C and RAD51D do? <span class="who inkar">INKAR</span></div>
+<div class="a">They're paralogs (related copies) of RAD51, the protein that does the actual strand invasion during HR repair. RAD51C and RAD51D form complexes that help RAD51 find and invade the matching DNA template. Pathogenic variants increase ovarian cancer risk primarily. They have the fewest training variants - RAD51C ~670, RAD51D ~410 - making them the hardest to model.</div></div>
+
+<div class="qa"><div class="q">What is a missense variant? <span class="who inkar">INKAR</span></div>
+<div class="a">A single nucleotide change in DNA that changes one amino acid to a different amino acid in the resulting protein. For example, an arginine at position 2784 might become a tryptophan. The protein is still full-length but might not function properly. Missense variants are the hardest to classify because the effect can range from completely harmless to devastating, depending on where in the protein the change occurs and what amino acid replaces what.</div></div>
+
+<div class="qa"><div class="q">What's the difference between missense, nonsense, and frameshift? <span class="who inkar">INKAR</span></div>
+<div class="a">Missense = one amino acid changes to another (subtle, hard to predict). Nonsense = a nucleotide change creates a premature stop codon, cutting the protein short (almost always pathogenic). Frameshift = insertion or deletion of nucleotides that aren't a multiple of 3, scrambling the entire reading frame downstream (almost always pathogenic). Our ML model only handles missense because nonsense and frameshift are handled by simple rules (PVS1 = loss of function).</div></div>
+
+<div class="qa"><div class="q">What is a VUS? <span class="who inkar">INKAR</span></div>
+<div class="a">Variant of Uncertain Significance. It means the genetic testing lab doesn't have enough evidence to say whether the mutation is dangerous or harmless. The patient gets a result that basically says "we found something but we don't know what it means." This is frustrating for patients and clinicians because it doesn't guide treatment decisions. Over 50% of missense variants in our 5 genes are currently VUS.</div></div>
+
+<div class="qa"><div class="q">What is ClinVar? <span class="who inkar">INKAR</span></div>
+<div class="a">ClinVar is a public database run by the US National Institutes of Health (NCBI) where genetics labs submit their variant classifications. It's our primary source of training labels - we use variants classified as Pathogenic/Likely Pathogenic and Benign/Likely Benign. Our training data is a February 2026 snapshot of ClinVar.</div></div>
+
+<div class="qa"><div class="q">What is gnomAD? <span class="who inkar">INKAR</span></div>
+<div class="a">Genome Aggregation Database - a collection of genetic data from ~1.6 million alleles across diverse populations. We use gnomAD in two ways: (1) We mined 485 proxy-benign variants (variants seen 2+ times in the population, which are very unlikely to be pathogenic for high-penetrance cancer genes). (2) We use gnomAD allele frequencies as features - if a variant is common in the population, it's probably not causing cancer.</div></div>
+
+<div class="qa"><div class="q">What are ACMG codes? <span class="who inkar">INKAR</span></div>
+<div class="a">The American College of Medical Genetics and Genomics (ACMG) created a framework of 28+ evidence codes for classifying variants. Each code represents a type of evidence - like PVS1 (null variant in a known loss-of-function gene), PM2 (absent from population databases), PP3 (computational prediction supports pathogenic). These codes are combined using rules to reach a final classification. Our system implements 15 of these codes and generates them for every prediction.</div></div>
+
+<div class="qa"><div class="q">What ACMG codes do you implement? <span class="who elnar">ELNAR</span></div>
+<div class="a">15 codes: PVS1 (loss-of-function), PS1 (same AA change as known pathogenic), PS4 (founder mutation prevalence — triggered for known Kazakh founder mutations), PM1 (critical domain), PM2 (absent from gnomAD), PM4 (protein length change), PM5 (novel missense at pathogenic position), PP3 (computational pathogenic), PP3_splice (splice prediction), BA1 (benign standalone - high AF), BS1 (benign strong - moderate AF), BP4 (computational benign), BP7 (synonymous benign). Plus PVS1_moderate for last-exon modifiers and PM2_insufficient (withheld PM2 for underrepresented populations).</div></div>
+
+<div class="qa"><div class="q">What is an amino acid? <span class="who inkar">INKAR</span></div>
+<div class="a">The building blocks of proteins. There are 20 different amino acids, each with different properties - some are large, some small, some are charged, some are hydrophobic (water-repelling). A protein is a chain of amino acids. A missense variant swaps one amino acid for another at a specific position, which may or may not affect how the protein folds and functions.</div></div>
+
+<div class="qa"><div class="q">What does "pathogenic" mean? <span class="who inkar">INKAR</span></div>
+<div class="a">It means the mutation causes disease - in this context, it significantly increases cancer risk by damaging the protein's ability to repair DNA. In the ACMG classification system, "Pathogenic" is the strongest classification, meaning there's very strong evidence the variant causes disease. "Likely Pathogenic" means there's strong but not conclusive evidence (>90% chance of being disease-causing).</div></div>
+
+<div class="qa"><div class="q">What is allele frequency? <span class="who inkar">INKAR</span></div>
+<div class="a">How common a genetic variant is in a population. Expressed as a fraction - for example, 0.001 means 1 in 1,000 people carry it. For high-penetrance cancer genes, truly pathogenic variants are extremely rare (AF < 0.0001) because natural selection removes them. If a variant is common (high AF), it's almost certainly benign. We use gnomAD allele frequencies as features and for ACMG BA1/BS1 thresholds.</div></div>
+
+<div class="qa"><div class="q">What is a protein domain? <span class="who inkar">INKAR</span></div>
+<div class="a">A region of a protein with a specific structure and function. For example, BRCA1 has the RING domain (binds to other proteins for ubiquitination) and the BRCT domain (recognizes phosphorylated proteins at DNA damage sites). Mutations in critical domains are more likely to be pathogenic - this is what ACMG code PM1 captures. Our feature "dist_nearest_domain" measures how close a mutation is to the nearest functional domain.</div></div>
+
+<div class="qa"><div class="q">What is AlphaFold? <span class="who inkar">INKAR</span></div>
+<div class="a">A deep learning system from DeepMind that predicts 3D protein structures from amino acid sequences. We use AlphaFold-predicted structures to calculate structural features for each mutation: how buried vs. exposed the amino acid position is (RSA), how confident the structure prediction is (pLDDT), how flexible the region is (B-factor), and distance to DNA binding sites. In v5.4, we have AlphaFold features for all 5 genes.</div></div>
+
+<div class="qa"><div class="q">What is ESM-2? <span class="who elnar">ELNAR</span></div>
+<div class="a">A protein language model from Meta AI, trained on millions of protein sequences. Like how GPT learns patterns in human language, ESM-2 learns patterns in protein "language" - which amino acid substitutions are tolerated at each position based on evolution. We use the 8M-parameter version to generate embeddings (numerical representations) for each variant, then reduce them to 20 dimensions using PCA. These capture evolutionary and structural context that handcrafted features miss.</div></div>
+
+<div class="qa"><div class="q">What is PhyloP? <span class="who inkar">INKAR</span></div>
+<div class="a">A measure of evolutionary conservation. It scores each position in the genome based on how unchanged it's been across many species over millions of years. A high PhyloP score means the position is strongly conserved - many species have the same nucleotide there - which suggests it's important for function. Mutations at highly conserved positions are more likely to be pathogenic.</div></div>
+
+<div class="qa"><div class="q">What is EVE? <span class="who elnar">ELNAR</span></div>
+<div class="a">EVE stands for Evolutionary model of Variant Effect. It's a deep generative model (variational autoencoder) trained on multiple sequence alignments of protein families. It predicts the effect of every possible amino acid substitution based purely on evolutionary patterns. We use EVE scores as features for BRCA1, PALB2, RAD51C, and RAD51D (not available for BRCA2). EVE is ranked 10th in feature importance.</div></div>
+
+<div class="qa"><div class="q">What is BLOSUM62? <span class="who elnar">ELNAR</span></div>
+<div class="a">A substitution matrix from 1992 that scores how likely each amino acid substitution is based on observed substitutions in protein families. A positive BLOSUM62 score means the substitution is commonly seen in evolution (likely tolerated). A negative score means it's rarely seen (likely damaging). BLOSUM62 score is our single most important feature by SHAP importance.</div></div>
+
+<div class="qa"><div class="q">What is MAVE/DMS? <span class="who inkar">INKAR</span></div>
+<div class="a">MAVE = Multiplexed Assays of Variant Effect. DMS = Deep Mutational Scanning. These are lab experiments where researchers create thousands of mutations in a gene and measure the effect of each one on protein function. We use Findlay et al. (2018) BRCA1 functional scores as features. These are the gold standard for variant effect but only exist for a few genes.</div></div>
+
+<div class="qa"><div class="q">What is SpliceAI? <span class="who elnar">ELNAR</span></div>
+<div class="a">A deep learning tool that predicts whether a mutation affects RNA splicing - the process of cutting and joining RNA before it becomes protein. Some missense variants can disrupt splicing even though they change an amino acid. We use SpliceAI scores as features and for ACMG PP3_splice evidence.</div></div>
+
+<div class="qa"><div class="q">What is PARP inhibitor therapy? <span class="who inkar">INKAR</span></div>
+<div class="a">A type of cancer drug that exploits the broken HR repair pathway. PARP is another DNA repair enzyme. If HR repair is already broken (because BRCA1/2 is mutated), blocking PARP too means the cancer cell can't repair its DNA at all, causing it to die. It's called "synthetic lethality" - neither defect alone is lethal, but both together are. PARP inhibitors like olaparib are approved specifically for patients with pathogenic BRCA mutations.</div></div>
+
+<div class="qa"><div class="q">What is genetic penetrance? <span class="who inkar">INKAR</span></div>
+<div class="a">The probability that someone with a pathogenic mutation actually develops the disease. BRCA1/2 are high-penetrance genes - 45-80% lifetime cancer risk. This is why we're confident that variants common in gnomAD (AC >= 2 in 1.6 million alleles) are benign - if they were high-penetrance pathogenic, they couldn't be that common because cancer would remove them from the gene pool.</div></div>
+
+<div class="qa"><div class="q">What is hereditary breast and ovarian cancer syndrome? <span class="who inkar">INKAR</span></div>
+<div class="a">A genetic condition caused by inherited pathogenic variants in BRCA1 or BRCA2. It dramatically increases the lifetime risk of breast cancer (55-72% for BRCA1, 45-69% for BRCA2) and ovarian cancer (39-44% for BRCA1, 11-17% for BRCA2). Identified patients can get enhanced screening, preventive surgery (mastectomy/oophorectomy), or targeted drugs. Other HR genes (PALB2, RAD51C/D) cause similar but less severe risk profiles.</div></div>
+
+<div class="qa"><div class="q">What's the difference between germline and somatic variants? <span class="who inkar">INKAR</span></div>
+<div class="a">Germline variants are inherited - they're in every cell of your body from birth. Somatic variants happen in individual cells during your lifetime, often in tumors. SteppeDNA only handles germline variants because our training data (ClinVar) is about inherited mutations. Somatic variant interpretation is a different problem with different rules.</div></div>
+
+<div class="qa"><div class="q">What does "class imbalance" mean in your context? <span class="who both">BOTH</span></div>
+<div class="a">It means the number of pathogenic and benign variants is very uneven for some genes. BRCA1 in ClinVar is 96.6% pathogenic - meaning almost every classified variant is dangerous. This makes it hard for the model to learn what "benign" looks like for BRCA1. We address this with gnomAD proxy-benign augmentation (adding 485 population-common benign variants) and per-gene calibration.</div></div>
+
+<div class="qa"><div class="q">Why are non-BRCA2 genes so much harder? <span class="who elnar">ELNAR</span></div>
+<div class="a">Three reasons: (1) Much less training data - RAD51D has 410 variants vs BRCA2's 10,000. (2) Extreme class imbalance - BRCA1 is 96.6% pathogenic in ClinVar, so the model has very few benign examples. (3) Weaker feature signals - Cohen's d effect sizes are below 1.0 for non-BRCA2 genes vs above 2.0 for BRCA2, meaning our features are less discriminative for smaller genes. This is a field-wide problem, not unique to us.</div></div>
+
+<div class="qa"><div class="q">What is RSA (relative solvent accessibility)? <span class="who elnar">ELNAR</span></div>
+<div class="a">A measure of how exposed or buried an amino acid is on the protein surface. RSA ranges from 0 (completely buried inside the protein) to 1 (fully exposed on the surface). Buried residues are structurally important - mutations there are more likely to destabilize the protein. Surface residues are more tolerant of substitutions. We calculate RSA from AlphaFold structures.</div></div>
+
+<div class="qa"><div class="q">What is pLDDT? <span class="who elnar">ELNAR</span></div>
+<div class="a">Predicted Local Distance Difference Test - AlphaFold's confidence score for each residue position, from 0 to 100. High pLDDT (>90) means AlphaFold is very confident in the predicted structure there. Low pLDDT (<50) means the region is likely disordered or flexible. We use it as a feature because mutations in well-structured regions (high pLDDT) may be more impactful than mutations in disordered regions.</div></div>
+
+<div class="qa"><div class="q">What is cDNA notation like c.8167G>C? <span class="who inkar">INKAR</span></div>
+<div class="a">It's a standard way to describe DNA mutations. "c." means coding DNA. "8167" is the position in the coding sequence. "G>C" means guanine was replaced by cytosine. This notation uniquely identifies a mutation at the DNA level. The protein-level notation would be something like p.Ala2723Pro (alanine at position 2723 changed to proline). Our system accepts both notations.</div></div>
+
+<div class="qa"><div class="q">What is a founder mutation? <span class="who inkar">INKAR</span></div>
+<div class="a">A pathogenic mutation that's common in a specific population because it was carried by an early ancestor (founder) of that population. For example, the BRCA1 185delAG mutation is common in Ashkenazi Jewish populations. Kazakhstan has its own founder mutations in BRCA1/BRCA2 that are underrepresented in global databases. We've curated a database of 7 known Kazakh founder mutations in SteppeDNA.</div></div>
+
+<div class="qa"><div class="q">What is compound heterozygosity? <span class="who inkar">INKAR</span></div>
+<div class="a">Having two different mutations in the same gene, one from each parent. Each mutation alone might be benign or mild, but together they can cause disease. SteppeDNA evaluates each variant independently and cannot detect compound heterozygous effects. We include a disclaimer about this limitation and recommend trio sequencing (testing parents alongside the patient).</div></div>
+
+<div class="qa"><div class="q">What is a protein language model? <span class="who elnar">ELNAR</span></div>
+<div class="a">A neural network trained on millions of protein sequences, learning patterns in the "language" of proteins - which amino acids tend to appear where, what substitutions are tolerated. Just like GPT learns that "the cat sat on the ___" probably ends with a noun, ESM-2 learns that a specific position in BRCA2 probably has a hydrophobic amino acid. When we substitute an unusual amino acid, the model's "surprise" (measured by embeddings) indicates potential pathogenicity.</div></div>
+
+<!-- ========== CATEGORY C: MACHINE LEARNING ========== -->
+<div class="page-break"></div>
+<h3>C. Machine Learning Architecture <span class="section-count">(40 questions)</span></h3>
+
+<div class="qa"><div class="q">What's your model architecture? <span class="who elnar">ELNAR</span></div>
+<div class="a">An ensemble of two models: XGBoost (gradient-boosted decision trees) and a 3-layer MLP (multi-layer perceptron neural network). Their predictions are combined using per-gene learned weights. Then isotonic calibration converts the raw score into a proper probability. The specific weights vary by gene - BRCA1 is 100% MLP, BRCA2 is 60% XGB / 40% MLP, RAD51C is 80% XGB / 20% MLP, etc.</div></div>
+
+<div class="qa"><div class="q">Why XGBoost + MLP and not just one model? <span class="who elnar">ELNAR</span></div>
+<div class="a">They have complementary strengths. XGBoost is excellent at learning patterns in tabular data like BLOSUM62 scores and conservation metrics. The MLP captures non-linear interactions, especially in the ESM-2 embedding space. They also have different failure modes: XGBoost tends to overfit on small gene datasets (like BRCA1 with its extreme class imbalance), while MLP underfits on sparse features. Blending them gets the best of both.</div></div>
+
+<div class="qa"><div class="q">Why not a deep neural network or transformer? <span class="who elnar">ELNAR</span></div>
+<div class="a">We're in a data-limited regime. RAD51D has only 410 training variants. A transformer would massively overfit with that little data. Recent NeurIPS benchmarks (Grinsztajn et al., 2022) confirm that gradient-boosted trees like XGBoost remain state-of-the-art for tabular data under ~50K samples. We use deep learning where it helps (ESM-2 for embeddings, MLP as one ensemble member) but the bottleneck is data, not model capacity.</div></div>
+
+<div class="qa"><div class="q">What is XGBoost? <span class="who elnar">ELNAR</span></div>
+<div class="a">Extreme Gradient Boosting. It builds many small decision trees sequentially, where each new tree corrects the errors of the previous ones. It's extremely effective for tabular data. Our XGBoost uses max_depth=7, learning_rate=0.05, n_estimators=400. It natively handles missing values and provides feature importance scores.</div></div>
+
+<div class="qa"><div class="q">What is an MLP? <span class="who elnar">ELNAR</span></div>
+<div class="a">Multi-Layer Perceptron - a basic neural network with multiple layers of neurons. Ours has 3 hidden layers built with TensorFlow/Keras. It takes the same 120 features as input and outputs a pathogenicity probability. The MLP is better at capturing smooth, non-linear decision boundaries in the feature space.</div></div>
+
+<div class="qa"><div class="q">What are per-gene weights? <span class="who elnar">ELNAR</span></div>
+<div class="a">Instead of using the same 60/40 XGBoost/MLP blend for every gene, we optimize the blend ratio per gene via grid search on the calibration set. BRCA1 is MLP-only (0% XGB, 100% MLP) because XGBoost overfits on BRCA1's extreme class imbalance. RAD51C is 80% XGB because XGBoost's tabular learning works better with RAD51C's sparse features. This is stored in gene_ensemble_weights.json and applied at prediction time.</div></div>
+
+<div class="qa"><div class="q">What is isotonic calibration? <span class="who elnar">ELNAR</span></div>
+<div class="a">A method to convert raw model scores into well-calibrated probabilities. "Calibrated" means when the model says 70% probability, roughly 70% of those variants are actually pathogenic. Isotonic calibration is non-parametric - it makes no assumptions about the score distribution, just fits a monotonically increasing function. We chose it over Platt scaling because Platt assumes a sigmoid relationship, which doesn't hold for our ensemble outputs.</div></div>
+
+<div class="qa"><div class="q">Why per-gene calibration? <span class="who elnar">ELNAR</span></div>
+<div class="a">Because the class distributions are vastly different across genes. BRCA2 is roughly balanced in our training data, but BRCA1 is 96.6% pathogenic. A single calibrator would be biased toward BRCA2's distribution. Per-gene isotonic calibrators adjust for each gene's specific class balance, giving more reliable probabilities for every gene.</div></div>
+
+<div class="qa"><div class="q">What is your data split? <span class="who elnar">ELNAR</span></div>
+<div class="a">60% training, 20% calibration, 20% test. The split is stratified by gene AND label, meaning each split has the same proportion of each gene and each class. The calibration set is used ONLY for fitting isotonic calibrators and optimizing ensemble weights - it's never used for training the models or evaluating performance. The test set is touched only once for final evaluation.</div></div>
+
+<div class="qa"><div class="q">Why 60/20/20 instead of 80/20 or 70/30? <span class="who elnar">ELNAR</span></div>
+<div class="a">We need a separate calibration set. In v5.3, we made the mistake of calibrating on the test set, which is a subtle form of data leakage. The 60/20/20 split gives us enough training data (11,534 variants), enough calibration data for reliable isotonic fitting (3,845 variants), and enough test data for robust evaluation (3,845 variants). The calibration set is the key innovation.</div></div>
+
+<div class="qa"><div class="q">What is gene x label stratification? <span class="who elnar">ELNAR</span></div>
+<div class="a">When we split the data, we ensure each split has proportionally the same amount of each gene-label combination. For example, if the full dataset has 5% RAD51D pathogenic variants, then the train, calibration, and test sets each also have roughly 5% RAD51D pathogenic variants. This prevents one split from accidentally having all the RAD51D benign variants, which would give misleading results.</div></div>
+
+<div class="qa"><div class="q">What are your 120 features? <span class="who elnar">ELNAR</span></div>
+<div class="a">Organized into categories: (1) Positional: relative position in coding DNA and protein. (2) Biochemical: BLOSUM62, hydrophobicity change, volume change, charge change, etc. (3) Conservation: PhyloP score, conservation flags. (4) Functional: MAVE/DMS scores. (5) EVE: evolutionary variant effect scores. (6) Structural: AlphaFold RSA, pLDDT, B-factor, distance to DNA, secondary structure. (7) Domain proximity: distance to nearest domain, functional zone score. (8) ESM-2: 20 PCA components + cosine similarity + L2 shift. (9) Splice: SpliceAI score. (10) Amino acid one-hot encoding: 42 features. (11) Interaction terms: conservation x BLOSUM, MAVE x BLOSUM, etc.</div></div>
+
+<div class="qa"><div class="q">What are the most important features? <span class="who elnar">ELNAR</span></div>
+<div class="a">By SHAP importance: (1) blosum62_score - amino acid substitution severity. (2) phylop_score - evolutionary conservation. (3) dist_nearest_domain - distance to nearest functional domain. (4) relative_aa_pos - position in the protein. (5) volume_diff - amino acid volume change. Most of the predictive power comes from about 15 of the 120 features.</div></div>
+
+<div class="qa"><div class="q">What is SHAP? <span class="who elnar">ELNAR</span></div>
+<div class="a">SHAP stands for SHapley Additive exPlanations. It's a method from game theory that assigns each feature a contribution score for each individual prediction. For example, if the model predicts 0.92 pathogenicity for a variant, SHAP might say: BLOSUM62 contributed +0.15, PhyloP contributed +0.12, RSA contributed +0.08, etc. This makes each prediction transparent and explainable. We show a SHAP waterfall chart for every prediction.</div></div>
+
+<div class="qa"><div class="q">What is AUC-ROC? <span class="who elnar">ELNAR</span></div>
+<div class="a">Area Under the Receiver Operating Characteristic Curve. It measures how well the model ranks pathogenic variants above benign ones. AUC = 1.0 means perfect ranking, AUC = 0.5 means random guessing. Our overall AUC is 0.985, meaning if you pick a random pathogenic and a random benign variant, the model correctly ranks the pathogenic one higher 98.5% of the time.</div></div>
+
+<div class="qa"><div class="q">What is MCC? <span class="who elnar">ELNAR</span></div>
+<div class="a">Matthews Correlation Coefficient. It's a balanced measure of classification quality that accounts for all four outcomes: true positives, true negatives, false positives, false negatives. It ranges from -1 (perfect disagreement) through 0 (random) to +1 (perfect agreement). Unlike accuracy, MCC isn't fooled by class imbalance. Our MCC is 0.881, which is considered very good.</div></div>
+
+<div class="qa"><div class="q">What is PR-AUC? <span class="who elnar">ELNAR</span></div>
+<div class="a">Area Under the Precision-Recall Curve. Our PR-AUC is 0.965. It's especially useful for imbalanced datasets because it focuses on how well the model identifies positives (pathogenic variants). A high PR-AUC means that when the model says "pathogenic," it's usually right (precision), and it finds most of the truly pathogenic variants (recall).</div></div>
+
+<div class="qa"><div class="q">What is cross-validation and why 10-fold? <span class="who elnar">ELNAR</span></div>
+<div class="a">We split the data into 10 equal parts. Train on 9 parts, test on 1 part. Repeat 10 times, each time holding out a different part. This gives 10 AUC scores. If they're consistent, the model is stable. Our 10-fold CV gives 0.9858 +/- 0.0021 - the very tight standard deviation (0.0031) means the model performs consistently regardless of which data is held out. This rules out lucky splits.</div></div>
+
+<div class="qa"><div class="q">What is the DeLong test? <span class="who elnar">ELNAR</span></div>
+<div class="a">A statistical test for comparing two AUC values on the same dataset. It tells you whether the difference is statistically significant or just due to chance. Our DeLong test comparing SteppeDNA vs REVEL gives a p-value of 1.1 x 10^-128 - essentially zero probability that the difference is due to chance. This means our improvement over REVEL is real, not a fluke.</div></div>
+
+<div class="qa"><div class="q">What is conformal prediction? <span class="who elnar">ELNAR</span></div>
+<div class="a">A statistical framework that provides prediction sets with formal coverage guarantees. Instead of just saying "pathogenic with probability 0.85," conformal prediction says "at 90% confidence, the true label is in {Pathogenic}." For uncertain cases, it might say {Pathogenic, Benign}, meaning the model genuinely can't decide. We use split conformal with the calibration set. The mathematical guarantee is that the true label is in the set at least 90% of the time.</div></div>
+
+<div class="qa"><div class="q">What are bootstrap confidence intervals? <span class="who elnar">ELNAR</span></div>
+<div class="a">We train 50 copies of the XGBoost model, each on a different random sample (with replacement) of the training data. For each prediction, all 50 models score it, giving 50 different probabilities. The 5th and 95th percentiles of these 50 scores form a 90% confidence interval. Wide CI = high uncertainty. Narrow CI = the model is confident. This is especially useful for rare gene variants where the model is less sure.</div></div>
+
+<div class="qa"><div class="q">What is feature engineering? <span class="who elnar">ELNAR</span></div>
+<div class="a">The process of creating informative input variables (features) from raw data. For each variant, we compute 120 features: BLOSUM62 score from the amino acid substitution matrix, volume/charge/hydrophobicity differences from biochemistry tables, PhyloP from genomic conservation databases, ESM-2 embeddings from a protein language model, structural features from AlphaFold PDB files, etc. Good feature engineering is often more important than the model architecture itself.</div></div>
+
+<div class="qa"><div class="q">What is PCA? <span class="who elnar">ELNAR</span></div>
+<div class="a">Principal Component Analysis. It reduces high-dimensional data to fewer dimensions while keeping the most important information. ESM-2 produces 320-dimensional embeddings for each variant. We use PCA to reduce these to 20 dimensions, which capture 72.8% of the variance. This prevents overfitting (320 features from one source would dominate) and makes the model more efficient.</div></div>
+
+<div class="qa"><div class="q">What is overfitting? <span class="who elnar">ELNAR</span></div>
+<div class="a">When a model memorizes the training data instead of learning general patterns. An overfit model performs great on training data but poorly on new data. We guard against it with: (1) separate test set never seen during training, (2) 10-fold cross-validation to check consistency, (3) PCA to reduce feature dimensions, (4) gene x label stratification, and (5) XGBoost's built-in regularization (max_depth=7 limits tree complexity).</div></div>
+
+<div class="qa"><div class="q">What is data leakage? <span class="who elnar">ELNAR</span></div>
+<div class="a">When information from the test set or the answer key accidentally gets into the training process. We found two leakage issues and fixed them: (1) AlphaMissense was trained on ClinVar labels (our answer key), so including it as a feature was like showing the model the answers. We removed it. (2) In v5.3, we calibrated on the test set instead of a separate calibration set. We fixed this in v5.4 with the 60/20/20 split.</div></div>
+
+<div class="qa"><div class="q">Tell me about the AlphaMissense leakage. <span class="who elnar">ELNAR</span></div>
+<div class="a">AlphaMissense, published by DeepMind in 2023, was partially trained on ClinVar pathogenicity labels. Our model also trains on ClinVar labels. So using AlphaMissense scores as features creates circular reasoning: the model learns "AlphaMissense says pathogenic = ClinVar says pathogenic." When we ran an ablation (removed AlphaMissense features), AUC actually IMPROVED by 0.02 for BRCA1, PALB2, and RAD51C. That's the smoking gun for leakage - a legitimate feature wouldn't improve performance when removed. We deleted AlphaMissense entirely from v5.4.</div></div>
+
+<div class="qa"><div class="q">What about MAVE leakage? <span class="who elnar">ELNAR</span></div>
+<div class="a">MAVE functional scores could also leak because variants with MAVE data often have ClinVar classifications. However, our ablation showed removing MAVE only changes AUC by -0.002, and MAVE only affects BRCA2 (the only gene with MAVE data). With only 3.5% coverage, the leakage risk is minimal. We kept MAVE but provide a use_mave=False flag for leakage-free evaluation.</div></div>
+
+<div class="qa"><div class="q">What is an ablation study? <span class="who elnar">ELNAR</span></div>
+<div class="a">Removing one component and measuring the effect. Like removing one ingredient from a recipe to see what it contributes. We ran ablation studies on: AlphaMissense (removing it improved performance = leakage confirmed), MAVE (minimal impact = kept), gnomAD proxy-benign variants (dramatic improvement when added), ESM-2 embeddings (helpful for all genes), GNN structural features (hurt small genes). Ablation studies are how we justify every design decision.</div></div>
+
+<div class="qa"><div class="q">What is regularization? <span class="who elnar">ELNAR</span></div>
+<div class="a">Techniques that prevent overfitting by penalizing model complexity. In XGBoost: max_depth=7 limits how deep trees can grow, and the learning_rate=0.05 makes each tree contribute less (requiring more trees to compensate, which averages out noise). In the MLP: dropout layers randomly deactivate neurons during training, forcing the network to not rely on any single pathway.</div></div>
+
+<div class="qa"><div class="q">What hyperparameters did you tune? <span class="who elnar">ELNAR</span></div>
+<div class="a">XGBoost: max_depth=7, learning_rate=0.05, n_estimators=400. These were selected based on calibration set performance. The per-gene ensemble weights were optimized via grid search from 0.0 to 1.0 in 0.05 increments. The isotonic calibrators are non-parametric and fit automatically. We use RANDOM_STATE=42 everywhere for reproducibility.</div></div>
+
+<div class="qa"><div class="q">What is one-hot encoding? <span class="who elnar">ELNAR</span></div>
+<div class="a">Converting categorical variables into binary features. For amino acids: instead of saying "reference = Arginine, alternate = Tryptophan" (which the model can't interpret numerically), we create 20 binary features for the reference AA (AA_ref_A, AA_ref_R, ...) and 20 for the alternate. Only one is 1, the rest are 0. We have 42 amino acid encoding features (20 ref + 20 alt + 2 aggregate).</div></div>
+
+<div class="qa"><div class="q">What is an interaction feature? <span class="who elnar">ELNAR</span></div>
+<div class="a">A feature created by combining two other features. For example, func_zone_x_phylop = functional_zone_score * phylop_score. A mutation in a functional domain (high functional_zone_score) at a conserved position (high PhyloP) is extra concerning - the interaction captures this combined effect that neither feature captures alone. We have 4 interaction features: conservation x BLOSUM, MAVE x BLOSUM, EVE x PhyloP, functional zone x PhyloP.</div></div>
+
+<div class="qa"><div class="q">Why not random forest instead of XGBoost? <span class="who elnar">ELNAR</span></div>
+<div class="a">XGBoost builds trees sequentially, each correcting the previous errors (boosting). Random forest builds trees independently and averages them (bagging). Boosting typically outperforms bagging on tabular data because each tree focuses on the hardest examples. XGBoost also has superior handling of missing values and regularization options.</div></div>
+
+<div class="qa"><div class="q">What is balanced accuracy? <span class="who elnar">ELNAR</span></div>
+<div class="a">The average of sensitivity (true positive rate) and specificity (true negative rate). Unlike regular accuracy, it's not inflated by class imbalance. If you have 90% pathogenic data, a model that always predicts "pathogenic" gets 90% accuracy but 50% balanced accuracy. Our 94.1% balanced accuracy means we're good at identifying both pathogenic AND benign variants.</div></div>
+
+<div class="qa"><div class="q">What is sensitivity vs. specificity? <span class="who elnar">ELNAR</span></div>
+<div class="a">Sensitivity = what fraction of truly pathogenic variants does the model correctly catch? Ours is 95.7%. Specificity = what fraction of truly benign variants does the model correctly clear? Ours is 92.6%. In clinical genetics, high sensitivity is critical because missing a pathogenic variant (false negative) can mean a patient doesn't get life-saving treatment. We have 77 false negatives and 152 false positives in our test set.</div></div>
+
+<div class="qa"><div class="q">What would you do to improve PALB2? <span class="who elnar">ELNAR</span></div>
+<div class="a">Three strategies: (1) More benign training data - mine gnomAD more aggressively for PALB2, maybe lower the AC threshold from 2 to 1. (2) PALB2-specific DMS functional scores - these don't exist yet but would add genuine biological signal. (3) Larger ESM-2 model (650M instead of 8M) - more capacity to capture subtle PALB2-specific patterns. (4) Transfer learning from BRCA2, which is functionally related. But honestly, PALB2 has extreme class imbalance (93% pathogenic) and this is a field-wide problem.</div></div>
+
+<div class="qa"><div class="q">Why 120 features and not more/fewer? <span class="who elnar">ELNAR</span></div>
+<div class="a">We started with 103 in v5.3 and added 17 new features in v5.4 (EVE scores, domain features, interaction terms) while removing 3 (AlphaMissense). We tried going bigger (178 features with GPU features) but it hurt small gene performance - more features need more data to learn from. Most predictive power comes from ~15 features. We keep the full 120 because the ensemble can handle the extra features without overfitting, and they provide marginal improvements.</div></div>
+
+<div class="qa"><div class="q">What is the threshold and how was it chosen? <span class="who elnar">ELNAR</span></div>
+<div class="a">The threshold is 0.2998 - above this probability, we classify as pathogenic; below, benign. It was chosen to maximize F1 score (the harmonic mean of precision and recall) on the test set. We could tune it for higher sensitivity (lower threshold, catch more pathogenic) or higher specificity (higher threshold, fewer false alarms). The threshold is stored in universal_threshold_ensemble.pkl.</div></div>
+
+<div class="qa"><div class="q">What is probability clipping? <span class="who elnar">ELNAR</span></div>
+<div class="a">We clip output probabilities to [1%, 99%]. No prediction ever says "100% pathogenic" or "0% pathogenic." This is because no model should claim absolute certainty given limitations in training data quality and feature coverage. It's a safety measure that reflects honest uncertainty.</div></div>
+
+<!-- ========== CATEGORY D: FEATURES & DATA ========== -->
+<div class="page-break"></div>
+<h3>D. Features &amp; Data Sources <span class="section-count">(25 questions)</span></h3>
+
+<div class="qa"><div class="q">Where does your training data come from? <span class="who elnar">ELNAR</span></div>
+<div class="a">Two sources: (1) ClinVar - 18,738 missense variants classified as P/LP (Pathogenic/Likely Pathogenic) or B/LB (Benign/Likely Benign), February 2026 snapshot. (2) gnomAD v4 proxy-benign - 485 variants with allele count >= 2 in ~1.6 million alleles, used as additional benign training data. Total: 19,223 variants across 5 genes.</div></div>
+
+<div class="qa"><div class="q">Why add gnomAD proxy-benign variants? <span class="who elnar">ELNAR</span></div>
+<div class="a">ClinVar has extreme class imbalance for non-BRCA2 genes - BRCA1 is 96.6% pathogenic. The model couldn't learn what "benign" looks like with so few benign examples. gnomAD has population-common variants that are almost certainly benign (for high-penetrance cancer genes, a variant common enough to appear 2+ times in 1.6M alleles can't be causing cancer). Adding 485 gnomAD variants improved non-BRCA2 AUC dramatically: BRCA1 went from 0.56 to 0.706, RAD51C from 0.51 to 0.743.</div></div>
+
+<div class="qa"><div class="q">How do you handle missing data? <span class="who elnar">ELNAR</span></div>
+<div class="a">XGBoost natively handles missing values (it learns which direction to go when a feature is missing). For the MLP, we impute with zeros for most features. For EVE scores (not available for BRCA2), we set them to 0. For MAVE (only available for BRCA1), we set mave_score to 0 and has_mave to 0 so the model knows it's missing. AlphaFold structural features default to gene-average values if a position isn't in the structure.</div></div>
+
+<div class="qa"><div class="q">What is hydrophobicity and why is it a feature? <span class="who elnar">ELNAR</span></div>
+<div class="a">How much an amino acid repels water. Hydrophobic amino acids (like valine, leucine) tend to be buried inside proteins, away from water. Hydrophilic ones (like aspartate, lysine) are on the surface. Replacing a hydrophobic amino acid with a hydrophilic one at a buried position can destabilize the protein structure. hydro_diff measures this change.</div></div>
+
+<div class="qa"><div class="q">What is volume_diff? <span class="who elnar">ELNAR</span></div>
+<div class="a">The difference in physical size between the original and replacement amino acid. Swapping a large amino acid (like tryptophan) for a small one (like glycine) - or vice versa - in a tightly packed protein core creates steric clashes or voids that can destabilize the structure. Large volume differences are associated with higher pathogenicity.</div></div>
+
+<div class="qa"><div class="q">What is charge_change? <span class="who elnar">ELNAR</span></div>
+<div class="a">Whether the mutation changes the electrical charge of the amino acid. Amino acids can be positive (arginine, lysine), negative (aspartate, glutamate), or neutral. Changing charge disrupts electrostatic interactions, salt bridges, and protein-protein interfaces. A charge change is a stronger pathogenicity signal than a neutral-to-neutral substitution.</div></div>
+
+<div class="qa"><div class="q">How do ESM-2 embeddings work? <span class="who elnar">ELNAR</span></div>
+<div class="a">We take a 101-amino-acid window around the mutation site (+/- 50 residues). We run this through ESM-2 twice: once with the original amino acid, once with the mutant. The model produces 320-dimensional embeddings for each version. We compute: (1) cosine similarity between them (how different the mutation looks to the model), (2) L2 distance (magnitude of change), (3) 20 PCA components of the difference vector. Total: 22 ESM-2 features per variant.</div></div>
+
+<div class="qa"><div class="q">Why the 8M-parameter ESM-2 and not the 650M? <span class="who elnar">ELNAR</span></div>
+<div class="a">Compute constraints. The 650M model needs a GPU to run. We tested it (in a GPU ablation study): it improved overall AUC to 0.984 but actually DEGRADED PALB2 from 0.641 to 0.521 and hurt RAD51C/D too. With small gene datasets, the richer embeddings led to overfitting. The 8M model is a better fit for our data size. Future work: revisit 650M when we have more non-BRCA2 training data.</div></div>
+
+<div class="qa"><div class="q">What structural features do you use from AlphaFold? <span class="who elnar">ELNAR</span></div>
+<div class="a">10 features per variant: (1) RSA - how exposed/buried. (2) is_buried - binary flag for deeply buried residues. (3) pLDDT - AlphaFold confidence. (4) B-factor - predicted flexibility. (5) dist_dna - distance to nearest DNA-binding residue. (6) secondary structure flags: ss_helix, ss_sheet, ss_coil. (7) Contact density - how many other residues are nearby. We parse PDB files from AlphaFold DB for all 5 genes.</div></div>
+
+<div class="qa"><div class="q">What are the domain proximity features? <span class="who elnar">ELNAR</span></div>
+<div class="a">6 features that capture how close a mutation is to a known functional domain: dist_nearest_domain (normalized 0-1 distance), n_domains_hit (how many domains the position falls in), in_multi_domain (binary: in 2+ domains), functional_zone_score (weighted inverse distance to all domains), func_zone_x_blosum and func_zone_x_phylop (interaction terms). Domain databases are gene-specific - each gene has its own known functional domains.</div></div>
+
+<div class="qa"><div class="q">What is the gnomAD allele frequency pipeline? <span class="who elnar">ELNAR</span></div>
+<div class="a">In v5.3, we had a broken Ensembl pipeline that returned all zeros for population-specific frequencies. In v5.4, we built a new pipeline using myvariant.info API that fetches real gnomAD v4 population-stratified allele frequencies (AFR, AMR, EAS, NFE, SAS). 3,508 of our 19,223 variants now have real AF > 0. These are used as features and for ACMG BA1/BS1/PM2 thresholds.</div></div>
+
+<div class="qa"><div class="q">What are interaction features and why use them? <span class="who elnar">ELNAR</span></div>
+<div class="a">Features created by multiplying two other features: conserv_x_blosum = phylop_score * blosum62_score, mave_x_blosum, eve_x_phylop, func_zone_x_phylop, func_zone_x_blosum. The idea is that the combination is more informative than either alone. A bad BLOSUM score at a conserved position (high PhyloP) is much more concerning than a bad BLOSUM score at a non-conserved position. Tree models can learn this implicitly, but explicit interaction features help.</div></div>
+
+<div class="qa"><div class="q">How many features were removed and why? <span class="who elnar">ELNAR</span></div>
+<div class="a">We removed gene-identifying features (cDNA position, AA position raw values, mutation type one-hots, is_transition, is_transversion) because they let the model shortcut "BRCA1 = pathogenic" based on position alone. We removed AlphaMissense (3 features) due to label leakage. Total removed: ~20 features. All removals were driven by validation findings, not arbitrary.</div></div>
+
+<div class="qa"><div class="q">What is the feature concentration problem? <span class="who elnar">ELNAR</span></div>
+<div class="a">Most predictive power comes from about 15 of our 120 features. The remaining 105 contribute marginal signal. This is normal for tabular ML - a few strong features dominate. But it means adding more features has diminishing returns. The GPU ablation study confirmed this: going from 103 to 178 features barely helped overall and hurt small genes.</div></div>
+
+<div class="qa"><div class="q">How do you compute features at inference time? <span class="who elnar">ELNAR</span></div>
+<div class="a">The backend feature engine (features.py, ~960 lines) computes all 120 features in real-time when a variant comes in. It queries cached databases: AlphaFold structural PKLs per gene, gnomAD frequency PKLs, EVE score PKL, MAVE score PKL, ESM-2 embedding PKLs. PhyloP and BLOSUM62 are computed from lookup tables. Domain proximity is computed from hard-coded domain definitions per gene. Everything is pre-loaded into memory at startup for speed.</div></div>
+
+<div class="qa"><div class="q">What data sources feed into each prediction? <span class="who elnar">ELNAR</span></div>
+<div class="a">Seven sources: (1) BLOSUM62 substitution matrix. (2) Amino acid physicochemical properties (volume, charge, hydrophobicity tables). (3) PhyloP conservation from UCSC. (4) ESM-2 protein language model embeddings. (5) AlphaFold protein structure (PDB files). (6) EVE evolutionary coupling model. (7) gnomAD population allele frequencies. Plus SpliceAI for splice predictions and MAVE functional scores where available.</div></div>
+
+<div class="qa"><div class="q">What is your training dataset's class balance? <span class="who elnar">ELNAR</span></div>
+<div class="a">Overall roughly 47% pathogenic, 53% benign after gnomAD augmentation. But per-gene it varies wildly: BRCA1 ~96.6% pathogenic, BRCA2 ~40% pathogenic, PALB2 ~93% pathogenic, RAD51C ~65% pathogenic, RAD51D ~50% pathogenic. The extreme imbalance for BRCA1 and PALB2 is why those genes underperform.</div></div>
+
+<div class="qa"><div class="q">Did you try oversampling or SMOTE? <span class="who elnar">ELNAR</span></div>
+<div class="a">We tested gene x class sample weighting but it degraded overall AUC from 0.98 to 0.94 without improving non-BRCA2 genes. SMOTE (synthetic oversampling) creates artificial samples that don't reflect real biological variants. For genomics data, synthetic variants in feature space don't correspond to real mutations and can teach the model incorrect patterns. We addressed imbalance through gnomAD proxy-benign augmentation instead - real data, not synthetic.</div></div>
+
+<div class="qa"><div class="q">How do you handle the February 2026 ClinVar snapshot? <span class="who elnar">ELNAR</span></div>
+<div class="a">ClinVar is constantly updated as new evidence comes in. Our training labels represent a single snapshot. Some currently-VUS variants may be classified later (we can't predict them). Some current classifications may change. This temporal bias is a known limitation. Our temporal validation showed BRCA2 generalizes well across time (AUC 0.983 on post-2024 data) but non-BRCA2 genes don't (0.51-0.61 AUC), because most non-BRCA2 classifications are recent.</div></div>
+
+<div class="qa"><div class="q">What is the gold-standard benchmark? <span class="who elnar">ELNAR</span></div>
+<div class="a">2,234 variants from two independent sources with zero training overlap: (1) ProteinGym DMS - 1,837 BRCA1 variants with lab-measured functional scores from Findlay et al. 2018. (2) ClinVar Expert Panel - 397 variants classified by ClinGen/ENIGMA expert reviewers. On these, our AUC is 0.719 (DMS BRCA1) and 0.793 (Expert Panel overall), 0.918 (Expert Panel BRCA2 only). These are the most honest performance numbers because there's zero training overlap.</div></div>
+
+<div class="qa"><div class="q">What is temporal validation? <span class="who elnar">ELNAR</span></div>
+<div class="a">We split data by date: train on variants classified before 2024, test on variants classified 2024 onwards. This simulates real-world use - can the model predict newly classified variants? Result: BRCA2 is excellent (0.983 AUC), but BRCA1 (0.527), PALB2 (0.513), RAD51C (0.561), RAD51D (0.608) are near-random. This is because most non-BRCA2 ClinVar classifications happened after 2024, leaving too few pre-2024 training examples. Critical disclosure: non-BRCA2 predictions for newly discovered variants should be interpreted with caution.</div></div>
+
+<!-- ========== CATEGORY E: SYSTEM & ENGINEERING ========== -->
+<div class="page-break"></div>
+<h3>E. System Architecture &amp; Engineering <span class="section-count">(30 questions)</span></h3>
+
+<div class="qa"><div class="q">What's the tech stack? <span class="who elnar">ELNAR</span></div>
+<div class="a">Backend: Python 3.13, FastAPI, XGBoost, TensorFlow/Keras, scikit-learn, BioPython. Frontend: vanilla HTML/CSS/JavaScript (no framework). Deployment: Render. Testing: pytest + Hypothesis (property-based). Protein embeddings: ESM-2 from Meta AI. Structure: AlphaFold. APIs: ClinVar NCBI E-utilities, gnomAD via myvariant.info.</div></div>
+
+<div class="qa"><div class="q">Why FastAPI? <span class="who elnar">ELNAR</span></div>
+<div class="a">It's fast (async by default), has automatic OpenAPI documentation, type validation with Pydantic, and great Python ecosystem integration. Our backend is about 8 modules: main.py (app + predict endpoint), features.py (feature engine), models.py (model loading), acmg_rules.py (ACMG engine), explanations.py (SHAP + bootstrap CI), vcf.py (VCF parsing), external_api.py (ClinVar/gnomAD lookups), middleware.py (security).</div></div>
+
+<div class="qa"><div class="q">Why vanilla JavaScript instead of React? <span class="who elnar">ELNAR</span></div>
+<div class="a">The frontend is a single-page clinical tool, not a complex SPA with state management. Vanilla JS keeps the total bundle under 50KB, loads instantly, and has zero build step. We have dark mode, trilingual support (English/Kazakh/Russian), SHAP visualization, PDF export, VCF drag-and-drop, and service worker offline caching - all without a framework. It's about choosing the right tool for the job and keeping things simple.</div></div>
+
+<div class="qa"><div class="q">How does the prediction flow work? <span class="who elnar">ELNAR</span></div>
+<div class="a">User types a variant (e.g., "BRCA2 c.8167G>C"). Frontend sends it to /predict endpoint. Backend: (1) Parses the notation to get gene, position, amino acids. (2) Feature engine computes 120 features from cached databases. (3) XGBoost scores it, MLP scores it. (4) Per-gene weights blend the scores. (5) Per-gene isotonic calibrator converts to probability. (6) ACMG rule engine evaluates evidence codes. (7) SHAP computes feature attributions. (8) Bootstrap CIs computed. (9) Conformal prediction set generated. (10) Everything returned as JSON. Frontend renders it with charts and tables.</div></div>
+
+<div class="qa"><div class="q">What security measures do you have? <span class="who elnar">ELNAR</span></div>
+<div class="a">Rate limiting per IP address, API key authentication, Content Security Policy (CSP) headers, XSS input sanitization, CORS whitelisting (only steppedna.com), no inline scripts, all user inputs validated and escaped, security headers via middleware. We follow OWASP top-10 guidelines. The frontend has no eval(), no innerHTML with user data, and all DOM manipulation uses textContent.</div></div>
+
+<div class="qa"><div class="q">What tests do you have? <span class="who elnar">ELNAR</span></div>
+<div class="a">200 tests across 3 files: (1) test_acmg_combinatorial.py - 46 tests for ACMG rule interactions, boundary conditions, PVS1 regression testing. (2) test_clinical_correctness.py - ~20 tests verifying known pathogenic/benign variants return correct classifications per gene. (3) test_property_based.py - 12 tests using Hypothesis framework for random-input invariant testing. Plus conftest.py with rate limit override (RATE_LIMIT=9999) for test isolation.</div></div>
+
+<div class="qa"><div class="q">What is property-based testing? <span class="who elnar">ELNAR</span></div>
+<div class="a">Instead of testing specific inputs, we test PROPERTIES that should always hold. For example: "For any valid missense variant in any supported gene, the output probability should be between 0.005 and 0.995." The Hypothesis library generates hundreds of random inputs and checks the property. This catches edge cases that hand-written tests miss.</div></div>
+
+<div class="qa"><div class="q">How do you handle VCF uploads? <span class="who elnar">ELNAR</span></div>
+<div class="a">VCF (Variant Call Format) is the standard file format for genetic variants. Our vcf.py module parses VCF files, extracts missense variants for our 5 genes, and runs batch predictions. The frontend supports drag-and-drop upload. Results are shown in a table and can be exported. All VCF parsing errors are caught and returned as JSON with proper HTTP status codes.</div></div>
+
+<div class="qa"><div class="q">How does the PDF export work? <span class="who elnar">ELNAR</span></div>
+<div class="a">The frontend generates a clinical-style PDF report using the browser's print functionality with custom CSS. It includes: variant details, pathogenicity probability with CI, classification, ACMG evidence codes, SHAP waterfall chart, ClinVar cross-reference, data scarcity warnings, and an RUO disclaimer. A clinician can print this and attach it to a patient's file.</div></div>
+
+<div class="qa"><div class="q">What is the service worker for? <span class="who elnar">ELNAR</span></div>
+<div class="a">The service worker (sw.js) caches frontend assets for offline access and faster loading. When the user visits steppedna.com, the SW caches HTML, CSS, JS, and fonts. On subsequent visits, it serves from cache first. It also detects when a new version is available and shows a toast notification. The cache version is bumped with each release (currently v5.4.1).</div></div>
+
+<div class="qa"><div class="q">How is the backend deployed? <span class="who elnar">ELNAR</span></div>
+<div class="a">On Render, a cloud platform. The backend starts up, loads all model artifacts (XGBoost JSON, MLP H5, scaler PKL, calibrators, feature name PKLs, structural feature PKLs, gnomAD frequency PKLs, EVE scores, MAVE scores) into memory. Then it serves predictions via HTTPS. We have CORS configured for steppedna.com and allowed origins.</div></div>
+
+<div class="qa"><div class="q">How do you handle the cold start problem? <span class="who elnar">ELNAR</span></div>
+<div class="a">Render spins down free-tier services after inactivity. First request triggers a cold start (~30 seconds). The frontend shows "Server is starting up - predictions will be available shortly" during this time. We mitigate by: pre-loading all data at startup in the lifespan function, and the frontend polls the backend health endpoint until it's ready. For the demo, we load the site BEFORE judges arrive.</div></div>
+
+<div class="qa"><div class="q">What's the trilingual support? <span class="who elnar">ELNAR</span></div>
+<div class="a">The UI supports English, Kazakh, and Russian. All user-facing text is stored in lang.js with translations. Users can switch languages via a selector. The medical terminology in Kazakh translations hasn't been reviewed by a domain expert - that's a known limitation. But it makes the tool accessible to Kazakh and Russian-speaking researchers and genetic counselors.</div></div>
+
+<div class="qa"><div class="q">What is ClinVar cross-referencing? <span class="who elnar">ELNAR</span></div>
+<div class="a">When a prediction is made, we also query ClinVar via NCBI E-utilities API to see if the variant already has an existing classification. This lets users compare our ML prediction against the established clinical classification. We also query gnomAD for population frequency data. Results are cached for performance.</div></div>
+
+<div class="qa"><div class="q">What is the ACMG rule engine? <span class="who elnar">ELNAR</span></div>
+<div class="a">A rule-based system (acmg_rules.py) that evaluates 13 ACMG evidence codes for each variant independently of the ML model. It uses: gene-specific BA1/BS1 allele frequency thresholds (e.g., BRCA1 BA1 = 0.1%, RAD51D BA1 = 0.5%), structural distance for PM1 (5 angstrom threshold), model probability for PP3/BP4 (PP3 if P > 0.70, BP4 if P < 0.20), ClinVar pathogenic positions for PS1/PM5, and variant type for PVS1. This provides clinical-standard evidence codes alongside the ML score.</div></div>
+
+<div class="qa"><div class="q">What external APIs do you call? <span class="who elnar">ELNAR</span></div>
+<div class="a">Two at inference time: (1) NCBI E-utilities for ClinVar variant lookup (existing classifications). (2) myvariant.info for gnomAD population frequencies. Both are cached to avoid repeated calls. At training time: myvariant.info for dbNSFP REVEL/BayesDel/CADD scores, gnomAD allele frequencies, and EVE scores.</div></div>
+
+<div class="qa"><div class="q">What is the active learning priority ranker? <span class="who elnar">ELNAR</span></div>
+<div class="a">A system that identifies which VUS variants would be most valuable to experimentally characterize next. It combines: (1) Query-by-Committee score - how much XGBoost and MLP disagree (high disagreement = high uncertainty). (2) Gene scarcity weight - prioritizes rare genes. (3) Positional novelty - prioritizes under-represented protein regions. The top 50 variants per gene are exposed via API for researchers to prioritize wet-lab experiments.</div></div>
+
+<div class="qa"><div class="q">What is contrastive explanation? <span class="who elnar">ELNAR</span></div>
+<div class="a">For each prediction, we find the nearest training variant with the OPPOSITE classification. So if the model predicts pathogenic, we find the most similar benign variant. Then we show the top 5 feature differences. This answers: "What would need to change for this variant to be benign?" It complements SHAP by giving a concrete reference point rather than abstract feature contributions. We use KD-trees for efficient nearest-neighbor lookup.</div></div>
+
+<div class="qa"><div class="q">What databases are loaded at startup? <span class="who elnar">ELNAR</span></div>
+<div class="a">Model files: XGBoost JSON, MLP H5, scaler PKL, calibrators (universal + per-gene), feature names PKL, threshold PKL. Data files: per-gene structural features PKL (5 files), per-gene gnomAD frequencies PKL (5 files), EVE scores PKL, MAVE scores PKL, Kazakh founder mutations JSON. Bootstrap models: 50 XGBoost JSON files. Total in-memory data: roughly 50-100 MB.</div></div>
+
+<div class="qa"><div class="q">What is the data scarcity warning? <span class="who elnar">ELNAR</span></div>
+<div class="a">For genes with limited training data (RAD51C, RAD51D, PALB2), we display a warning alongside the prediction: "This gene has limited training data. Predictions should be interpreted with additional caution." The warning is triggered based on gene-specific reliability tiers: High (BRCA2), Moderate (RAD51C/D, BRCA1), Low (PALB2). This ensures users don't overinterpret predictions for data-scarce genes.</div></div>
+
+<div class="qa"><div class="q">Is the code open source? <span class="who elnar">ELNAR</span></div>
+<div class="a">Yes, the code is MIT-licensed (fully open). Model artifacts and predictions are Research Use Only (RUO). This means anyone can use, modify, and distribute the code, but the trained models should only be used for research, not clinical diagnosis.</div></div>
+
+<!-- ========== CATEGORY F: VALIDATION ========== -->
+<div class="page-break"></div>
+<h3>F. Validation &amp; Rigor <span class="section-count">(25 questions)</span></h3>
+
+<div class="qa"><div class="q">How do you know the model isn't just memorizing ClinVar? <span class="who elnar">ELNAR</span></div>
+<div class="a">Five safeguards: (1) Strict held-out test set (20%) never seen during training or calibration. (2) 10-fold cross-validation: 0.9858 AUC with tight SD means consistent across splits, not memorized. (3) External benchmarks: AUC 0.719 on ProteinGym DMS, 0.793 on ClinVar Expert Panel - zero training overlap. (4) We caught and removed AlphaMissense precisely because it WAS a memorization pathway. (5) Temporal validation showing generalization over time for BRCA2.</div></div>
+
+<div class="qa"><div class="q">What's the gap between internal and external AUC? <span class="who elnar">ELNAR</span></div>
+<div class="a">Internal test set: 0.985 overall. External benchmarks: 0.719-0.793. This gap is expected and we're transparent about it. The internal AUC benefits from identical feature distributions and label sources. External benchmarks test true generalization. BRCA2-specific: internal 0.994 vs external Expert Panel 0.918 - still very good. The gap is larger for data-scarce genes.</div></div>
+
+<div class="qa"><div class="q">Is the SOTA comparison fair? <span class="who elnar">ELNAR</span></div>
+<div class="a">Partially. We have a methodological advantage: SteppeDNA was trained on ClinVar data from these 5 genes, while REVEL/BayesDel/CADD are generic pan-genome tools not optimized for this distribution. Their low MCC scores (0.027 for REVEL) partly reflect distribution mismatch, not poor quality - REVEL typically achieves AUC > 0.90 in published benchmarks. We disclose this caveat explicitly. The gold-standard benchmark provides a fairer comparison.</div></div>
+
+<div class="qa"><div class="q">Why are REVEL/CADD MCC scores so low on your test set? <span class="who elnar">ELNAR</span></div>
+<div class="a">Because our test set has a different class distribution than what REVEL and CADD were designed for. Their default thresholds are calibrated for a pan-genome variant mix. Our test set is specifically HR repair genes with their unique class ratios. The low MCC means their default decision boundaries don't align with our test set, not that they're bad tools. Their AUC (which is threshold-independent) is a fairer comparison: REVEL 0.725, CADD 0.539.</div></div>
+
+<div class="qa"><div class="q">What does the temporal validation tell us? <span class="who elnar">ELNAR</span></div>
+<div class="a">It's our most sobering validation. BRCA2 generalizes excellently (0.983 AUC on post-2024 data). But BRCA1 (0.527), PALB2 (0.513), RAD51C (0.561), RAD51D (0.608) are near-random. This means our model can't reliably predict newly discovered variants for data-scarce genes. The root cause: most non-BRCA2 ClinVar classifications happened after 2024, so the temporal train set had too few examples. This is a data availability problem that will improve as more variants are classified.</div></div>
+
+<div class="qa"><div class="q">What's the population equity analysis? <span class="who elnar">ELNAR</span></div>
+<div class="a">We analyzed how ACMG PM2 flags (variant absent from population databases) vary by ancestry. East Asian patients get 97.6% PM2 rate vs 91.2% for European patients - a 6.4 percentage point gap. We don't just document this problem — we actively solve it with population-calibrated ACMG rules: (1) PM2 evidence is automatically withheld for Kazakh/Central Asian patients because gnomAD has ~0% Central Asian representation — "absent from controls" means "never checked." (2) BA1/BS1 benign thresholds are relaxed 2× to prevent premature benign calls from sparse data. (3) 7 known Kazakh founder mutations are integrated as PS4 strong pathogenic evidence. (4) Confidence intervals are widened ×1.5 for underrepresented populations. Additionally, 90.8% of our 120 prediction features are frequency-independent (protein structure, conservation, language models), reducing reliance on biased population databases.</div></div>
+
+<div class="qa"><div class="q">How do you know the calibration works? <span class="who elnar">ELNAR</span></div>
+<div class="a">We have calibration reliability diagrams (in visual_proofs/) that plot predicted probability vs actual observed frequency. For a well-calibrated model, these should fall on the diagonal. Isotonic calibration was fitted on the held-out calibration set (20%), not the test set. Caveat: BRCA1's calibration may be unreliable in the benign range because the calibration subset is 96.6% pathogenic - very few benign calibration points.</div></div>
+
+<div class="qa"><div class="q">What is the ACMG agreement rate? <span class="who elnar">ELNAR</span></div>
+<div class="a">Our ACMG rule engine resolves 20.6% of variants (792 out of 3,845) - the rest are VUS (79.4% unresolved). Of the resolved ones, 71.2% agree with ClinVar labels. Cohen's kappa is 0.154 (slight agreement). Per gene: BRCA1 95%, BRCA2 53.4%, PALB2 63.6%, RAD51C 37.5%, RAD51D 66.7%. The low BRCA2 agreement (53.4%) is because BRCA2 has many classified variants in non-standard ACMG categories that our 15 rules don't fully capture.</div></div>
+
+<div class="qa"><div class="q">What visual proofs do you have? <span class="who elnar">ELNAR</span></div>
+<div class="a">9 types: (1) Per-gene ROC curves. (2) Per-gene PR curves. (3) Calibration reliability diagram. (4) SHAP global feature importances. (5) Per-gene performance bar charts. (6) Confusion matrices (overall + per-gene). (7) SOTA comparison charts. (8) Benchmark DMS correlation. (9) Cross-validation results. These are in the visual_proofs/ directory and embedded in the poster.</div></div>
+
+<div class="qa"><div class="q">What is the Spearman correlation with DMS data? <span class="who elnar">ELNAR</span></div>
+<div class="a">-0.319 (p = 1.45e-10) on 386 BRCA1 variants. The negative correlation is correct because DMS measures fitness (higher = more functional = benign) while SteppeDNA predicts pathogenicity (higher = more pathogenic). So they should be anti-correlated. The magnitude (-0.319) is moderate - reasonable given DMS noise and the different measurement approaches.</div></div>
+
+<div class="qa"><div class="q">What is Cohen's kappa? <span class="who elnar">ELNAR</span></div>
+<div class="a">A statistic measuring agreement between two classifiers beyond what's expected by chance. Kappa = 1 means perfect agreement, 0 means no better than random. Our ACMG engine's kappa of 0.154 against ClinVar labels is low because: (1) we only implement 15 of 28+ codes, (2) 79.4% of variants are unresolved VUS, and (3) the resolved variants skew toward easy cases. The ACMG engine is supplementary to the ML model, not a replacement.</div></div>
+
+<div class="qa"><div class="q">What would clinical validation look like? <span class="who elnar">ELNAR</span></div>
+<div class="a">It would require: (1) An independent cohort of variants not in ClinVar, ideally prospective (new variants before they're classified). (2) Review by at least 2-3 clinical geneticists who examine predictions and explanations. (3) Comparison against established clinical workflows. (4) Assessment on diverse populations, especially Central Asian. (5) Pre-registration of the evaluation protocol. This is a multi-year process for any clinical tool.</div></div>
+
+<div class="qa"><div class="q">How reproducible is your work? <span class="who elnar">ELNAR</span></div>
+<div class="a">Fully reproducible. RANDOM_STATE=42 everywhere for deterministic splits and training. All scripts are documented in the Validation Report with exact commands. Data files are versioned. Feature engineering code is shared between training and inference. All 9 visual proofs can be regenerated from scratch with generate_figures.py.</div></div>
+
+<!-- ========== CATEGORY G: LIMITATIONS ========== -->
+<div class="page-break"></div>
+<h3>G. Limitations &amp; Honesty <span class="section-count">(30 questions)</span></h3>
+
+<div class="qa"><div class="q">What are the biggest limitations? <span class="who both">BOTH</span></div>
+<div class="a">In order of severity: (1) Non-BRCA2 temporal generalization is near-random (0.51-0.61). (2) PALB2 underperforms REVEL. (3) Population bias - predominantly European training data. (4) No clinical expert review. (5) No prospective validation. (6) Overall AUC (0.985) is misleadingly high due to BRCA2 dominance. (7) ACMG codes are computational approximations, not expert-reviewed. (8) Only 5 genes covered. (9) Compound heterozygosity not modeled.</div></div>
+
+<div class="qa"><div class="q">Why does PALB2 underperform? <span class="who elnar">ELNAR</span></div>
+<div class="a">Three reasons: (1) Extreme class imbalance - 93% of PALB2 ClinVar variants are pathogenic, so the model sees very few benign examples. (2) Feature effect sizes are smaller for PALB2 (Cohen's d < 1.0), meaning our features are less discriminative. (3) REVEL was trained on a much larger pan-genome dataset that includes more PALB2 diversity. Our per-gene weights try to compensate (PALB2 uses MLP-only) but more training data is the real solution.</div></div>
+
+<div class="qa"><div class="q">Is the 0.985 overall AUC misleading? <span class="who elnar">ELNAR</span></div>
+<div class="a">Yes, if taken at face value. It's weighted by test set composition, and BRCA2 (AUC 0.994) is 52% of the data. If BRCA2 were only 20% of the data, the overall AUC would be much lower. That's why we always report macro AUC (0.791) alongside it - which weights each gene equally. We also show the per-gene breakdown in our table. We consider transparency about this a strength, not a weakness.</div></div>
+
+<div class="qa"><div class="q">What about population bias? <span class="who inkar">INKAR</span></div>
+<div class="a">ClinVar submissions are predominantly from US and European labs, meaning our training data over-represents European-ancestry variants. gnomAD has ~0% Central Asian coverage. However, we actively mitigate this: 90.8% of our features are frequency-independent (protein structure, conservation, language models). For the frequency-dependent portion, we implement population-calibrated ACMG rules — PM2 evidence withheld for Kazakh patients, BA1/BS1 thresholds relaxed 2×, 7 Kazakh founder mutations integrated as PS4 evidence, and confidence intervals widened ×1.5. Users can select "Kazakh / Central Asian" in the population dropdown to activate all adjustments.</div></div>
+
+<div class="qa"><div class="q">Can this be used clinically? <span class="who inkar">INKAR</span></div>
+<div class="a">No. It's labeled Research Use Only. Clinical use would require: regulatory approval (FDA/CE-IVD), external validation on independent cohorts, clinical geneticist review, prospective testing, and assessment across diverse populations. REVEL took years from publication to clinical adoption. We're at the research tool stage - it can help researchers prioritize VUS for study and give genetic counselors an additional data point, but it cannot be the sole basis for clinical decisions.</div></div>
+
+<div class="qa"><div class="q">What if your model gives a wrong answer? <span class="who inkar">INKAR</span></div>
+<div class="a">That's why we provide uncertainty quantification. Every prediction comes with: (1) A confidence interval showing the range of uncertainty. (2) A conformal prediction set that may say {Pathogenic, Benign} for uncertain cases. (3) Data scarcity warnings for under-represented genes. (4) Gene reliability tiers. (5) ACMG codes as independent evidence. A wrong ML prediction is mitigated by all these safeguards and the RUO label ensuring no one makes clinical decisions based solely on our tool.</div></div>
+
+<div class="qa"><div class="q">What about ClinVar label noise? <span class="who elnar">ELNAR</span></div>
+<div class="a">ClinVar is not perfect. Some variants classified as pathogenic may be reclassified later, and vice versa. ClinVar has known ascertainment biases - labs tend to submit variants they've classified (selection bias), and classification standards have changed over time. We mitigate this by: using only P/LP and B/LB (not VUS), excluding 1-star submissions where possible, and acknowledging temporal bias as a limitation.</div></div>
+
+<div class="qa"><div class="q">What can't the model handle? <span class="who both">BOTH</span></div>
+<div class="a">It can't handle: (1) Non-missense variants (handled by rule-based PVS1 instead). (2) Genes outside the 5 HR genes. (3) Somatic variants. (4) Compound heterozygosity. (5) Copy number variations. (6) Large insertions/deletions. (7) Regulatory region variants. (8) Epistatic interactions between genes. (9) Population-specific penetrance differences. (10) Environmental interactions with genetic risk.</div></div>
+
+<div class="qa"><div class="q">What's the worst-case scenario for misuse? <span class="who inkar">INKAR</span></div>
+<div class="a">Someone uses our prediction as the sole basis for a clinical decision - like recommending preventive mastectomy based on a high SteppeDNA score alone. This is why the RUO label is critical. Every output includes disclaimers. The tool should always be used alongside clinical judgment, not replacing it. A false negative (missing a pathogenic variant) is especially dangerous because the patient wouldn't get recommended surveillance.</div></div>
+
+<div class="qa"><div class="q">Why only 5 genes? <span class="who inkar">INKAR</span></div>
+<div class="a">These 5 share the HR repair pathway and have the most training data in ClinVar for HR genes. Other cancer genes exist (TP53, ATM, CHEK2, etc.) but either have different biology (not HR pathway), different feature profiles, or insufficient ClinVar data. A future expansion could add ATM and CHEK2, which are also HR-adjacent. But adding unrelated genes could dilute the biological signal that comes from modeling related genes together.</div></div>
+
+<div class="qa"><div class="q">What about other cancer types? <span class="who inkar">INKAR</span></div>
+<div class="a">Our 5 genes affect multiple cancer types: breast, ovarian, prostate, pancreatic, and others. But we don't predict which cancer type - we predict whether the mutation damages the protein's DNA repair function. A pathogenic BRCA2 mutation increases risk for all associated cancers simultaneously. Cancer-type-specific risk estimation is a different problem requiring epidemiological data.</div></div>
+
+<div class="qa"><div class="q">Why is BRCA1 performance (0.747) lower than expected? <span class="who elnar">ELNAR</span></div>
+<div class="a">BRCA1 has extreme class imbalance: 96.6% of ClinVar variants are pathogenic. The model essentially sees "almost everything in BRCA1 is pathogenic," making it very hard to learn what benign BRCA1 variants look like. The 485 gnomAD proxy-benign variants helped (improved from 0.56 to 0.706 to 0.747), but BRCA1 still has far fewer benign examples than BRCA2. The MLP-only ensemble weight helps because MLP handles class imbalance better than XGBoost for this gene.</div></div>
+
+<div class="qa"><div class="q">What don't you know? <span class="who both">BOTH</span></div>
+<div class="a">Several things: (1) How the model performs on Central Asian / Kazakh population variants specifically. (2) Whether the improvement from v5.3 to v5.4 is due to structural features, EVE, gnomAD, or their combination (changes weren't isolated). (3) Exact contribution of each of the 120 features. (4) How the model handles variants at the boundaries of its training distribution. (5) Long-term stability as ClinVar evolves. Being honest about unknowns is part of good science.</div></div>
+
+<div class="qa"><div class="q">What about regulatory concerns? <span class="who inkar">INKAR</span></div>
+<div class="a">The tool has no regulatory approval from any body - no FDA, CE-IVD, or equivalent. It's not a medical device. The RUO label is important legally and ethically. In Kazakhstan, genetic testing regulation is still developing, which is both an opportunity (our tool could help) and a risk (less oversight). We emphasize that this is a research exploration tool, not a diagnostic.</div></div>
+
+<div class="qa"><div class="q">Could the model be biased against certain mutations? <span class="who elnar">ELNAR</span></div>
+<div class="a">Yes, in several ways: (1) Mutations at conserved positions are always flagged, even if the substitution is functionally neutral. (2) Mutations in data-rich protein regions get more accurate predictions than mutations in under-characterized regions. (3) The model may overfit to BRCA2 patterns and apply them incorrectly to other genes. (4) The model reflects ClinVar biases - if ClinVar overclassifies certain types of variants, our model will too.</div></div>
+
+<div class="qa"><div class="q">What is ascertainment bias in ClinVar? <span class="who elnar">ELNAR</span></div>
+<div class="a">Labs submit variants they've tested and classified. Variants that are easily classified (strong evidence) get submitted more often than ambiguous ones. This means ClinVar overrepresents "easy" variants and underrepresents the hard cases we most want to classify. Also, labs in the US and Europe submit more than labs in other regions, creating geographic bias. Our model is trained on this biased sample.</div></div>
+
+<div class="qa"><div class="q">What limitations did the GPU ablation reveal? <span class="who elnar">ELNAR</span></div>
+<div class="a">That more features don't always help. Going from 103 to 178 features (adding ESM-2 650M + GNN structural) improved overall AUC from 0.978 to 0.984 but devastated PALB2 (0.641 to 0.521). GNN features acted as gene identifiers (XGBoost gain 647 vs next feature at 21) because they were non-zero only for non-BRCA2 genes. The lesson: with small datasets, richer features cause overfitting. The production model stays at 120 features.</div></div>
+
+<div class="qa"><div class="q">What would happen if ClinVar reclassified lots of variants? <span class="who elnar">ELNAR</span></div>
+<div class="a">Our model would need retraining. Since we trained on a February 2026 snapshot, any subsequent reclassifications could make some of our predictions outdated. This is temporal bias and it's inherent to any supervised ML model trained on evolving labels. Regular retraining (every 6-12 months) would be needed for production use. The temporal validation shows this is especially concerning for non-BRCA2 genes.</div></div>
+
+<div class="qa"><div class="q">What is the hardest variant type to predict? <span class="who elnar">ELNAR</span></div>
+<div class="a">Conservative missense variants in moderately conserved positions of data-scarce genes. For example, a valine-to-isoleucine substitution (similar physicochemistry, neutral BLOSUM62, low PhyloP) in PALB2. The features give weak signals, the model has few training examples, and the calibration is unreliable. These are the variants that conformal prediction flags as {Pathogenic, Benign} - genuinely uncertain.</div></div>
+
+<div class="qa"><div class="q">Is 0.605 AUC for PALB2 useful at all? <span class="who elnar">ELNAR</span></div>
+<div class="a">Barely. AUC 0.5 is random guessing. 0.605 is only slightly better than random. However: (1) We combine it with ACMG evidence codes which add independent evidence. (2) The confidence interval and conformal prediction explicitly show high uncertainty. (3) The data scarcity warning alerts users. (4) For high-probability predictions (>0.9 or <0.1), even a weak model provides some signal. But PALB2 predictions should never be taken at face value.</div></div>
+
+<!-- ========== CATEGORY H: COMPETITION & PERSONAL ========== -->
+<div class="page-break"></div>
+<h3>H. Competition, Personal &amp; Meta Questions <span class="section-count">(30 questions)</span></h3>
+
+<div class="qa"><div class="q">Did you use AI tools to build this? <span class="who elnar">ELNAR</span></div>
+<div class="a">We used AI coding assistants as tools - similar to using Stack Overflow, documentation, or a calculator. They helped with syntax, boilerplate, and debugging. But the architecture decisions, feature engineering choices, ablation study design, domain-specific validation methodology, and catching AlphaMissense label leakage all required deep understanding of both ML and genetics. You can't prompt-engineer domain knowledge about isotonic calibration for gene-specific class imbalance.</div></div>
+
+<div class="qa"><div class="q">What part are you most proud of? <span class="who both">BOTH</span></div>
+<div class="a">[Elnar]: The AlphaMissense ablation study. Finding and removing a popular feature because we detected label leakage - and having our performance improve afterward - is the kind of rigorous validation that many published papers don't do.<br>[Inkar]: The uncertainty quantification. Most tools just give a number. We give a probability, confidence interval, conformal prediction set, and data scarcity warnings. That honesty is what clinical tools should provide.</div></div>
+
+<div class="qa"><div class="q">What was the hardest challenge? <span class="who elnar">ELNAR</span></div>
+<div class="a">Getting non-BRCA2 genes to work at all. Before gnomAD augmentation, BRCA1 was 0.56 AUC, RAD51C was 0.51 - essentially random. It took months of iterations: adding proxy-benign data, removing gene-identifying features, per-gene calibration, per-gene ensemble weights, structural features for all genes. Each fix was incremental. PALB2 still doesn't work well. Data scarcity is a harder problem than model architecture.</div></div>
+
+<div class="qa"><div class="q">What mistake did you make and learn from? <span class="who elnar">ELNAR</span></div>
+<div class="a">In v5.3, we calibrated the isotonic calibrator on the test set instead of a separate calibration set. This is a subtle data leakage - the calibrator sees the test distribution and adjusts to it, making test metrics artificially good. We discovered this during a self-audit and fixed it in v5.4 by introducing the 60/20/20 split with a dedicated calibration set. The lesson: even small methodological mistakes matter.</div></div>
+
+<div class="qa"><div class="q">What would you do with more time? <span class="who elnar">ELNAR</span></div>
+<div class="a">Top 5: (1) Upgrade to ESM-2 650M with careful regularization to prevent small-gene degradation. (2) Clinical expert review by a geneticist. (3) Prospective validation on truly new variants. (4) Population-aware calibration thresholds for Central Asian population. (5) Integrate LOVD database for more training data. Also: expand to ATM/CHEK2, get DMS data for PALB2, and implement mutation testing (mutmut) for code quality.</div></div>
+
+<div class="qa"><div class="q">Why should we give you an award over other projects? <span class="who both">BOTH</span></div>
+<div class="a">Three reasons: (1) Real impact: this tool addresses a genuine healthcare gap - VUS classification in cancer genes. (2) Technical depth: ensemble ML with 120 features, 200 tests, production deployment, and rigorous validation including ablation studies and external benchmarks. (3) Intellectual honesty: we volunteer our weaknesses, report both favorable and unfavorable metrics, and label everything Research Use Only. This is how real science works.</div></div>
+
+<div class="qa"><div class="q">How does this relate to Kazakhstan? <span class="who inkar">INKAR</span></div>
+<div class="a">Kazakhstan's population is underrepresented in global genomics databases. Kazakh founder mutations in BRCA1/BRCA2 may not be properly characterized. We built SteppeDNA with Kazakh language support, integrated Kazakh founder mutations, and our population equity analysis shows Central Asian patients face a 6.4% higher PM2 flag rate than Europeans. This project directly addresses genomic health equity for our population.</div></div>
+
+<div class="qa"><div class="q">What's the real-world impact if this worked perfectly? <span class="who inkar">INKAR</span></div>
+<div class="a">If every VUS could be correctly classified: (1) Patients with pathogenic variants would get preventive treatment earlier. (2) Patients with benign variants would be spared unnecessary anxiety and surveillance. (3) Genetic counselors could give clear answers instead of "we don't know." (4) Healthcare resources would be allocated more efficiently. (5) Underrepresented populations would get the same quality of variant interpretation as European-ancestry patients.</div></div>
+
+<div class="qa"><div class="q">How is this different from a Kaggle competition? <span class="who elnar">ELNAR</span></div>
+<div class="a">On Kaggle, you optimize a single metric on a static dataset with no deployment. We: (1) Curated our own dataset from ClinVar + gnomAD. (2) Engineered 120 domain-specific features. (3) Built validation methodology including temporal validation, external benchmarks, and ablation studies. (4) Deployed a production web application. (5) Wrote a Model Card and Validation Report. (6) Handle real-world concerns like population bias and label leakage. This is applied research, not a metric-optimization contest.</div></div>
+
+<div class="qa"><div class="q">What would a geneticist think of this? <span class="who inkar">INKAR</span></div>
+<div class="a">They'd probably appreciate the ACMG codes, SHAP explanations, and uncertainty quantification. They'd be skeptical of the non-BRCA2 performance and temporal validation results. They'd want to see external validation on their own variant sets. They'd value the honesty about limitations and the RUO label. Overall, they'd view it as a promising research tool but not ready for clinical use - which is exactly what we claim.</div></div>
+
+<div class="qa"><div class="q">What did you learn about yourself through this project? <span class="who both">BOTH</span></div>
+<div class="a">[Elnar]: That the hardest part of ML isn't the model - it's the data and validation. I spent more time debugging data pipelines and running ablation studies than tuning hyperparameters. Also that honesty about limitations is a sign of strength, not weakness.<br>[Inkar]: That biology and computer science are deeply connected. Understanding the HR repair pathway helped us engineer better features, and understanding ML limitations helped frame the clinical impact correctly.</div></div>
+
+<div class="qa"><div class="q">What resources did you use to learn? <span class="who both">BOTH</span></div>
+<div class="a">Research papers: Richards et al. (2015) for ACMG, Mitchell et al. (2019) for model cards, Lin et al. (2023) for ESM-2, Cheng et al. (2023) for AlphaMissense. Libraries: XGBoost documentation, scikit-learn, FastAPI docs, BioPython. Databases: ClinVar, gnomAD, AlphaFold DB, ProteinGym. APIs: NCBI E-utilities, myvariant.info. We also learned from published benchmarks like Grinsztajn et al. (2022) on tree models vs deep learning for tabular data.</div></div>
+
+<div class="qa"><div class="q">If you could only show one thing, what would it be? <span class="who both">BOTH</span></div>
+<div class="a">The per-gene SOTA comparison bar chart on the poster. Five gene clusters, four bars each (SteppeDNA, REVEL, BayesDel, CADD). Purple (us) is tallest on 4 of 5 clusters. PALB2 shows REVEL's green bar taller than ours. It's honest, visual, and immediately communicates both our strengths and our weakness. One image tells the whole story.</div></div>
+
+<div class="qa"><div class="q">What's the competition format? How long do you present? <span class="who both">BOTH</span></div>
+<div class="a">Infomatrix Asia is a poster session format. Judges walk by, you explain your project while pointing at the poster. Typically 5-10 minutes per judge interaction. Some judges may ask many questions (10+ min), others may give you only 2-3 min. Be prepared to deliver a 2-minute elevator version and a 7-minute full version. Always offer the live demo - it's your strongest differentiator.</div></div>
+
+<div class="qa"><div class="q">What if the judge doesn't understand ML at all? <span class="who both">BOTH</span></div>
+<div class="a">Focus on: (1) The problem: "genetic tests come back uncertain, patients don't know if they have cancer risk." (2) The solution: "our tool predicts which mutations are dangerous." (3) The result: "it beats existing tools on 4 of 5 genes." (4) The demo: show them steppedna.com - the visual output is self-explanatory. Skip technical jargon. Let Inkar lead with the biology story.</div></div>
+
+<div class="qa"><div class="q">What if the judge IS an ML expert? <span class="who both">BOTH</span></div>
+<div class="a">Lead with: per-gene ensemble weights, isotonic calibration on separate calibration set, AlphaMissense ablation study, conformal prediction, DeLong test significance. They'll want to probe your validation methodology. Volunteer the overall-vs-macro AUC discrepancy and the temporal validation results. Mention the GPU ablation showing more features don't help with small data. ML experts respect honesty and methodological rigor above all.</div></div>
+
+<div class="qa"><div class="q">How do you handle disagreements with your teammate during the presentation? <span class="who both">BOTH</span></div>
+<div class="a">We don't contradict each other during judging. If a question falls in the other person's area, we say "Inkar can speak to that better" or "Elnar, take this one." We never say "I did" - always "we." If one person gets stuck, the other naturally steps in. We practiced the handoffs so they're smooth.</div></div>
+
+<div class="qa"><div class="q">Do you have any publications or prior competition results? <span class="who both">BOTH</span></div>
+<div class="a">This is our first time presenting SteppeDNA at a competition. The codebase, Model Card, and Validation Report serve as our documentation. We follow Mitchell et al. (2019) model card framework, which is the standard in responsible ML. A future goal is journal submission after clinical expert review.</div></div>
+
+<div class="qa"><div class="q">What would a critic say about this project? <span class="who elnar">ELNAR</span></div>
+<div class="a">Fair criticisms: (1) "The 0.985 AUC is inflated by BRCA2." True - macro AUC is 0.791. (2) "The SOTA comparison isn't fair." True - we disclose the methodological advantage. (3) "Non-BRCA2 temporal generalization is terrible." True - only BRCA2 generalizes well. (4) "No clinical expert has reviewed this." True - it's on our roadmap. (5) "PALB2 is barely better than random." True - we report REVEL's superiority. We address each criticism proactively.</div></div>
+
+<div class="qa"><div class="q">What separates this from a tutorial project? <span class="who elnar">ELNAR</span></div>
+<div class="a">Tutorials show you how to run XGBoost on a CSV. We: (1) Built our own dataset from three databases. (2) Engineered 120 domain-specific features from 7 biological sources. (3) Discovered and fixed label leakage. (4) Ran ablation studies on every major design decision. (5) Validated externally on gold-standard benchmarks. (6) Deployed with 200 tests and production security. (7) Documented everything with a Model Card and Validation Report. The depth of validation alone separates this from tutorials.</div></div>
+
+<!-- ========== CATEGORY I: STATISTICS ========== -->
+<div class="page-break"></div>
+<h3>I. Statistics &amp; Metrics Deep Dive <span class="section-count">(20 questions)</span></h3>
+
+<div class="qa"><div class="q">What's the difference between AUC-ROC and AUC-PR? <span class="who elnar">ELNAR</span></div>
+<div class="a">AUC-ROC plots true positive rate vs false positive rate across all thresholds. It's good for balanced datasets. AUC-PR plots precision vs recall and is more informative for imbalanced datasets because it penalizes false positives more heavily. Our AUC-ROC is 0.985, AUC-PR is 0.965. Both are high, confirming the model works well under different evaluation perspectives.</div></div>
+
+<div class="qa"><div class="q">What does p < 10^-128 mean? <span class="who elnar">ELNAR</span></div>
+<div class="a">The probability of seeing our AUC difference (or larger) by pure chance is less than 1 in 10^128. That's a number with 128 zeros. For reference, the number of atoms in the universe is about 10^80. So the chance of our result being a fluke is astronomically smaller than randomly picking the same atom twice from the entire universe. The DeLong test gives us very high statistical confidence that SteppeDNA genuinely outperforms REVEL.</div></div>
+
+<div class="qa"><div class="q">Why use MCC instead of accuracy? <span class="who elnar">ELNAR</span></div>
+<div class="a">Accuracy can be misleading with imbalanced data. If 90% of your data is positive, always predicting "positive" gives 90% accuracy. MCC ranges from -1 to +1 and accounts for all four confusion matrix quadrants. An MCC of 0.881 means strong agreement between predictions and reality across both classes. It's considered the gold standard metric for binary classification evaluation.</div></div>
+
+<div class="qa"><div class="q">How should we interpret the confusion matrix? <span class="who elnar">ELNAR</span></div>
+<div class="a">Out of 3,845 test variants: 1,888 correctly identified as benign (TN), 1,728 correctly identified as pathogenic (TP), 152 falsely flagged as pathogenic (FP = false alarms), 77 missed pathogenic variants (FN = missed dangers). More FPs than FNs is the safer direction for a medical tool - better to over-alert than to miss a cancer-causing mutation. FP rate: 7.5%. FN rate: 4.3%.</div></div>
+
+<div class="qa"><div class="q">What is the F1 score? <span class="who elnar">ELNAR</span></div>
+<div class="a">The harmonic mean of precision and recall. Precision = TP/(TP+FP) = 1,728/1,880 = 91.9%. Recall = TP/(TP+FN) = 1,728/1,805 = 95.7%. F1 = 2 * (91.9 * 95.7) / (91.9 + 95.7) = 93.8%. Our threshold (0.2998) was chosen to maximize F1.</div></div>
+
+<div class="qa"><div class="q">What is the 95% CI for the AUC? <span class="who elnar">ELNAR</span></div>
+<div class="a">From 10-fold cross-validation: AUC = 0.9858, 95% CI [0.9837, 0.9879]. The tight interval (width 0.0042) confirms the model is very stable across different data splits. We also compute bootstrap CIs for individual predictions using 50 resampled models, giving per-variant uncertainty estimates.</div></div>
+
+<div class="qa"><div class="q">What does "threshold-independent" mean? <span class="who elnar">ELNAR</span></div>
+<div class="a">AUC-ROC is threshold-independent because it evaluates the model across all possible classification thresholds. It measures ranking quality: does the model rank pathogenic variants above benign ones? Metrics like accuracy, precision, recall, MCC, and F1 are threshold-dependent - they change based on where you draw the line. That's why we report both types.</div></div>
+
+<div class="qa"><div class="q">How do you calculate bootstrap CIs for individual predictions? <span class="who elnar">ELNAR</span></div>
+<div class="a">50 XGBoost models trained on bootstrap resamples of the training data. Each model scores the query variant. Take the 5th percentile (lower bound) and 95th percentile (upper bound) of the 50 predictions. If all 50 models agree (narrow CI), the prediction is reliable. If they disagree (wide CI), there's genuine uncertainty. This is independent of the ensemble MLP component - it only uses XGBoost bootstraps.</div></div>
+
+<div class="qa"><div class="q">What is the optimal threshold and how was it found? <span class="who elnar">ELNAR</span></div>
+<div class="a">0.2998, found by maximizing F1 score on the test set. We tested every probability value from 0 to 1 and picked the one where F1 is highest. A lower threshold catches more pathogenic variants (higher sensitivity) but creates more false alarms. A higher threshold reduces false alarms but misses some pathogenic variants. 0.2998 is the balanced sweet spot.</div></div>
+
+<div class="qa"><div class="q">What is the coverage comparison with REVEL/CADD? <span class="who elnar">ELNAR</span></div>
+<div class="a">SteppeDNA: 100% coverage (we generate predictions for any valid missense in our 5 genes). REVEL and CADD: ~72-73% of our test set variants had scores available via myvariant.info. The missing 27-28% tend to be less-characterized variants. Note: REVEL and CADD can actually score most missense variants in general - the 72% refers specifically to what we could retrieve via the API for our test set comparison.</div></div>
+
+<div class="qa"><div class="q">What does the calibration reliability diagram show? <span class="who elnar">ELNAR</span></div>
+<div class="a">It plots predicted probability (x-axis) vs observed frequency of pathogenic (y-axis). A perfectly calibrated model falls on the diagonal: when it says 70% probability, 70% of those variants are actually pathogenic. After isotonic calibration, our model follows the diagonal well for BRCA2 and moderately well for other genes. BRCA1's calibration is unreliable in the benign range (below 0.3) because there are too few benign calibration points for BRCA1.</div></div>
+
+<div class="qa"><div class="q">What is Cohen's d? <span class="who elnar">ELNAR</span></div>
+<div class="a">A measure of effect size - how different the feature distributions are between pathogenic and benign variants. Cohen's d > 2.0 for BRCA2 features means pathogenic and benign are very well-separated. Cohen's d < 1.0 for non-BRCA2 features means the distributions overlap significantly. This is why more training data alone won't solve non-BRCA2: the features themselves are less discriminative for smaller genes.</div></div>
+
+<!-- ========== CATEGORY J: COMPARISON ========== -->
+<div class="page-break"></div>
+<h3>J. Comparison with Existing Tools <span class="section-count">(20 questions)</span></h3>
+
+<div class="qa"><div class="q">What is REVEL? <span class="who elnar">ELNAR</span></div>
+<div class="a">Rare Exome Variant Ensemble Learner. Published by Ioannidis et al. in 2016. It's a pan-genome meta-predictor that combines scores from 13 individual tools (SIFT, PolyPhen, etc.) using random forest. It's one of the most widely used variant effect predictors in clinical genetics. REVEL beats us on PALB2 (0.732 vs 0.605) but we beat it on the other 4 genes.</div></div>
+
+<div class="qa"><div class="q">What is BayesDel? <span class="who elnar">ELNAR</span></div>
+<div class="a">A Bayesian framework for deleteriousness prediction (Feng 2017). It integrates multiple evidence sources including allele frequency, functional prediction, and conservation. It's used as an ACMG PP3/BP4 evidence tool. We outperform it on all 5 genes individually, with the biggest margin on RAD51D (0.824 vs 0.448).</div></div>
+
+<div class="qa"><div class="q">What is CADD? <span class="who elnar">ELNAR</span></div>
+<div class="a">Combined Annotation Dependent Depletion (Rentzsch et al. 2019). It scores the deleteriousness of genetic variants by comparing observed vs expected variants based on evolutionary data. Unlike REVEL, CADD scores all types of variants, not just missense. It's the weakest performer on our test set (0.539 AUC overall) because it's designed for a very different use case - ranking variants across the entire genome.</div></div>
+
+<div class="qa"><div class="q">Why do REVEL/BayesDel/CADD perform poorly on your test set? <span class="who elnar">ELNAR</span></div>
+<div class="a">Distribution mismatch. These tools were trained on different datasets with different class balances and variant spectra. Our test set is 5 specific HR genes with their unique characteristics. REVEL's published AUC is typically >0.90 on its own test sets. The low scores on our test set reflect the mismatch, not that they're bad tools. That's why we also evaluate on independent benchmarks where the playing field is more level.</div></div>
+
+<div class="qa"><div class="q">What is AlphaMissense? <span class="who elnar">ELNAR</span></div>
+<div class="a">A deep learning model from DeepMind (Cheng et al., 2023) that predicts pathogenicity of all possible human missense variants. It was initially our best standalone feature (AUC 0.660). But we discovered it was partially trained on ClinVar labels, creating label leakage. We removed it from v5.4 and our performance improved by 0.02 on 3 genes. AlphaMissense is a good tool in general, but using it as a feature alongside ClinVar labels is circular reasoning.</div></div>
+
+<div class="qa"><div class="q">How is SteppeDNA different from general-purpose variant predictors? <span class="who elnar">ELNAR</span></div>
+<div class="a">General-purpose tools (REVEL, CADD, BayesDel) score variants across all ~20,000 human genes. SteppeDNA is purpose-built for 5 HR genes. This specialization allows us to: (1) Use gene-specific structural features from AlphaFold. (2) Use gene-specific domain proximity features. (3) Apply per-gene ensemble weights and calibrators. (4) Provide gene-specific ACMG BA1/BS1 thresholds. (5) Offer gene-specific data scarcity warnings. Specialization beats generalization when you have the right data.</div></div>
+
+<div class="qa"><div class="q">What tools do geneticists actually use in practice? <span class="who inkar">INKAR</span></div>
+<div class="a">In clinical genetics labs, the standard workflow is: (1) Check ClinVar for existing classification. (2) Check population databases (gnomAD) for allele frequency. (3) Run computational predictors (REVEL, BayesDel, CADD) for PP3/BP4 evidence. (4) Apply ACMG rules. (5) Expert review. SteppeDNA could replace or supplement step 3 for HR genes, while also providing steps 4-5 in a single interface.</div></div>
+
+<div class="qa"><div class="q">Could SteppeDNA be integrated into existing clinical workflows? <span class="who elnar">ELNAR</span></div>
+<div class="a">Technically yes - our API is RESTful and could be called by lab information systems. The output includes ACMG codes in the format labs expect. The VCF upload handles standard file formats. But clinical integration would require: validation on the lab's own variant set, regulatory approval, and agreement on how to weight SteppeDNA scores against other evidence. That's a 2-3 year process minimum.</div></div>
+
+<div class="qa"><div class="q">What tools do you use as features vs. compete against? <span class="who elnar">ELNAR</span></div>
+<div class="a">We compete against (not used as features): REVEL, BayesDel, CADD. These are independent fair comparisons. We use as features (not competed against): ESM-2 (embeddings), PhyloP (conservation), SpliceAI (splice prediction), EVE (evolutionary coupling), MAVE (functional assays), AlphaFold (structure). This separation is critical for fair benchmarking - you can't use a tool as a feature and then claim you "beat" it.</div></div>
+
+<div class="qa"><div class="q">What about PolyPhen-2 or SIFT? <span class="who elnar">ELNAR</span></div>
+<div class="a">PolyPhen-2 and SIFT are older, widely-used missense effect predictors. REVEL already includes them as component scores. We don't compare directly against them because REVEL is considered their successor - it combines 13 tools including PolyPhen and SIFT into a better meta-prediction. Beating REVEL implicitly beats its components.</div></div>
+
+<!-- ========== CATEGORY K: SPECIFIC TECHNICAL ========== -->
+<div class="page-break"></div>
+<h3>K. Specific Technical Details <span class="section-count">(25 questions)</span></h3>
+
+<div class="qa"><div class="q">What is the ACMG PM1 threshold? <span class="who elnar">ELNAR</span></div>
+<div class="a">5 angstroms. If the mutation is within 5 angstroms of a functional site (DNA binding, catalytic site), PM1 is triggered. We calculate distances from AlphaFold structures. The default sentinel value for unknown distances is 999.0 (meaning PM1 won't trigger if structural data is unavailable).</div></div>
+
+<div class="qa"><div class="q">What are the gene-specific BA1/BS1 thresholds? <span class="who elnar">ELNAR</span></div>
+<div class="a">Based on ClinGen SVI recommendations: BRCA1/BRCA2: BA1 = 0.1%, BS1 = 0.01%. PALB2: BA1 = 0.2%, BS1 = 0.05%. RAD51C/RAD51D: BA1 = 0.5%, BS1 = 0.1%. Higher thresholds for rarer genes because they have less population data. BA1 (standalone benign) is a higher bar than BS1 (strong benign). These are used with gnomAD allele frequencies.</div></div>
+
+<div class="qa"><div class="q">What is PP3/BP4 and how do you assign it? <span class="who elnar">ELNAR</span></div>
+<div class="a">PP3 = computational evidence supports pathogenic effect (supporting evidence). BP4 = computational evidence supports no impact (supporting benign). We assign PP3 when our model probability >= 0.70, and BP4 when probability <= 0.20. The thresholds are conservative to avoid over-claiming. This is a circular reference concern (model using its own prediction as evidence), which we acknowledge.</div></div>
+
+<div class="qa"><div class="q">How do you handle PVS1? <span class="who elnar">ELNAR</span></div>
+<div class="a">PVS1 = null variant in a gene with known loss-of-function mechanism. For nonsense, frameshift, and canonical splice-site variants, PVS1 is assigned automatically (these are handled by rules, not ML). For missense variants (which go through ML), PVS1 is not assigned because missense variants don't create null proteins. We also have PVS1_moderate for variants in the last exon (where truncation may not cause NMD).</div></div>
+
+<div class="qa"><div class="q">What is the KD-tree for contrastive explanations? <span class="who elnar">ELNAR</span></div>
+<div class="a">A spatial data structure for efficient nearest-neighbor search. At startup, we split training variants by gene and class (pathogenic/benign), scale features with StandardScaler, and build KD-trees per gene per class. When a query comes in, we search the opposite-class tree for the nearest neighbor. This is O(log n) per query instead of O(n) brute force. KD-trees are from scipy.spatial.</div></div>
+
+<div class="qa"><div class="q">How does population-aware ACMG work? <span class="who elnar">ELNAR</span></div>
+<div class="a">When a user selects their population (e.g., East Asian), we use that population's specific gnomAD allele frequency instead of the global AF for BA1/BS1/PM2 evaluation. This matters because a variant might be common globally but rare in East Asian populations (or vice versa). The /predict endpoint accepts an optional population parameter.</div></div>
+
+<div class="qa"><div class="q">What is the ESM-2 context window? <span class="who elnar">ELNAR</span></div>
+<div class="a">+/- 50 amino acids around the mutation site, total 101 residues. We feed this window to ESM-2 twice (with original AA and with mutant AA). The context window captures local protein environment. We chose 50 because protein secondary structures and local contacts typically span <30 residues. A larger window adds noise from distant residues.</div></div>
+
+<div class="qa"><div class="q">What does 72.8% PCA variance explained mean? <span class="who elnar">ELNAR</span></div>
+<div class="a">When we reduce ESM-2's 320 dimensions to 20 PCA components, those 20 components capture 72.8% of the information in the original 320. We lose 27.2% - but that's mostly noise and redundancy. 20 components is a good balance: enough to capture the important patterns, few enough to avoid overfitting. Going to 50 components only adds ~10% more variance but increases overfitting risk substantially.</div></div>
+
+<div class="qa"><div class="q">What is RANDOM_STATE=42? <span class="who elnar">ELNAR</span></div>
+<div class="a">A seed for the random number generator. Setting it to 42 (a common convention from "Hitchhiker's Guide to the Galaxy") means every random operation - data splits, tree building, bootstrap sampling - produces the same result every time. This ensures reproducibility: if someone reruns our code, they get the exact same model and metrics.</div></div>
+
+<div class="qa"><div class="q">What is the load_with_fallback pattern? <span class="who elnar">ELNAR</span></div>
+<div class="a">A robust data loading pattern we use: try to load the primary data file (e.g., EVE scores). If it fails (file missing, corrupt), fall back to a default (e.g., zero EVE scores). Log a warning but don't crash. This lets the system work even if some data files are missing, with degraded but functional predictions. Better to give a prediction without EVE than to crash entirely.</div></div>
+
+<div class="qa"><div class="q">How does the rate limiter work? <span class="who elnar">ELNAR</span></div>
+<div class="a">IP-based rate limiting in middleware.py. Each IP address gets a maximum number of requests per time window. In tests, we override it to RATE_LIMIT=9999 via conftest.py fixture to avoid tests being rate-limited. In production, it prevents abuse and ensures fair access. Returns HTTP 429 Too Many Requests when exceeded.</div></div>
+
+<div class="qa"><div class="q">What is XSS hardening? <span class="who elnar">ELNAR</span></div>
+<div class="a">Cross-Site Scripting (XSS) protection. We ensure user inputs (variant notation, gene names) can't inject malicious JavaScript. All user inputs are validated against expected patterns (regex), escaped before rendering, and the frontend uses textContent instead of innerHTML. CSP headers block inline scripts. No user input is ever evaluated as code.</div></div>
+
+<div class="qa"><div class="q">What is CSP? <span class="who elnar">ELNAR</span></div>
+<div class="a">Content Security Policy - a security header that tells the browser which sources of content (scripts, styles, images) are allowed. Our CSP blocks inline scripts, restricts script sources to same-origin, and allows connections only to steppedna.com and the Render backend. This prevents XSS attacks even if an attacker finds an injection point, because the browser won't execute unauthorized scripts.</div></div>
+
+<div class="qa"><div class="q">What gene strands matter? <span class="who elnar">ELNAR</span></div>
+<div class="a">The DNA strand a gene is on affects how cDNA notation maps to genomic position. BRCA2 and RAD51C are on the positive (+) strand - straightforward. BRCA1, PALB2, and RAD51D are on the negative (-) strand - the cDNA sequence is the reverse complement of the genomic sequence. Our feature engine handles this correctly when computing features, ensuring the amino acid substitution is interpreted on the correct strand.</div></div>
+
+<!-- ========== CATEGORY L: FUTURE WORK ========== -->
+<h3>L. Future Work &amp; Extensions <span class="section-count">(15 questions)</span></h3>
+
+<div class="qa"><div class="q">What's the #1 priority for future work? <span class="who elnar">ELNAR</span></div>
+<div class="a">Clinical expert review. Having a geneticist examine our predictions, explanations, and ACMG codes would identify practical issues we might miss. It's also a prerequisite for any pathway to clinical use. Second priority: ESM-2 650M upgrade with careful small-gene regularization.</div></div>
+
+<div class="qa"><div class="q">Could you expand to more genes? <span class="who elnar">ELNAR</span></div>
+<div class="a">Yes, ATM and CHEK2 are natural candidates - they're DNA damage response genes related to the HR pathway. But they have different biology (ATM is a kinase, CHEK2 is a checkpoint kinase), so their feature profiles may differ from our current 5 genes. Expanding requires re-evaluating whether a single universal model still makes sense, or whether gene-group-specific models would be better.</div></div>
+
+<div class="qa"><div class="q">What about GNN on protein structure? <span class="who elnar">ELNAR</span></div>
+<div class="a">We tested it in the GPU ablation: Graph Neural Networks on AlphaFold structures. The 32D GNN embeddings + indicator feature backfired - the indicator (has_gnn_features) became the top XGBoost feature because it perfectly identified non-BRCA2 genes. GNNs would need to be computed for ALL genes including BRCA2 to avoid this gene-identification artifact. That requires more compute but is feasible.</div></div>
+
+<div class="qa"><div class="q">What would a larger ESM-2 model do? <span class="who elnar">ELNAR</span></div>
+<div class="a">The 650M model captures richer protein representations. In our test, it improved BRCA2 and BRCA1 AUC but degraded PALB2/RAD51C/RAD51D. The improvement for large genes is real, but for small genes the richer embeddings need more training data to avoid overfitting. Strategy: use 650M embeddings but with stronger regularization (feature selection, dimensionality reduction) to prevent small-gene overfitting. Needs careful experiments.</div></div>
+
+<div class="qa"><div class="q">How would you address population bias? <span class="who inkar">INKAR</span></div>
+<div class="a">Fully implemented in v5.4 with four mechanisms: (1) Population-calibrated ACMG rules — PM2 evidence withheld for Kazakh/Central Asian patients (gnomAD has ~0% Central Asian data), BA1/BS1 thresholds relaxed 2× for sparse populations. (2) Founder mutation integration — 7 known Kazakh founder mutations from published studies count as PS4 strong pathogenic evidence. (3) Honest uncertainty — confidence intervals automatically widened ×1.5 for underrepresented populations. (4) Frequency-independent architecture — 90.8% of our features use universal biological signals, not population databases. Future work: expand training data with population-diverse variants and collect Kazakh-specific variant data through local hospital collaborations.</div></div>
+
+<div class="qa"><div class="q">What is LOVD and how would you integrate it? <span class="who elnar">ELNAR</span></div>
+<div class="a">Leiden Open Variation Database - a gene-specific variant database with curated functional data. LOVD has BRCA1/BRCA2 variant data with clinical and functional annotations not always in ClinVar. Integration would add more training examples, especially for rare genes. The challenge is harmonizing LOVD's classification system with ClinVar's.</div></div>
+
+<div class="qa"><div class="q">What is mutation testing (mutmut)? <span class="who elnar">ELNAR</span></div>
+<div class="a">A test quality technique that intentionally introduces bugs (mutations) into the code and checks whether existing tests catch them. If a test suite passes with a bug injected, the tests are insufficient. We haven't run mutmut yet but it's on our roadmap to verify that our 200 tests are actually catching real bugs and not just passing by coincidence.</div></div>
+
+<div class="qa"><div class="q">What DMS data would help most? <span class="who elnar">ELNAR</span></div>
+<div class="a">PALB2 DMS data would be the most impactful because PALB2 is our weakest gene and has no DMS scores currently. A deep mutational scan of PALB2's key functional domains would provide ground-truth functional measurements that could dramatically improve classification. BRCA1 already has Findlay SGE data. RAD51C/RAD51D DMS data would also help but those genes are rarer research targets.</div></div>
+
+<!-- ========== CATEGORY M: CURVEBALLS ========== -->
+<div class="page-break"></div>
+<h3>M. Curveball &amp; Hostile Questions <span class="section-count">(25 questions)</span></h3>
+
+<div class="qa"><div class="q">Isn't this just training on ClinVar and predicting ClinVar? <span class="who elnar">ELNAR</span></div>
+<div class="a">It would be if we only measured performance on our own test set. That's why we have external benchmarks: ProteinGym DMS (AUC 0.719) and ClinVar Expert Panel (AUC 0.793) with zero training overlap. We also caught and removed AlphaMissense specifically because it WAS just memorizing ClinVar through indirect label leakage. The model learns generalizable features (BLOSUM62, conservation, structure) - not ClinVar entries.</div></div>
+
+<div class="qa"><div class="q">If hospitals won't use it, what's the point? <span class="who inkar">INKAR</span></div>
+<div class="a">Multiple points: (1) Researchers can use it to prioritize VUS for functional study. (2) The methodology (per-gene calibration, ablation validation) advances the field. (3) The active learning ranker identifies which variants to experimentally characterize next. (4) It demonstrates that specialized models can beat general-purpose tools. (5) The population equity analysis highlights a real problem. Clinical use is a long-term goal, not the only measure of value.</div></div>
+
+<div class="qa"><div class="q">Why should I trust predictions from high school students? <span class="who both">BOTH</span></div>
+<div class="a">You shouldn't trust anyone's predictions blindly - that's why we provide SHAP explanations, ACMG codes, confidence intervals, and an RUO label. The work speaks for itself: 19,223 training variants, 120 features, 200 tests, external benchmark validation, ablation studies, and transparent reporting of every limitation. The question isn't who built it - it's whether the methodology is sound. We invite you to examine it.</div></div>
+
+<div class="qa"><div class="q">0.791 macro AUC doesn't seem very impressive. <span class="who elnar">ELNAR</span></div>
+<div class="a">It's the honest number, and we report it precisely because it's not inflated. The macro AUC reflects that small genes are genuinely hard - this is a field-wide problem. REVEL's macro AUC across our 5 genes is 0.666. BayesDel's is 0.622. CADD's is 0.632. Our 0.791 is substantially above all of them. The relevant comparison isn't "is 0.791 good in absolute terms" but "is it better than the alternatives" - and it is.</div></div>
+
+<div class="qa"><div class="q">You removed AlphaMissense but isn't that admitting you made a mistake? <span class="who elnar">ELNAR</span></div>
+<div class="a">Yes, and that's exactly what good science does. We included AlphaMissense, noticed something was off, designed an ablation study, confirmed the leakage hypothesis, and removed the problematic feature. The result improved. Most published papers don't run this kind of self-audit. Admitting and correcting mistakes is a strength, not a weakness.</div></div>
+
+<div class="qa"><div class="q">What if ClinVar labels are wrong? <span class="who elnar">ELNAR</span></div>
+<div class="a">ClinVar has noise - some classifications will be revised. But: (1) We use only P/LP and B/LB classifications (the higher-confidence ends). (2) ClinVar Expert Panel classifications are the gold standard and we validate against them separately (AUC 0.793). (3) The gnomAD proxy-benign variants are based on population frequency, not ClinVar labels - they're an independent benign signal. (4) Even if 5% of labels are wrong, the model can tolerate that noise because of the large training set size.</div></div>
+
+<div class="qa"><div class="q">Your temporal validation for non-BRCA2 is basically random. How can you call this useful? <span class="who elnar">ELNAR</span></div>
+<div class="a">Fair point. The temporal validation is our most concerning result. However: (1) It's a data availability problem - most non-BRCA2 classifications are post-2024, leaving too few for temporal training. (2) The standard held-out test (with gene x label stratification) is the more appropriate evaluation for our current use case. (3) We disclose the temporal results and recommend caution for non-BRCA2 newly discovered variants. (4) BRCA2 temporal generalization IS excellent (0.983). We believe in showing all results, not just favorable ones.</div></div>
+
+<div class="qa"><div class="q">Isn't the SOTA comparison unfair since you trained on this data? <span class="who elnar">ELNAR</span></div>
+<div class="a">Yes, we have a methodological advantage on our own test set. We say this explicitly in our Validation Report. The per-gene comparison is more informative than the overall one, and the external benchmark (AUC 0.719-0.793) is the fairest comparison. REVEL's low MCC on our test set reflects distribution mismatch, not poor quality. We respect REVEL as a strong tool and acknowledge their PALB2 superiority.</div></div>
+
+<div class="qa"><div class="q">What about newer tools like PrimateAI or ESM1v? <span class="who elnar">ELNAR</span></div>
+<div class="a">PrimateAI-3D and ESM1v are newer variant effect predictors. We haven't benchmarked against them yet because they weren't available via our myvariant.info/dbNSFP pipeline at training time. A comprehensive benchmark against 10+ tools including PrimateAI-3D, ESM1v, AlphaMissense (standalone), and VARITY would strengthen our comparison. This is planned future work.</div></div>
+
+<div class="qa"><div class="q">Couldn't someone just use ChatGPT to predict variant pathogenicity? <span class="who elnar">ELNAR</span></div>
+<div class="a">No. Language models hallucinate - they generate plausible-sounding but factually incorrect medical information. They have no formal uncertainty quantification, no calibrated probabilities, no ACMG codes, no SHAP explanations, and no validation against gold-standard benchmarks. A hallucinated "pathogenic" prediction could lead to unnecessary surgery. SteppeDNA's predictions are grounded in 120 measured features and validated against 3,845 held-out variants with known labels.</div></div>
+
+<div class="qa"><div class="q">What's the carbon footprint of training this? <span class="who elnar">ELNAR</span></div>
+<div class="a">Minimal. XGBoost trains in under 5 minutes on a CPU. The MLP trains in about 30 minutes on CPU. ESM-2 8M model inference takes about 2 hours on a GPU (Google Colab T4, free tier). Total compute is orders of magnitude less than training a large language model. The 50 bootstrap models add ~4 hours. This is not a computationally expensive project.</div></div>
+
+<div class="qa"><div class="q">If I give you a variant right now, can you predict it? <span class="who both">BOTH</span></div>
+<div class="a">[With internet]: Yes! Go to steppedna.com, type it in, get a result in seconds. Let me show you.<br>[Without internet]: I can walk you through a previously computed prediction on paper/phone screenshots. The system is deployed at steppedna.com - you can try it after the session if wifi isn't available here.</div></div>
+
+<div class="qa"><div class="q">What if I have a variant in TP53, can you predict it? <span class="who inkar">INKAR</span></div>
+<div class="a">No. SteppeDNA only handles the 5 HR repair genes (BRCA1, BRCA2, PALB2, RAD51C, RAD51D). TP53 is a different pathway - it's a tumor suppressor but involved in cell cycle control, not homologous recombination repair. Our features are optimized for HR genes. A TP53 prediction would require retraining with TP53-specific data, structural features, and domain definitions.</div></div>
+
+<div class="qa"><div class="q">What if a judge asks something you don't know? <span class="who both">BOTH</span></div>
+<div class="a">Say: "That's a great question. We haven't tested that specifically, but our hypothesis is [best guess based on understanding], and we would validate it by [method]." Never bluff. Never make up numbers. It's perfectly acceptable to say "I don't know, but here's how we'd find out." Research maturity means knowing what you don't know.</div></div>
+
+<div class="qa"><div class="q">Why not just use the rule-based ACMG system alone? <span class="who elnar">ELNAR</span></div>
+<div class="a">Because ACMG rules alone resolve only 20.6% of variants in our test set. The other 79.4% remain VUS. That's the whole problem SteppeDNA solves - the ML model can provide a probability for ALL variants, including the 79.4% that ACMG rules can't classify. We provide both: ML probability for a quantitative assessment, ACMG codes for clinical-standard evidence.</div></div>
+
+<div class="qa"><div class="q">How do you know your ACMG implementation is correct? <span class="who elnar">ELNAR</span></div>
+<div class="a">45 dedicated tests in test_acmg_combinatorial.py covering: individual rule triggers, rule combinations, boundary conditions, PVS1 regression (we had a bug in v5.3 where splice PVS1 could overwrite nonsense PVS1), and gene-specific BA1/BS1 threshold tests. Agreement with ClinVar is 71.2% on resolved variants - not perfect, but expected given we only implement 15 of 28+ rules.</div></div>
+
+<div class="qa"><div class="q">Is the project commercially viable? <span class="who both">BOTH</span></div>
+<div class="a">Not our goal. It's MIT-licensed code and RUO model. The goal is scientific contribution and health equity. If a commercial lab wanted to use the approach, they'd need to: retrain with their own data, validate clinically, get regulatory approval. Commercial genetic testing companies (Invitae, Myriad, Ambry) have their own internal classifiers. Our contribution is methodological - showing that specialized multi-gene models with per-gene calibration outperform general-purpose tools.</div></div>
+
+<div class="qa"><div class="q">What if someone forks your code and uses it clinically? <span class="who both">BOTH</span></div>
+<div class="a">The MIT license allows this technically, but the model is RUO-labeled. Anyone using it clinically without proper validation would be acting irresponsibly, not because of our code, but because proper clinical validation hasn't been done. We include disclaimers in the code, the UI, the Model Card, and every PDF report. We can't prevent misuse, but we've done everything reasonable to warn against it.</div></div>
+
+<!-- ========== CATEGORY N: VERY SPECIFIC ========== -->
+<div class="page-break"></div>
+<h3>N. Very Specific &amp; Edge-Case Questions <span class="section-count">(25 questions)</span></h3>
+
+<div class="qa"><div class="q">What happens if I input a nonsense variant? <span class="who elnar">ELNAR</span></div>
+<div class="a">Nonsense variants (creating a premature stop codon) are handled by the rule-based Tier 1 classifier, not the ML model. They automatically get PVS1 (very strong pathogenic) evidence because a truncated protein is almost always non-functional. The system detects this from the amino acid change (any AA to Stop) and routes it to the rule engine.</div></div>
+
+<div class="qa"><div class="q">What if the variant is at the very end of the protein? <span class="who elnar">ELNAR</span></div>
+<div class="a">Variants in the last exon may not trigger nonsense-mediated decay (NMD) even if they're truncating. We handle this with PVS1_moderate instead of full PVS1 - a reduced strength code. The system checks exon_number vs total_exons and applies the modifier. For missense variants at the C-terminal, features like relative_aa_pos will be near 1.0, which the model has learned to interpret.</div></div>
+
+<div class="qa"><div class="q">How do you handle variants not in the training data? <span class="who elnar">ELNAR</span></div>
+<div class="a">Every valid missense variant in the 5 genes can be predicted because features are computed from the amino acid substitution and position, not from a lookup table. Even a completely novel variant has a BLOSUM62 score, PhyloP, structural features, ESM-2 embeddings, etc. The model generalizes from training examples to new positions. The confidence interval will be wider for variants in under-represented protein regions.</div></div>
+
+<div class="qa"><div class="q">What if someone inputs the same amino acid (synonymous)? <span class="who elnar">ELNAR</span></div>
+<div class="a">If the reference and alternate amino acid are the same (e.g., p.Ala100Ala), it's a synonymous variant at the protein level. The system should return benign with ACMG code BP7 (synonymous without splice impact). BLOSUM62 for same-to-same is positive, and most other features would indicate benign.</div></div>
+
+<div class="qa"><div class="q">How fast is a single prediction? <span class="who elnar">ELNAR</span></div>
+<div class="a">Under 2 seconds once the backend is warmed up. Feature computation is fast because all databases are pre-loaded into memory. XGBoost prediction is microseconds. MLP prediction is milliseconds. The SHAP computation is the slowest part (TreeSHAP for XGBoost). Bootstrap CI from 50 models adds ~100ms. The ClinVar/gnomAD API lookups are cached for repeat queries.</div></div>
+
+<div class="qa"><div class="q">How big is the dataset file? <span class="who elnar">ELNAR</span></div>
+<div class="a">master_training_dataset.csv: about 19,223 rows x 120+ columns. XGBoost model: ~2.8 MB (JSON). MLP: ~372 KB (H5). Total model artifacts in data/ directory: roughly 50 MB including all PKL files, structural features, and bootstrap models.</div></div>
+
+<div class="qa"><div class="q">What is the AlphaFold DB version? <span class="who elnar">ELNAR</span></div>
+<div class="a">Version 6 (v6). URL format: AF-{uniprot_id}-F1-model_v6.pdb. UniProt IDs: BRCA1 (P38398), BRCA2 (P51587), PALB2 (Q86YC2), RAD51C (O43502), RAD51D (O75771). BRCA2's PDB was too large for the AlphaFold DB API so we use existing pre-computed structural features for BRCA2.</div></div>
+
+<div class="qa"><div class="q">What Python version? <span class="who elnar">ELNAR</span></div>
+<div class="a">Python 3.13. We use type hints, f-strings, and walrus operators where appropriate. Key dependencies: fastapi, xgboost, tensorflow, scikit-learn, biopython, shap, scipy, numpy, pandas.</div></div>
+
+<div class="qa"><div class="q">What is the secondary structure feature? <span class="who elnar">ELNAR</span></div>
+<div class="a">Three binary features from AlphaFold: ss_helix (alpha-helix), ss_sheet (beta-sheet), ss_coil (random coil). In v5.4, we added dual format support because AlphaFold v6 uses integer codes (1=helix, 2=sheet, 3=coil) while our older data used string labels. Mutations in helices and sheets are generally more disruptive than mutations in coils because structured regions are more sensitive to amino acid changes.</div></div>
+
+<div class="qa"><div class="q">What is functional_zone_score? <span class="who elnar">ELNAR</span></div>
+<div class="a">A continuous score that measures how "deep" in a functional domain a mutation is. It's calculated as the weighted inverse distance to ALL known domains for that gene, not just the nearest. A position inside multiple overlapping domains gets a higher score than one near a single domain edge. Formula: sum(1 / (1 + distance_to_domain_i)) for all domains. Higher = more functionally important.</div></div>
+
+<div class="qa"><div class="q">What is the popmax_af? <span class="who elnar">ELNAR</span></div>
+<div class="a">The maximum allele frequency across all gnomAD populations for a variant. Used for ACMG BA1/BS1 evaluation because the highest population frequency is the most conservative measure. If a variant is common in ANY population, it's likely benign. We handle alias keys (popmax_af vs popmax) from different gnomAD data sources.</div></div>
+
+<div class="qa"><div class="q">What did the gnomAD augmentation do exactly? <span class="who elnar">ELNAR</span></div>
+<div class="a">Added 485 variants: BRCA1 +97, BRCA2 +114, PALB2 +60, RAD51C +86, RAD51D +128. These are variants with allele count >= 2 in gnomAD v4, deduplicated against ClinVar entries. The massive impact: RAD51C went from 0.51 to 0.743 AUC, RAD51D from 0.59 to 0.804. The reason: these genes had almost no benign training examples before augmentation. Important: this wasn't a controlled ablation - other changes happened simultaneously.</div></div>
+
+<div class="qa"><div class="q">What is BioPython used for? <span class="who elnar">ELNAR</span></div>
+<div class="a">Parsing PDB files (AlphaFold structures) to extract per-residue structural features like RSA, B-factor, secondary structure, and inter-residue distances. BioPython's Bio.PDB module handles the 3D coordinate parsing, DSSP-like secondary structure assignment, and accessible surface area calculation.</div></div>
+
+<div class="qa"><div class="q">What is the Kazakh founder mutation database? <span class="who inkar">INKAR</span></div>
+<div class="a">A JSON file (kazakh_founder_mutations.json) with 12 known founder mutations in BRCA1 and BRCA2 from published literature on Kazakh and Central Asian populations. When a user queries one of these variants, the system flags it as a known founder mutation with population context. This helps Central Asian genetic counselors recognize population-specific variants.</div></div>
+
+<div class="qa"><div class="q">What is the CODON_TABLE in constants.py? <span class="who elnar">ELNAR</span></div>
+<div class="a">A mapping from DNA codons to amino acids, used to translate cDNA notation to protein notation. Also includes the COMPLEMENT table for reverse-complementing sequences on negative-strand genes (BRCA1, PALB2, RAD51D). These are standard molecular biology lookup tables implemented in Python dicts.</div></div>
+
+<div class="qa"><div class="q">How do you handle the BRCA1 class imbalance specifically? <span class="who elnar">ELNAR</span></div>
+<div class="a">Four mechanisms: (1) gnomAD proxy-benign: added 97 benign BRCA1 variants. (2) MLP-only ensemble weight (0% XGBoost, 100% MLP) because MLP handles imbalance better for BRCA1. (3) Per-gene isotonic calibration to correct probability estimates. (4) BRCA1-specific data scarcity warnings in the output. Despite all this, BRCA1 AUC is only 0.747 - the extreme imbalance (96.6% pathogenic) remains the fundamental challenge.</div></div>
+
+<!-- ========== CATEGORY O: ONE-LINE QUICK ANSWERS ========== -->
+<div class="page-break"></div>
+<h3>O. Quick-Fire Answers (One-Liners) <span class="section-count">(20 questions)</span></h3>
+
+<div class="qa"><div class="q">How many lines of code? <span class="who elnar">ELNAR</span></div>
+<div class="a">~15 backend modules + frontend (~50KB total). Features.py alone is ~960 lines. Not counting tests or scripts.</div></div>
+
+<div class="qa"><div class="q">What's the license? <span class="who elnar">ELNAR</span></div>
+<div class="a">MIT for code, Research Use Only for model artifacts and predictions.</div></div>
+
+<div class="qa"><div class="q">What languages does the UI support? <span class="who elnar">ELNAR</span></div>
+<div class="a">English, Kazakh, and Russian. Translations in lang.js.</div></div>
+
+<div class="qa"><div class="q">What's the random seed? <span class="who elnar">ELNAR</span></div>
+<div class="a">42, everywhere. RANDOM_STATE=42 for reproducibility.</div></div>
+
+<div class="qa"><div class="q">How many bootstrap models? <span class="who elnar">ELNAR</span></div>
+<div class="a">50 XGBoost models trained on resampled data.</div></div>
+
+<div class="qa"><div class="q">What's the conformal coverage level? <span class="who elnar">ELNAR</span></div>
+<div class="a">Default 90%.</div></div>
+
+<div class="qa"><div class="q">How many ACMG codes? <span class="who elnar">ELNAR</span></div>
+<div class="a">15 implemented out of 28+ standard codes.</div></div>
+
+<div class="qa"><div class="q">How many gnomAD proxy-benign variants? <span class="who elnar">ELNAR</span></div>
+<div class="a">485 total (97 BRCA1, 114 BRCA2, 60 PALB2, 86 RAD51C, 128 RAD51D).</div></div>
+
+<div class="qa"><div class="q">What's the probability clipping range? <span class="who elnar">ELNAR</span></div>
+<div class="a">[1%, 99%].</div></div>
+
+<div class="qa"><div class="q">What's BRCA2 AUC? <span class="who elnar">ELNAR</span></div>
+<div class="a">0.994 on held-out test set, 0.918 on ClinVar Expert Panel.</div></div>
+
+<div class="qa"><div class="q">What's the worst-performing gene? <span class="who elnar">ELNAR</span></div>
+<div class="a">PALB2 at 0.605 AUC.</div></div>
+
+<div class="qa"><div class="q">How many false negatives? <span class="who elnar">ELNAR</span></div>
+<div class="a">77 out of 1,805 pathogenic variants (4.3% miss rate).</div></div>
+
+<div class="qa"><div class="q">How many false positives? <span class="who elnar">ELNAR</span></div>
+<div class="a">152 out of 2,040 benign variants (7.5% false alarm rate).</div></div>
+
+<div class="qa"><div class="q">What's the ESM-2 model name? <span class="who elnar">ELNAR</span></div>
+<div class="a">esm2_t6_8M_UR50D (8 million parameters).</div></div>
+
+<div class="qa"><div class="q">How many PCA components from ESM-2? <span class="who elnar">ELNAR</span></div>
+<div class="a">20 components capturing 72.8% of variance.</div></div>
+
+<div class="qa"><div class="q">What's the XGBoost max depth? <span class="who elnar">ELNAR</span></div>
+<div class="a">7.</div></div>
+
+<div class="qa"><div class="q">What's the XGBoost learning rate? <span class="who elnar">ELNAR</span></div>
+<div class="a">0.05.</div></div>
+
+<div class="qa"><div class="q">What's the XGBoost n_estimators? <span class="who elnar">ELNAR</span></div>
+<div class="a">400 trees.</div></div>
+
+<div class="qa"><div class="q">What's the PM1 distance threshold? <span class="who elnar">ELNAR</span></div>
+<div class="a">5 angstroms to nearest functional site.</div></div>
+
+<div class="qa"><div class="q">Where is it deployed? <span class="who elnar">ELNAR</span></div>
+<div class="a">steppedna.com on Render.</div></div>
+
+<p class="footer-note" style="margin-top: 30px;">SteppeDNA Complete Offline Bible &bull; 310 Questions &bull; Infomatrix Asia 2026 &bull; CONFIDENTIAL</p>
+
+</body>
+</html>
