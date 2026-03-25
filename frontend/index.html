@@ -70,19 +70,15 @@
             </div>
             <div class="hero-stats">
                 <div class="hero-stat">
-                    <div class="num" id="hero-macro-auc">0.791</div>
-                    <div class="lbl" data-i18n="stat_macro_auc">Macro-Avg AUC <button class="help-tip" aria-label="What is Macro-Averaged AUC?">?<span class="help-text" data-i18n-tooltip="tip_macro_auc">Macro-averaged AUC across all 5 genes (unweighted). Better reflects multi-gene performance than the sample-weighted AUC.</span></button></div>
-                </div>
-                <div class="hero-stat">
                     <div class="num" id="hero-roc-auc">0.985</div>
-                    <div class="lbl" data-i18n="stat_sw_auc">Sample-Wtd AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Sample-weighted Area Under the ROC curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess. Weighted by gene representation (BRCA2 = 52% of test set).</span></button></div>
+                    <div class="lbl" data-i18n="stat_auc">AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Area Under the ROC curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess.</span></button></div>
                 </div>
                 <div class="hero-stat">
-                    <div class="num" id="hero-mcc">0.881</div>
+                    <div class="num" id="hero-mcc">0.928</div>
                     <div class="lbl" data-i18n="stat_mcc">MCC <button class="help-tip" aria-label="What is MCC?">?<span class="help-text" data-i18n-tooltip="tip_mcc">Matthew's Correlation Coefficient. A balanced metric from -1 to +1 that accounts for true/false positives and negatives. Considered the most reliable single metric for binary classification.</span></button></div>
                 </div>
                 <div class="hero-stat">
-                    <div class="num" id="hero-bal-acc">94.1%</div>
+                    <div class="num" id="hero-bal-acc">96.5%</div>
                     <div class="lbl" data-i18n="stat_bal_acc">Balanced Acc <button class="help-tip" aria-label="What is Balanced Accuracy?">?<span class="help-text" data-i18n-tooltip="tip_bal_acc">Average of sensitivity (true pathogenic rate) and specificity (true benign rate). Unaffected by class imbalance unlike raw accuracy.</span></button></div>
                 </div>
                 <div class="hero-stat">
@@ -96,40 +92,6 @@
             </div>
         </div>
     </header>
-
-    <!-- ============ PER-GENE PERFORMANCE ============ -->
-    <section class="per-gene-section" aria-label="Per-Gene Performance">
-        <h3 class="per-gene-title" data-i18n="pergene_title">Per-Gene ROC-AUC Performance</h3>
-        <div class="per-gene-chart">
-            <div class="pg-row">
-                <span class="pg-gene">BRCA2</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
-                <span class="pg-val">0.994</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">RAD51D</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
-                <span class="pg-val">0.824</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">RAD51C</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
-                <span class="pg-val">0.785</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">BRCA1</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
-                <span class="pg-val">0.747</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">PALB2</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
-                <span class="pg-val">0.605</span>
-            </div>
-        </div>
-        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.985) is weighted by gene representation. BRCA2 comprises 52% of the test set. Evaluated on a held-out 20% stratified test split.</p>
-        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes.</p>
-    </section>
 
     <!-- ============ MANUAL ENTRY ============ -->
     <section class="manual-entry-section" role="main">
@@ -260,6 +222,40 @@
         </div>
         <div class="history-list" id="historyList"></div>
     </div>
+
+    <!-- ============ PER-GENE PERFORMANCE ============ -->
+    <section class="per-gene-section" aria-label="Per-Gene Performance">
+        <h3 class="per-gene-title" data-i18n="pergene_title">Per-Gene ROC-AUC Performance</h3>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">BRCA2</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
+                <span class="pg-val">0.994</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51D</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
+                <span class="pg-val">0.824</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51C</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
+                <span class="pg-val">0.785</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">BRCA1</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
+                <span class="pg-val">0.747</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">PALB2</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
+                <span class="pg-val">0.605</span>
+            </div>
+        </div>
+        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.985) is weighted by gene representation. BRCA2 comprises 52% of the test set. Evaluated on a held-out 20% stratified test split.</p>
+        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes.</p>
+    </section>
 
     <!-- ============ RESULT AREA ============ -->
     <div class="result-area">
@@ -820,7 +816,7 @@
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_performance">Performance</h4>
-                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.881 &middot; Balanced Accuracy: 94.1%. 10-fold CV: 0.9858 &plusmn; 0.0022. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
+                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.928 &middot; Balanced Accuracy: 96.5%. 10-fold CV: 0.9858 &plusmn; 0.0021. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
                     <p class="mc-sota-note" data-i18n="mc_perf_caveat" style="font-size:0.78rem;color:var(--text-mid);margin-top:4px;font-style:italic">* Evaluated on SteppeDNA test set. General-purpose tools not trained on same distribution.</p>
                 </div>
                 <div class="mc-block">
