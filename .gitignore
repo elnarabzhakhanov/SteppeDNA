@@ -158,7 +158,6 @@ data/gnn_model_weights.pt
 # ============================================
 .hypothesis/
 archive/
-data/archived_raw_pdb/
 data/benchmark/fair_sota_cache.json
 data/brca1_dms_scores.pkl
 data/cdna_to_genomic.pkl

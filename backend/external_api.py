@@ -286,11 +286,11 @@ async def lookup_clinvar(variant: str, request: Request):
                 "clinical_significance": rec.get(          # e.g. "Pathogenic", "Benign", "VUS"
                     "clinical_significance", {}
                 ).get("description", "Unknown"),
-                "title": rec.get("title", ""),             # Human-readable variant title
-                "review_status": rec.get(                  # e.g. "criteria provided, multiple submitters"
-                    "clinical_significance", {}             #   (more stars = more confidence)
+                "title": rec.get("title", ""),  # Human-readable variant title
+                "review_status": rec.get(  # e.g. "criteria provided, multiple submitters"
+                    "clinical_significance", {}  # (more stars = more confidence)
                 ).get("review_status", ""),
-                "n_results": len(ids),                     # How many ClinVar entries matched
+                "n_results": len(ids),  # How many ClinVar entries matched
             }
             _cache_set(cache_key, res)  # Cache for future lookups
             return res

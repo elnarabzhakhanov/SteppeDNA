@@ -1657,10 +1657,10 @@ async function loadAndRenderUMAP(queryProb) {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 2;
         ctx.stroke();
-        // Honest label for heuristic placement
+        // Label for heuristic placement
         ctx.font = '10px sans-serif';
         ctx.fillStyle = '#888';
-        ctx.fillText('Estimated (not projected)', qx + 12, qy + 4);
+        ctx.fillText('Estimated position', qx + 12, qy + 4);
         // Glow effect
         ctx.beginPath();
         ctx.arc(qx, qy, 12, 0, Math.PI * 2);

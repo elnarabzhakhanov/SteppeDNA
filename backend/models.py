@@ -84,11 +84,11 @@ GENE_MAX_AA = {'BRCA1': 1863, 'BRCA2': 3418, 'PALB2': 1186, 'RAD51C': 376, 'RAD5
 # "tier" = human-friendly label shown in the UI to set user expectations.
 # "note" = extra context explaining WHY performance differs across genes.
 GENE_RELIABILITY = {
-    "BRCA2": {"auc": 0.983, "tier": "high", "note": ""},
-    "RAD51D": {"auc": 0.804, "tier": "moderate", "note": "Limited training data (82 test variants)"},
-    "RAD51C": {"auc": 0.743, "tier": "moderate", "note": "Limited training data (135 test variants)"},
-    "BRCA1": {"auc": 0.706, "tier": "low", "note": "Extreme class imbalance in ClinVar (96.6% pathogenic)"},
-    "PALB2": {"auc": 0.641, "tier": "low", "note": "Smallest training set, lowest model confidence"},
+    "BRCA2": {"auc": 0.994, "tier": "high", "note": ""},
+    "RAD51D": {"auc": 0.824, "tier": "moderate", "note": "Limited training data (82 test variants)"},
+    "RAD51C": {"auc": 0.785, "tier": "moderate", "note": "Limited training data (135 test variants)"},
+    "BRCA1": {"auc": 0.747, "tier": "moderate", "note": "Extreme class imbalance in ClinVar (96.6% pathogenic)"},
+    "PALB2": {"auc": 0.605, "tier": "low", "note": "Smallest training set, lowest model confidence"},
 }
 
 # Legacy BRCA2 CDS (coding sequence) boundaries -- kept for backward compatibility
@@ -107,10 +107,8 @@ NN_WEIGHT = 0.4           # Default MLP (neural network) contribution
 # correspond to?"  Higher = narrower CIs = more confident.
 N_EFFECTIVE = 200          # Pseudo-observations for Beta CI estimation
 
-ESM2_WINDOW = 50           # How many amino acids on each side of the variant to feed
-                           # into ESM-2 for local protein-language-model embeddings
-ESM2_PCA_COMPONENTS = 20   # We reduce ESM-2's high-dimensional output to 20 numbers
-                           # via PCA (Principal Component Analysis) for efficiency
+ESM2_WINDOW = 50  # AAs on each side of variant for ESM-2 embeddings
+ESM2_PCA_COMPONENTS = 20  # Reduce ESM-2 output to 20 dims via PCA
 
 MAX_VCF_SIZE = 50 * 1024 * 1024  # 50 MB -- reject VCF uploads larger than this
 
