@@ -132,7 +132,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <tr><td>Test set size</td><td><strong>3,845 variants</strong></td><td>20% held out, never seen during training</td></tr>
 <tr><td>Data split</td><td><strong>60/20/20</strong></td><td>60% train, 20% calibrate, 20% test</td></tr>
 <tr><td>Tests in codebase</td><td><strong>198</strong></td><td>Automated checks that verify correctness</td></tr>
-<tr><td>ACMG rules implemented</td><td><strong>15</strong></td><td>Out of 28+ total ACMG evidence codes</td></tr>
+<tr><td>ACMG rules implemented</td><td><strong>12</strong></td><td>Out of 28+ standard ACMG evidence codes (plus 3 custom modifiers)</td></tr>
 <tr><td>Genes we beat SOTA on</td><td><strong>4 out of 5</strong></td><td>All except PALB2 (REVEL wins there)</td></tr>
 <tr><td>Threshold</td><td><strong>0.2998</strong></td><td>Above this = pathogenic, below = benign</td></tr>
 </table>
@@ -306,10 +306,10 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">Genome Aggregation Database - a collection of genetic data from ~1.6 million alleles across diverse populations. We use gnomAD in two ways: (1) We mined 485 proxy-benign variants (variants seen 2+ times in the population, which are very unlikely to be pathogenic for high-penetrance cancer genes). (2) We use gnomAD allele frequencies as features - if a variant is common in the population, it's probably not causing cancer.</div></div>
 
 <div class="qa"><div class="q">What are ACMG codes? <span class="who inkar">INKAR</span></div>
-<div class="a">The American College of Medical Genetics and Genomics (ACMG) created a framework of 28+ evidence codes for classifying variants. Each code represents a type of evidence - like PVS1 (null variant in a known loss-of-function gene), PM2 (absent from population databases), PP3 (computational prediction supports pathogenic). These codes are combined using rules to reach a final classification. Our system implements 15 of these codes and generates them for every prediction.</div></div>
+<div class="a">The American College of Medical Genetics and Genomics (ACMG) created a framework of 28+ evidence codes for classifying variants. Each code represents a type of evidence - like PVS1 (null variant in a known loss-of-function gene), PM2 (absent from population databases), PP3 (computational prediction supports pathogenic). These codes are combined using rules to reach a final classification. Our system implements 12 of these codes and generates them for every prediction.</div></div>
 
 <div class="qa"><div class="q">What ACMG codes do you implement? <span class="who elnar">ELNAR</span></div>
-<div class="a">15 codes: PVS1 (loss-of-function), PS1 (same AA change as known pathogenic), PS4 (founder mutation prevalence — triggered for known Kazakh founder mutations), PM1 (critical domain), PM2 (absent from gnomAD), PM4 (protein length change), PM5 (novel missense at pathogenic position), PP3 (computational pathogenic), PP3_splice (splice prediction), BA1 (benign standalone - high AF), BS1 (benign strong - moderate AF), BP4 (computational benign), BP7 (synonymous benign). Plus PVS1_moderate for last-exon modifiers and PM2_insufficient (withheld PM2 for underrepresented populations).</div></div>
+<div class="a">12 standard ACMG codes: PVS1 (loss-of-function), PS1 (same AA change as known pathogenic), PS4 (founder mutation prevalence — triggered for known Kazakh founder mutations), PM1 (critical domain), PM2 (absent from gnomAD), PM4 (protein length change), PM5 (novel missense at pathogenic position), PP3 (computational pathogenic), BA1 (benign standalone - high AF), BS1 (benign strong - moderate AF), BP4 (computational benign), BP7 (synonymous benign). Plus 3 custom modifiers: PVS1_moderate (last-exon strength reduction), PP3_splice (splice-context computational evidence), and PM2_insufficient (PM2 withheld for underrepresented populations — informational, not counted as evidence).</div></div>
 
 <div class="qa"><div class="q">What is an amino acid? <span class="who inkar">INKAR</span></div>
 <div class="a">The building blocks of proteins. There are 20 different amino acids, each with different properties - some are large, some small, some are charged, some are hydrophobic (water-repelling). A protein is a chain of amino acids. A missense variant swaps one amino acid for another at a specific position, which may or may not affect how the protein folds and functions.</div></div>
@@ -615,7 +615,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">When a prediction is made, we also query ClinVar via NCBI E-utilities API to see if the variant already has an existing classification. This lets users compare our ML prediction against the established clinical classification. We also query gnomAD for population frequency data. Results are cached for performance.</div></div>
 
 <div class="qa"><div class="q">What is the ACMG rule engine? <span class="who elnar">ELNAR</span></div>
-<div class="a">A rule-based system (acmg_rules.py) that evaluates 13 ACMG evidence codes for each variant independently of the ML model. It uses: gene-specific BA1/BS1 allele frequency thresholds (e.g., BRCA1 BA1 = 0.1%, RAD51D BA1 = 0.5%), structural distance for PM1 (5 angstrom threshold), model probability for PP3/BP4 (PP3 if P > 0.70, BP4 if P < 0.20), ClinVar pathogenic positions for PS1/PM5, and variant type for PVS1. This provides clinical-standard evidence codes alongside the ML score.</div></div>
+<div class="a">A rule-based system (acmg_rules.py) that evaluates 12 standard ACMG evidence codes (plus 3 custom modifiers) for each variant independently of the ML model. It uses: gene-specific BA1/BS1 allele frequency thresholds (e.g., BRCA1 BA1 = 0.1%, RAD51D BA1 = 0.5%), structural distance for PM1 (5 angstrom threshold), model probability for PP3/BP4 (PP3 if P > 0.70, BP4 if P < 0.20), ClinVar pathogenic positions for PS1/PM5, variant type for PVS1, and Kazakh founder mutation data for PS4. For underrepresented populations, PM2 is withheld and BA1/BS1 thresholds are relaxed 2×. This provides clinical-standard evidence codes alongside the ML score.</div></div>
 
 <div class="qa"><div class="q">What external APIs do you call? <span class="who elnar">ELNAR</span></div>
 <div class="a">Two at inference time: (1) NCBI E-utilities for ClinVar variant lookup (existing classifications). (2) myvariant.info for gnomAD population frequencies. Both are cached to avoid repeated calls. At training time: myvariant.info for dbNSFP REVEL/BayesDel/CADD scores, gnomAD allele frequencies, and EVE scores.</div></div>
@@ -661,7 +661,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">We have calibration reliability diagrams (in visual_proofs/) that plot predicted probability vs actual observed frequency. For a well-calibrated model, these should fall on the diagonal. Isotonic calibration was fitted on the held-out calibration set (20%), not the test set. Caveat: BRCA1's calibration may be unreliable in the benign range because the calibration subset is 96.6% pathogenic - very few benign calibration points.</div></div>
 
 <div class="qa"><div class="q">What is the ACMG agreement rate? <span class="who elnar">ELNAR</span></div>
-<div class="a">Our ACMG rule engine resolves 20.6% of variants (792 out of 3,845) - the rest are VUS (79.4% unresolved). Of the resolved ones, 71.2% agree with ClinVar labels. Cohen's kappa is 0.154 (slight agreement). Per gene: BRCA1 95%, BRCA2 53.4%, PALB2 63.6%, RAD51C 37.5%, RAD51D 66.7%. The low BRCA2 agreement (53.4%) is because BRCA2 has many classified variants in non-standard ACMG categories that our 15 rules don't fully capture.</div></div>
+<div class="a">Our ACMG rule engine resolves 20.6% of variants (792 out of 3,845) - the rest are VUS (79.4% unresolved). Of the resolved ones, 71.2% agree with ClinVar labels. Cohen's kappa is 0.154 (slight agreement). Per gene: BRCA1 95%, BRCA2 53.4%, PALB2 63.6%, RAD51C 37.5%, RAD51D 66.7%. The low BRCA2 agreement (53.4%) is because BRCA2 has many classified variants in non-standard ACMG categories that our 12 standard codes don't fully capture.</div></div>
 
 <div class="qa"><div class="q">What visual proofs do you have? <span class="who elnar">ELNAR</span></div>
 <div class="a">9 types: (1) Per-gene ROC curves. (2) Per-gene PR curves. (3) Calibration reliability diagram. (4) SHAP global feature importances. (5) Per-gene performance bar charts. (6) Confusion matrices (overall + per-gene). (7) SOTA comparison charts. (8) Benchmark DMS correlation. (9) Cross-validation results. These are in the visual_proofs/ directory and embedded in the poster.</div></div>
@@ -670,7 +670,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">-0.319 (p = 1.45e-10) on 386 BRCA1 variants. The negative correlation is correct because DMS measures fitness (higher = more functional = benign) while SteppeDNA predicts pathogenicity (higher = more pathogenic). So they should be anti-correlated. The magnitude (-0.319) is moderate - reasonable given DMS noise and the different measurement approaches.</div></div>
 
 <div class="qa"><div class="q">What is Cohen's kappa? <span class="who elnar">ELNAR</span></div>
-<div class="a">A statistic measuring agreement between two classifiers beyond what's expected by chance. Kappa = 1 means perfect agreement, 0 means no better than random. Our ACMG engine's kappa of 0.154 against ClinVar labels is low because: (1) we only implement 15 of 28+ codes, (2) 79.4% of variants are unresolved VUS, and (3) the resolved variants skew toward easy cases. The ACMG engine is supplementary to the ML model, not a replacement.</div></div>
+<div class="a">A statistic measuring agreement between two classifiers beyond what's expected by chance. Kappa = 1 means perfect agreement, 0 means no better than random. Our ACMG engine's kappa of 0.154 against ClinVar labels is low because: (1) we only implement 12 of 28+ codes, (2) 79.4% of variants are unresolved VUS, and (3) the resolved variants skew toward easy cases. The ACMG engine is supplementary to the ML model, not a replacement.</div></div>
 
 <div class="qa"><div class="q">What would clinical validation look like? <span class="who elnar">ELNAR</span></div>
 <div class="a">It would require: (1) An independent cohort of variants not in ClinVar, ideally prospective (new variants before they're classified). (2) Review by at least 2-3 clinical geneticists who examine predictions and explanations. (3) Comparison against established clinical workflows. (4) Assessment on diverse populations, especially Central Asian. (5) Pre-registration of the evaluation protocol. This is a multi-year process for any clinical tool.</div></div>
@@ -1003,7 +1003,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">Because ACMG rules alone resolve only 20.6% of variants in our test set. The other 79.4% remain VUS. That's the whole problem SteppeDNA solves - the ML model can provide a probability for ALL variants, including the 79.4% that ACMG rules can't classify. We provide both: ML probability for a quantitative assessment, ACMG codes for clinical-standard evidence.</div></div>
 
 <div class="qa"><div class="q">How do you know your ACMG implementation is correct? <span class="who elnar">ELNAR</span></div>
-<div class="a">45 dedicated tests in test_acmg_combinatorial.py covering: individual rule triggers, rule combinations, boundary conditions, PVS1 regression (we had a bug in v5.3 where splice PVS1 could overwrite nonsense PVS1), and gene-specific BA1/BS1 threshold tests. Agreement with ClinVar is 71.2% on resolved variants - not perfect, but expected given we only implement 15 of 28+ rules.</div></div>
+<div class="a">46 dedicated tests in test_acmg_combinatorial.py covering: individual rule triggers, rule combinations, boundary conditions, PVS1 regression (we had a bug in v5.3 where splice PVS1 could overwrite nonsense PVS1), and gene-specific BA1/BS1 threshold tests. Agreement with ClinVar is 71.2% on resolved variants - not perfect, but expected given we only implement 12 of 28+ rules.</div></div>
 
 <div class="qa"><div class="q">Is the project commercially viable? <span class="who both">BOTH</span></div>
 <div class="a">Not our goal. It's MIT-licensed code and RUO model. The goal is scientific contribution and health equity. If a commercial lab wanted to use the approach, they'd need to: retrain with their own data, validate clinically, get regulatory approval. Commercial genetic testing companies (Invitae, Myriad, Ambry) have their own internal classifiers. Our contribution is methodological - showing that specialized multi-gene models with per-gene calibration outperform general-purpose tools.</div></div>
@@ -1055,7 +1055,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">Parsing PDB files (AlphaFold structures) to extract per-residue structural features like RSA, B-factor, secondary structure, and inter-residue distances. BioPython's Bio.PDB module handles the 3D coordinate parsing, DSSP-like secondary structure assignment, and accessible surface area calculation.</div></div>
 
 <div class="qa"><div class="q">What is the Kazakh founder mutation database? <span class="who inkar">INKAR</span></div>
-<div class="a">A JSON file (kazakh_founder_mutations.json) with 12 known founder mutations in BRCA1 and BRCA2 from published literature on Kazakh and Central Asian populations. When a user queries one of these variants, the system flags it as a known founder mutation with population context. This helps Central Asian genetic counselors recognize population-specific variants.</div></div>
+<div class="a">A JSON file (kazakh_founder_mutations.json) with 7 known founder mutations in BRCA1 and BRCA2 from published literature on Kazakh and Central Asian populations. When a user queries one of these variants, the system flags it as a known founder mutation with population context. This helps Central Asian genetic counselors recognize population-specific variants.</div></div>
 
 <div class="qa"><div class="q">What is the CODON_TABLE in constants.py? <span class="who elnar">ELNAR</span></div>
 <div class="a">A mapping from DNA codons to amino acids, used to translate cDNA notation to protein notation. Also includes the COMPLEMENT table for reverse-complementing sequences on negative-strand genes (BRCA1, PALB2, RAD51D). These are standard molecular biology lookup tables implemented in Python dicts.</div></div>
@@ -1086,7 +1086,7 @@ td { padding: 4px 8px; border-bottom: 1px solid #eee; }
 <div class="a">Default 90%.</div></div>
 
 <div class="qa"><div class="q">How many ACMG codes? <span class="who elnar">ELNAR</span></div>
-<div class="a">15 implemented out of 28+ standard codes.</div></div>
+<div class="a">12 standard ACMG codes implemented (plus 3 custom modifiers).</div></div>
 
 <div class="qa"><div class="q">How many gnomAD proxy-benign variants? <span class="who elnar">ELNAR</span></div>
 <div class="a">485 total (97 BRCA1, 114 BRCA2, 60 PALB2, 86 RAD51C, 128 RAD51D).</div></div>
