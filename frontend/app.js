@@ -1106,6 +1106,15 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
 
         if (Object.keys(acmgData).length > 0) {
             acmgGrid.innerHTML = Object.entries(acmgData).map(([code, desc]) => {
+                // PM2_insufficient is a special info badge (population equity)
+                if (code === 'PM2_insufficient') {
+                    return `
+                        <div class="acmg-badge-row">
+                            <div class="acmg-code" style="background:var(--warning,#f59e0b);color:#000;font-size:0.72rem">PM2*</div>
+                            <div class="acmg-desc" style="color:var(--warning,#f59e0b)">${escapeHtml(desc)}</div>
+                        </div>
+                    `;
+                }
                 // PP3, PM1, PM5 etc are Pathogenic. BP4, BS1 etc are Benign.
                 const isPathogenic = code.startsWith('P');
                 const codeClass = isPathogenic ? 'pathogenic' : 'benign';
@@ -1161,6 +1170,20 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
             }
         } else {
             popCompDiv.style.display = 'none';
+        }
+
+        // ---- Population Equity Summary (Kazakh/Central Asian) ----
+        if (data.population_equity) {
+            const eq = data.population_equity;
+            let eqHtml = `<div style="margin-top:8px;padding:8px 12px;background:var(--bg-card);border:1px solid var(--accent);border-radius:6px;font-size:0.82rem;line-height:1.5">`;
+            eqHtml += `<div style="font-weight:600;margin-bottom:4px">Population Equity Adjustments Active</div>`;
+            eqHtml += `<div>${eq.frequency_independent_pct}% of features are frequency-independent</div>`;
+            if (eq.pm2_adjusted) eqHtml += `<div style="color:var(--warning,#f59e0b)">PM2 evidence withheld (insufficient population data)</div>`;
+            if (eq.thresholds_relaxed) eqHtml += `<div>BA1/BS1 thresholds relaxed 2× for sparse population</div>`;
+            if (eq.founder_mutation_evidence) eqHtml += `<div style="color:var(--danger,#ef4444)">PS4 founder mutation evidence applied</div>`;
+            eqHtml += `</div>`;
+            popCompContent.insertAdjacentHTML('beforeend', eqHtml);
+            popCompDiv.style.display = 'block';
         }
 
         // ---- SHAP Chart ----
@@ -1554,7 +1577,7 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
     <tr><td>Training Data</td><td>19,223 variants (BRCA2: 10,085 | BRCA1: 5,432 | PALB2: 2,621 | RAD51C: 675 | RAD51D: 410)</td></tr>
     <tr><td>Validation ROC-AUC</td><td>0.985</td></tr>
     ${data.gene_reliability?.auc ? `<tr><td>Gene-Specific AUC (${data.gene_reliability?.gene || input.gene_name})</td><td>${data.gene_reliability.auc}</td></tr>` : ''}
-    <tr><td>Validation MCC</td><td>0.928</td></tr>
+    <tr><td>Validation MCC</td><td>0.881</td></tr>
     <tr><td>Genes Covered</td><td>BRCA1, BRCA2, PALB2, RAD51C, RAD51D</td></tr>
 </table>
 

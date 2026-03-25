@@ -70,15 +70,19 @@
             </div>
             <div class="hero-stats">
                 <div class="hero-stat">
-                    <div class="num" id="hero-roc-auc">0.985</div>
-                    <div class="lbl" data-i18n="stat_auc">AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Area Under the ROC curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess.</span></button></div>
+                    <div class="num" id="hero-macro-auc">0.791</div>
+                    <div class="lbl" data-i18n="stat_macro_auc">Macro-Avg AUC <button class="help-tip" aria-label="What is Macro-Averaged AUC?">?<span class="help-text" data-i18n-tooltip="tip_macro_auc">Macro-averaged AUC across all 5 genes (unweighted).</span></button></div>
                 </div>
                 <div class="hero-stat">
-                    <div class="num" id="hero-mcc">0.928</div>
+                    <div class="num" id="hero-roc-auc">0.985</div>
+                    <div class="lbl" data-i18n="stat_sw_auc">Sample-Wtd AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Sample-weighted Area Under the ROC curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess. Weighted by gene representation (BRCA2 = 52% of test set).</span></button></div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num" id="hero-mcc">0.881</div>
                     <div class="lbl" data-i18n="stat_mcc">MCC <button class="help-tip" aria-label="What is MCC?">?<span class="help-text" data-i18n-tooltip="tip_mcc">Matthew's Correlation Coefficient. A balanced metric from -1 to +1 that accounts for true/false positives and negatives. Considered the most reliable single metric for binary classification.</span></button></div>
                 </div>
                 <div class="hero-stat">
-                    <div class="num" id="hero-bal-acc">96.5%</div>
+                    <div class="num" id="hero-bal-acc">94.1%</div>
                     <div class="lbl" data-i18n="stat_bal_acc">Balanced Acc <button class="help-tip" aria-label="What is Balanced Accuracy?">?<span class="help-text" data-i18n-tooltip="tip_bal_acc">Average of sensitivity (true pathogenic rate) and specificity (true benign rate). Unaffected by class imbalance unlike raw accuracy.</span></button></div>
                 </div>
                 <div class="hero-stat">
@@ -92,6 +96,40 @@
             </div>
         </div>
     </header>
+
+    <!-- ============ PER-GENE PERFORMANCE ============ -->
+    <section class="per-gene-section" aria-label="Per-Gene Performance">
+        <h3 class="per-gene-title" data-i18n="pergene_title">Per-Gene ROC-AUC Performance</h3>
+        <div class="per-gene-chart">
+            <div class="pg-row">
+                <span class="pg-gene">BRCA2</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
+                <span class="pg-val">0.994</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51D</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
+                <span class="pg-val">0.824</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">RAD51C</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
+                <span class="pg-val">0.785</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">BRCA1</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
+                <span class="pg-val">0.747</span>
+            </div>
+            <div class="pg-row">
+                <span class="pg-gene">PALB2</span>
+                <div class="pg-bar-track"><div class="pg-bar" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
+                <span class="pg-val">0.605</span>
+            </div>
+        </div>
+        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.985) is weighted by gene representation. BRCA2 comprises 52% of the test set. Evaluated on a held-out 20% stratified test split.</p>
+        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes.</p>
+    </section>
 
     <!-- ============ MANUAL ENTRY ============ -->
     <section class="manual-entry-section" role="main">
@@ -159,6 +197,7 @@
                         <div class="dropdown-selected" id="populationSelected" data-i18n="pop_global">Global (default)</div>
                         <div class="dropdown-options">
                             <div class="dropdown-option active" data-value="">Global (default)</div>
+                            <div class="dropdown-option" data-value="kazakh" style="font-weight:600">Kazakh / Central Asian</div>
                             <div class="dropdown-option" data-value="nfe">European (NFE)</div>
                             <div class="dropdown-option" data-value="eas">East Asian (EAS)</div>
                             <div class="dropdown-option" data-value="afr">African (AFR)</div>
@@ -222,40 +261,6 @@
         </div>
         <div class="history-list" id="historyList"></div>
     </div>
-
-    <!-- ============ PER-GENE PERFORMANCE ============ -->
-    <section class="per-gene-section" aria-label="Per-Gene Performance">
-        <h3 class="per-gene-title" data-i18n="pergene_title">Per-Gene ROC-AUC Performance</h3>
-        <div class="per-gene-chart">
-            <div class="pg-row">
-                <span class="pg-gene">BRCA2</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:99.4%" aria-label="BRCA2 AUC 0.994"></div></div>
-                <span class="pg-val">0.994</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">RAD51D</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:82.4%" aria-label="RAD51D AUC 0.824"></div></div>
-                <span class="pg-val">0.824</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">RAD51C</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:78.5%" aria-label="RAD51C AUC 0.785"></div></div>
-                <span class="pg-val">0.785</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">BRCA1</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:74.7%" aria-label="BRCA1 AUC 0.747"></div></div>
-                <span class="pg-val">0.747</span>
-            </div>
-            <div class="pg-row">
-                <span class="pg-gene">PALB2</span>
-                <div class="pg-bar-track"><div class="pg-bar" style="width:60.5%" aria-label="PALB2 AUC 0.605"></div></div>
-                <span class="pg-val">0.605</span>
-            </div>
-        </div>
-        <p class="pg-footnote" data-i18n="pergene_footnote">Overall AUC (0.985) is weighted by gene representation. BRCA2 comprises 52% of the test set. Evaluated on a held-out 20% stratified test split.</p>
-        <p class="pg-footnote" style="margin-top:4px" data-i18n="temporal_footnote">Non-BRCA2 temporal AUCs (0.51&ndash;0.61) indicate limited generalization over time for data-scarce genes.</p>
-    </section>
 
     <!-- ============ RESULT AREA ============ -->
     <div class="result-area">
@@ -599,6 +604,16 @@
             <span class="eq-leg-item"><span class="eq-leg-dot eq-tier-low"></span> <span data-i18n="eq_low">Low &mdash; interpret with caution</span></span>
         </div>
 
+        <h4 class="eq-subtitle" data-i18n="eq_mitigation_title">How SteppeDNA Addresses Population Bias</h4>
+        <div class="eq-mitigation-box" style="background:var(--bg-card);border:1px solid var(--accent);border-radius:8px;padding:0.9rem 1.1rem;margin-bottom:1.2rem;font-size:0.88rem;line-height:1.6">
+            <ol style="margin:0;padding-left:1.3rem;">
+                <li data-i18n="eq_mit1"><strong>90.8% frequency-independent architecture</strong> &mdash; 109 of 120 prediction features use universal biological signals (protein structure, evolutionary conservation, protein language models) that work equally for any population</li>
+                <li data-i18n="eq_mit2"><strong>Population-calibrated ACMG rules</strong> &mdash; PM2 evidence is automatically withheld for Kazakh/Central Asian patients (gnomAD has ~0% Central Asian representation; &ldquo;absent from controls&rdquo; means &ldquo;never checked&rdquo;). BA1/BS1 benign thresholds are relaxed 2&times; to prevent premature benign calls from sparse data</li>
+                <li data-i18n="eq_mit3"><strong>Founder mutation integration (PS4)</strong> &mdash; 7 known Kazakh founder mutations from published cancer genetics studies are recognized as formal ACMG strong pathogenic evidence, not just annotations</li>
+                <li data-i18n="eq_mit4"><strong>Honest uncertainty</strong> &mdash; confidence intervals are automatically widened (&times;1.5) for underrepresented populations, preventing overconfident misclassification</li>
+            </ol>
+        </div>
+
         <h4 class="eq-subtitle" data-i18n="eq_pm2_title">PM2 Evidence Disparity by Population</h4>
         <div style="overflow-x:auto">
             <table class="sota-table eq-table" aria-label="PM2 evidence disparity">
@@ -816,7 +831,7 @@
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_performance">Performance</h4>
-                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.928 &middot; Balanced Accuracy: 96.5%. 10-fold CV: 0.9858 &plusmn; 0.0021. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
+                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.881 &middot; Balanced Accuracy: 94.1%. 10-fold CV: 0.9858 &plusmn; 0.0022. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
                     <p class="mc-sota-note" data-i18n="mc_perf_caveat" style="font-size:0.78rem;color:var(--text-mid);margin-top:4px;font-style:italic">* Evaluated on SteppeDNA test set. General-purpose tools not trained on same distribution.</p>
                 </div>
                 <div class="mc-block">
@@ -827,7 +842,7 @@
                         <li data-i18n="mc_lim3">Model may underperform on novel variants with no population frequency data</li>
                         <li data-i18n="mc_lim4">Probabilities are clipped to [1%, 99%] &mdash; the model never claims absolute certainty</li>
                         <li data-i18n="mc_lim5">Compound heterozygosity warning is provided in VCF batch analysis, but does not perform phasing; variants require segregation study to determine cis/trans configuration</li>
-                        <li data-i18n="mc_lim6">Training data predominantly from populations of European descent (ClinVar submission bias); predictions for underrepresented ancestries may be less reliable</li>
+                        <li data-i18n="mc_lim6">Training data predominantly from populations of European descent; however, 90.8% of features are population-independent. Population-calibrated ACMG rules and widened CIs mitigate frequency bias for Central Asian variants</li>
                         <li data-i18n="mc_lim7">ClinVar classifications evolve over time; training labels may not reflect the latest expert consensus</li>
                     </ul>
                     <p class="mc-sota-note" data-i18n="mc_sota_note" style="font-size:0.8rem;color:var(--text-mid);margin-top:8px;font-style:italic"></p>
@@ -836,7 +851,7 @@
                     <h4 data-i18n="mc_ethics">Ethical Considerations</h4>
                     <ul>
                         <li data-i18n="mc_eth1">Not validated for clinical diagnostic use &mdash; all predictions require expert review</li>
-                        <li data-i18n="mc_eth2">Training data is primarily from populations of European descent; performance may vary across ancestries</li>
+                        <li data-i18n="mc_eth2">Training data is primarily from populations of European descent; population-calibrated ACMG rules and widened confidence intervals are applied for underrepresented ancestries</li>
                         <li data-i18n="mc_eth3">ACMG evidence codes are computational approximations, not expert classifications</li>
                         <li data-i18n="mc_eth4">Should not be used as the sole basis for clinical decisions about patient care</li>
                     </ul>

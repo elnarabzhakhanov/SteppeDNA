@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 262 262" width="262" height="262">
+  <defs>
+    <!-- Background gradient -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1e1e2d"/>
+      <stop offset="100%" stop-color="#12121a"/>
+    </linearGradient>
+    <!-- Helix strand gradient -->
+    <linearGradient id="helix" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#a78bfa"/>
+      <stop offset="50%" stop-color="#8382ff"/>
+      <stop offset="100%" stop-color="#6260FF"/>
+    </linearGradient>
+    <!-- Glow filter -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Rounded square background -->
+  <rect width="262" height="262" rx="52" ry="52" fill="url(#bg)"/>
+
+  <!-- DNA double helix -->
+  <g filter="url(#glow)" transform="translate(131,131) rotate(-30)">
+    <!-- Left strand -->
+    <path d="M-8,-75 C-35,-50 -35,-20 -8,0 C19,20 19,50 -8,75"
+          fill="none" stroke="url(#helix)" stroke-width="10" stroke-linecap="round"/>
+    <!-- Right strand -->
+    <path d="M8,-75 C35,-50 35,-20 8,0 C-19,20 -19,50 8,75"
+          fill="none" stroke="url(#helix)" stroke-width="10" stroke-linecap="round"/>
+    <!-- Base pair rungs -->
+    <line x1="-16" y1="-56" x2="16" y2="-56" stroke="url(#helix)" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-24" y1="-32" x2="24" y2="-32" stroke="url(#helix)" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+    <line x1="-20" y1="-8" x2="20" y2="-8" stroke="url(#helix)" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+    <line x1="-8" y1="16" x2="8" y2="16" stroke="url(#helix)" stroke-width="5" stroke-linecap="round" opacity="0.8"/>
+    <line x1="-24" y1="40" x2="24" y2="40" stroke="url(#helix)" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="-16" y1="62" x2="16" y2="62" stroke="url(#helix)" stroke-width="5" stroke-linecap="round" opacity="0.6"/>
+  </g>
+</svg>
