@@ -78,11 +78,11 @@
                     <div class="lbl" data-i18n="stat_sw_auc">Sample-Wtd AUC <button class="help-tip" aria-label="What is ROC-AUC?">?<span class="help-text" data-i18n-tooltip="tip_roc_auc">Sample-weighted Area Under the ROC curve. Measures how well the model separates pathogenic from benign variants. 1.0 = perfect, 0.5 = random guess. Weighted by gene representation (BRCA2 = 52% of test set).</span></button></div>
                 </div>
                 <div class="hero-stat">
-                    <div class="num" id="hero-mcc">0.881</div>
+                    <div class="num" id="hero-mcc">0.928</div>
                     <div class="lbl" data-i18n="stat_mcc">MCC <button class="help-tip" aria-label="What is MCC?">?<span class="help-text" data-i18n-tooltip="tip_mcc">Matthew's Correlation Coefficient. A balanced metric from -1 to +1 that accounts for true/false positives and negatives. Considered the most reliable single metric for binary classification.</span></button></div>
                 </div>
                 <div class="hero-stat">
-                    <div class="num" id="hero-bal-acc">94.1%</div>
+                    <div class="num" id="hero-bal-acc">96.5%</div>
                     <div class="lbl" data-i18n="stat_bal_acc">Balanced Acc <button class="help-tip" aria-label="What is Balanced Accuracy?">?<span class="help-text" data-i18n-tooltip="tip_bal_acc">Average of sensitivity (true pathogenic rate) and specificity (true benign rate). Unaffected by class imbalance unlike raw accuracy.</span></button></div>
                 </div>
                 <div class="hero-stat">
@@ -831,7 +831,7 @@
                 </div>
                 <div class="mc-block">
                     <h4 data-i18n="mc_performance">Performance</h4>
-                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.881 &middot; Balanced Accuracy: 94.1%. 10-fold CV: 0.9858 &plusmn; 0.0022. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
+                    <p data-i18n="mc_performance_d">ROC-AUC: 0.985 &middot; MCC: 0.928 &middot; Balanced Accuracy: 96.5%. 10-fold CV: 0.9858 &plusmn; 0.0021. Outperforms REVEL (0.725), BayesDel (0.721), CADD (0.539) on same test set.*</p>
                     <p class="mc-sota-note" data-i18n="mc_perf_caveat" style="font-size:0.78rem;color:var(--text-mid);margin-top:4px;font-style:italic">* Evaluated on SteppeDNA test set. General-purpose tools not trained on same distribution.</p>
                 </div>
                 <div class="mc-block">

@@ -1577,7 +1577,7 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
     <tr><td>Training Data</td><td>19,223 variants (BRCA2: 10,085 | BRCA1: 5,432 | PALB2: 2,621 | RAD51C: 675 | RAD51D: 410)</td></tr>
     <tr><td>Validation ROC-AUC</td><td>0.985</td></tr>
     ${data.gene_reliability?.auc ? `<tr><td>Gene-Specific AUC (${data.gene_reliability?.gene || input.gene_name})</td><td>${data.gene_reliability.auc}</td></tr>` : ''}
-    <tr><td>Validation MCC</td><td>0.881</td></tr>
+    <tr><td>Validation MCC</td><td>0.928</td></tr>
     <tr><td>Genes Covered</td><td>BRCA1, BRCA2, PALB2, RAD51C, RAD51D</td></tr>
 </table>
 

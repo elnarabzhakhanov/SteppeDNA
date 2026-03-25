@@ -69,7 +69,11 @@ WHAT THIS MODULE EVALUATES:
 
     NOT evaluated (require external data we don't have):
     - PS2/PM6 (de novo), PP1/BS4 (co-segregation), PS3/BS3 (functional assays),
-      PS4 (case-control prevalence), PP2/BP1 (gene-level missense constraint).
+      PP2/BP1 (gene-level missense constraint).
+
+    Conditionally evaluated:
+    - PS4 (case-control prevalence): triggered for known Kazakh founder mutations
+      with published population frequency data.
 
 KEY HIERARCHIES:
     Some codes override or supersede others:
