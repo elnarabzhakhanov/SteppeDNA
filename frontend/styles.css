@@ -1592,57 +1592,6 @@ input:focus {
     }
 }
 
-/* ---- UMAP VARIANT LANDSCAPE ---- */
-.umap-section {
-    max-width: 920px;
-    margin: 1rem auto;
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 1rem 1.2rem;
-    text-align: center;
-}
-.umap-title {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--text-dark);
-}
-.umap-subtitle {
-    font-size: 0.75rem;
-    color: var(--text-body);
-    margin-bottom: 0.6rem;
-}
-#umapCanvas {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    background: var(--bg-body);
-}
-.umap-legend {
-    display: flex;
-    justify-content: center;
-    gap: 1.2rem;
-    margin-top: 0.5rem;
-    font-size: 0.75rem;
-    color: var(--text-body);
-}
-.umap-leg-item { display: flex; align-items: center; gap: 4px; }
-.umap-dot {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    display: inline-block;
-}
-.umap-dot-query {
-    background: #f59e0b;
-    border: 2px solid #fff;
-    box-shadow: 0 0 4px rgba(245,158,11,0.6);
-    width: 12px;
-    height: 12px;
-}
-
 /* ---- VARIANT COMPARISON ---- */
 .comparison-panel {
     max-width: 920px;

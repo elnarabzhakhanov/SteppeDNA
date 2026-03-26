@@ -788,10 +788,8 @@ fileInput.addEventListener('change', () => {
 // dismiss result card + associated sections
 document.getElementById('btnDismissResult')?.addEventListener('click', () => {
     document.getElementById('resultCard').style.display = 'none';
-    const umap = document.getElementById('umapSection');
     const viewer = document.getElementById('viewer3dSection');
     const comparison = document.getElementById('comparisonPanel');
-    if (umap) umap.style.display = 'none';
     if (viewer) viewer.style.display = 'none';
     if (comparison) comparison.style.display = 'none';
 });
@@ -1328,9 +1326,6 @@ document.getElementById('mutationForm').addEventListener('submit', async e => {
         // Render protein domain lollipop plot
         renderLollipopPlot(body.gene_name, aaPos, data.prediction);
 
-        // Render UMAP variant landscape (async, non-blocking)
-        loadAndRenderUMAP(prob);
-
         // Render 3D protein structure viewer (async, non-blocking)
         render3DViewer(body.gene_name, aaPos, data.prediction);
 
@@ -1609,67 +1604,6 @@ ${shapRows ? '<h2>SHAP Feature Attribution (Top 8)</h2><table class="info-table"
     printWindow.document.write(html);
     printWindow.document.close();
     setTimeout(() => printWindow.print(), 500);
-}
-
-// ─── UMAP Variant Landscape ──────────────────────────────────────────────────
-let umapData = null;
-
-async function loadAndRenderUMAP(queryProb) {
-    const section = document.getElementById('umapSection');
-    const canvas = document.getElementById('umapCanvas');
-    if (!section || !canvas) return;
-
-    try {
-        if (!umapData) {
-            const resp = await fetchWithTimeout(UMAP_API, {}, 10000);
-            if (!resp.ok) { section.style.display = 'none'; return; }
-            umapData = await resp.json();
-        }
-        if (!umapData.points || umapData.points.length === 0) { section.style.display = 'none'; return; }
-
-        section.style.display = 'block';
-        const ctx = canvas.getContext('2d');
-        const W = canvas.width, H = canvas.height;
-        const pad = 20;
-        ctx.clearRect(0, 0, W, H);
-
-        // Draw background points
-        const pts = umapData.points;
-        for (const p of pts) {
-            const x = pad + p.x * (W - 2 * pad);
-            const y = pad + p.y * (H - 2 * pad);
-            ctx.beginPath();
-            ctx.arc(x, y, 2, 0, Math.PI * 2);
-            ctx.fillStyle = p.l === 1 ? 'rgba(239,68,68,0.25)' : 'rgba(16,185,129,0.25)';
-            ctx.fill();
-        }
-
-        // Draw query variant as a larger golden dot at approximate position
-        // Simple heuristic: place based on probability (pathogenic = closer to pathogenic cluster)
-        // For real projection, the backend would need to project the new variant through the same UMAP transform
-        // This is an approximation for visual effect
-        const qx = pad + queryProb * (W - 2 * pad) * 0.6 + (W - 2 * pad) * 0.2;
-        const qy = pad + (1 - queryProb) * (H - 2 * pad) * 0.5 + (H - 2 * pad) * 0.25;
-        ctx.beginPath();
-        ctx.arc(qx, qy, 8, 0, Math.PI * 2);
-        ctx.fillStyle = '#f59e0b';
-        ctx.fill();
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-        // Label for heuristic placement
-        ctx.font = '10px sans-serif';
-        ctx.fillStyle = '#888';
-        ctx.fillText('Estimated position', qx + 12, qy + 4);
-        // Glow effect
-        ctx.beginPath();
-        ctx.arc(qx, qy, 12, 0, Math.PI * 2);
-        ctx.strokeStyle = 'rgba(245,158,11,0.3)';
-        ctx.lineWidth = 3;
-        ctx.stroke();
-    } catch (e) {
-        section.style.display = 'none';
-    }
 }
 
 // ─── Variant Comparison Mode ─────────────────────────────────────────────────

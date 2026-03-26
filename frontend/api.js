@@ -19,7 +19,6 @@ const VCF_API = API_BASE + '/predict/vcf';
 const CLINVAR_API = API_BASE + '/lookup/clinvar/';
 const GNOMAD_API = API_BASE + '/lookup/gnomad/';
 const METRICS_API = API_BASE + '/model_metrics';
-const UMAP_API = API_BASE + '/umap';
 
 /* ─── Backend Health Check & Offline Banner ─────────────────────────── */
 let _backendOnline = false;
